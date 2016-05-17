@@ -1,6 +1,7 @@
 #include "cmainwindow.h"
 #include "ui_cmainwindow.h"
 
+#include <QFileDialog>
 #include <QFontDialog>
 #include <QSlider>
 #include <QToolBar>
@@ -46,5 +47,11 @@ void CMainWindow::initActions()
 			_textSizeSlider->setValue(font.pointSize());
 		});
 		fontDialog.exec();
+	});
+
+	connect(ui->actionOpen, &QAction::triggered, [this](){
+		const QString fileName = QFileDialog::getOpenFileName(this, "Pick a text file to open");
+		if (!fileName.isEmpty())
+			_txtParser.parseFile(fileName);
 	});
 }

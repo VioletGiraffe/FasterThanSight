@@ -19,7 +19,7 @@ MOC_DIR     = ../build/$${OUTPUT_DIR}/app
 UI_DIR      = ../build/$${OUTPUT_DIR}/app
 RCC_DIR     = ../build/$${OUTPUT_DIR}/app
 
-LIBS += -L../bin/$${OUTPUT_DIR} -lautoupdater -lcpputils
+LIBS += -L../bin/$${OUTPUT_DIR} -lcore -lautoupdater -lcpputils
 
 win*{
     QMAKE_CXXFLAGS += /MP /wd4251
@@ -43,8 +43,11 @@ win32*:!*msvc2012:*msvc* {
 }
 
 mac*|linux*{
-    PRE_TARGETDEPS += $${DESTDIR}/libcpputils.a $${DESTDIR}/libautoupdater.a
+    PRE_TARGETDEPS += $${DESTDIR}/libcore.a $${DESTDIR}/libautoupdater.a
 }
+
+INCLUDEPATH += \
+    ../core/
 
 
 SOURCES += \

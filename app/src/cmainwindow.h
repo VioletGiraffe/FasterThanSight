@@ -1,5 +1,6 @@
-#ifndef CMAINWINDOW_H
-#define CMAINWINDOW_H
+#pragma once
+
+#include "parser/ctxtfileparser.h"
 
 #include <QMainWindow>
 
@@ -25,6 +26,7 @@ private:
 
 	QToolBar* _readingSettingsToolbar = nullptr;
 	QSlider * _textSizeSlider;
+
+	CTxtFileParser _txtParser;
 };
 
-#endif // CMAINWINDOW_H
