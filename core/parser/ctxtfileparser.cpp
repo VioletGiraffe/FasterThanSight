@@ -4,6 +4,8 @@
 #include <QFile>
 #include <QTextCodec>
 
+#include <set>
+
 CTxtFileParser::CTxtFileParser()
 {
 
@@ -12,6 +14,37 @@ CTxtFileParser::CTxtFileParser()
 std::vector<TextFragment> CTxtFileParser::parse(QIODevice& device)
 {
 	const QString text = readText(device);
+
+	struct Delimiter {
+		QString delimiterCharacter;
+		TextFragment::Delimiter delimiterType;
+
+		inline bool operator< (const Delimiter& other) const {
+			return delimiterCharacter < other.delimiterCharacter;
+		}
+	};
+
+	static const std::set<Delimiter> delimiters {
+		{' ', TextFragment::Space},
+		{'.', TextFragment::Point},
+		{':', TextFragment::Colon},
+		{';', TextFragment::Semicolon},
+		{',', TextFragment::Comma},
+		{'-', TextFragment::Dash},
+		{"...", TextFragment::Ellipsis},
+		{"⋯", TextFragment::Ellipsis},
+		{"…", TextFragment::Ellipsis},
+		{"!", TextFragment::ExclamationMark},
+		{"\n", TextFragment::Newline},
+		{"?", TextFragment::QuestionMark},
+
+		{')', TextFragment::Bracket},
+		{'(', TextFragment::Bracket},
+		{'[', TextFragment::Bracket},
+		{']', TextFragment::Bracket},
+		{'{', TextFragment::Bracket},
+		{'}', TextFragment::Bracket}
+	};
 
 	std::vector<TextFragment> fragments;
 

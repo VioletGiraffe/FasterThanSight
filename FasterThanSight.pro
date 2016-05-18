@@ -1,6 +1,6 @@
 TEMPLATE = subdirs
 
-SUBDIRS += autoupdater app cpputils core
+SUBDIRS += app autoupdater cpputils core
 
 cpputils.subdir = cpputils
 

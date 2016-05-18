@@ -59,7 +59,7 @@
     <string>&amp;Open...</string>
    </property>
    <property name="shortcut">
-    <string/>
+    <string>Ctrl+O</string>
    </property>
   </action>
   <action name="action_Font">
