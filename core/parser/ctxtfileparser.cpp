@@ -32,6 +32,7 @@ std::vector<TextFragment> CTxtFileParser::parse(QIODevice& device)
 		{',', TextFragment::Comma},
 		// TODO: dash should be ignored unless it has an adjacent space!
 		{'-', TextFragment::Dash},
+		{'—', TextFragment::Dash},
 		// TODO:
 		// {"...", TextFragment::Ellipsis},
 		{'⋯', TextFragment::Ellipsis},
