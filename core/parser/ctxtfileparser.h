@@ -9,11 +9,8 @@ class QIODevice;
 class CTxtFileParser
 {
 public:
-	CTxtFileParser();
-
-	std::vector<TextFragment> parse(QIODevice& device);
-	std::vector<TextFragment> parseFile(const QString& filePath);
+	static std::vector<TextFragment> parse(QIODevice& device);
 
 private:
-	QString readText(QIODevice& device);
+	static QString readText(QIODevice& device);
 };

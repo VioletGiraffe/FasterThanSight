@@ -1,6 +1,6 @@
 #pragma once
 
-#include "parser/ctxtfileparser.h"
+#include "reader/creader.h"
 
 #include <QMainWindow>
 
@@ -11,7 +11,7 @@ namespace Ui {
 class CMainWindow;
 }
 
-class CMainWindow : public QMainWindow
+class CMainWindow : public QMainWindow, private CReader::ReaderInterface
 {
 public:
 	explicit CMainWindow(QWidget *parent = 0);
@@ -22,11 +22,16 @@ private:
 	void initActions();
 
 private:
+// Reader callbacks
+	void displayText(const TextFragment& text) override;
+	void stateChanged(const CReader::State newState) override;
+
+private:
 	Ui::CMainWindow *ui;
 
 	QToolBar* _readingSettingsToolbar = nullptr;
 	QSlider * _textSizeSlider;
 
-	CTxtFileParser _txtParser;
+	CReader _reader;
 };
 

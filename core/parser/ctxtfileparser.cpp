@@ -6,11 +6,6 @@
 
 #include <set>
 
-CTxtFileParser::CTxtFileParser()
-{
-
-}
-
 std::vector<TextFragment> CTxtFileParser::parse(QIODevice& device)
 {
 	const QString text = readText(device);
@@ -82,16 +77,9 @@ std::vector<TextFragment> CTxtFileParser::parse(QIODevice& device)
 	return fragments;
 }
 
-std::vector<TextFragment> CTxtFileParser::parseFile(const QString& filePath)
-{
-	QFile file(filePath);
-	return parse(file);
-}
-
 QString CTxtFileParser::readText(QIODevice& device)
 {
-	if (!device.isOpen())
-		assert_and_return_r(device.open(QIODevice::ReadOnly), QString());
+	assert_and_return_r(device.isOpen(), QString());
 
 	QTextCodec* codec = QTextCodec::codecForName("UTF-8");
 	if (!codec)

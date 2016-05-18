@@ -47,7 +47,8 @@ mac*|linux*{
 }
 
 INCLUDEPATH += \
-    ../core/
+    ../core/ \
+    ../cpputils/
 
 
 SOURCES += \

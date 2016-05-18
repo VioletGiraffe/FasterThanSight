@@ -21,7 +21,7 @@ RCC_DIR     = ../build/$${OUTPUT_DIR}/core
 
 win*{
 	QMAKE_CXXFLAGS += /MP /wd4251
-	QMAKE_CXXFLAGS_WARN_ON = -W4
+	QMAKE_CXXFLAGS_WARN_ON = /W4
 	DEFINES += WIN32_LEAN_AND_MEAN NOMINMAX _SCL_SECURE_NO_WARNINGS
 }
 
@@ -52,4 +52,5 @@ INCLUDEPATH += \
 
 include (parser/parser.pri)
 include (textfragment/textfragment.pri)
+include (reader/reader.pri)
 

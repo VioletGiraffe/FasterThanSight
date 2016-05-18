@@ -8,7 +8,8 @@
 
 CMainWindow::CMainWindow(QWidget *parent) :
 	QMainWindow(parent),
-	ui(new Ui::CMainWindow)
+	ui(new Ui::CMainWindow),
+	_reader(this)
 {
 	ui->setupUi(this);
 
@@ -23,6 +24,7 @@ CMainWindow::~CMainWindow()
 
 void CMainWindow::initToolBars()
 {
+	// Reading settings toolbar
 	_textSizeSlider = new QSlider(Qt::Horizontal);
 	_textSizeSlider->setMinimum(20);
 	_textSizeSlider->setMaximum(300);
@@ -50,8 +52,32 @@ void CMainWindow::initActions()
 	});
 
 	connect(ui->actionOpen, &QAction::triggered, [this](){
-		const QString fileName = QFileDialog::getOpenFileName(this, "Pick a text file to open");
-		if (!fileName.isEmpty())
-			_txtParser.parseFile(fileName);
+		const QString filePath = QFileDialog::getOpenFileName(this, "Pick a text file to open");
+		if (!filePath.isEmpty())
+			_reader.loadFromFile(filePath);
 	});
+
+	connect(ui->action_Start_resume, &QAction::triggered, [this](){
+		_reader.resumeReading();
+	});
+
+	connect(ui->action_Pause, &QAction::triggered, [this](){
+		_reader.pauseReading();
+	});
+
+	connect(ui->actionStop, &QAction::triggered, [this](){
+		_reader.resetAndStop();
+	});
+
+	connect(ui->action_Exit, &QAction::triggered, qApp, &QApplication::exit);
+}
+
+void CMainWindow::displayText(const TextFragment& text)
+{
+	ui->_text->setText(text._text);
+}
+
+void CMainWindow::stateChanged(const CReader::State newState)
+{
+
 }
