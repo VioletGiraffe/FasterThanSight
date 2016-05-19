@@ -21,11 +21,10 @@ std::vector<TextFragment> CTextParser::parse(const QString& text)
 		{',', TextFragment::Comma},
 		// TODO: dash should be ignored unless it has an adjacent space!
 		{'-', TextFragment::Dash},
-		{'—', TextFragment::Dash},
+		{0x2014, TextFragment::Dash},
 		// TODO:
 		// {"...", TextFragment::Ellipsis},
-		{'⋯', TextFragment::Ellipsis},
-		{'…', TextFragment::Ellipsis},
+		{0x2026, TextFragment::Ellipsis},
 		{'!', TextFragment::ExclamationMark},
 		{'\n', TextFragment::Newline},
 		{'?', TextFragment::QuestionMark},

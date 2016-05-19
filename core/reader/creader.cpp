@@ -14,7 +14,8 @@ void CReader::load(const std::vector<TextFragment>& textFragments)
 	pauseReading();
 
 	_position = 0;
-	_textFragments.swap(std::vector<TextFragment>(textFragments));
+	std::vector<TextFragment> tmp(textFragments);
+	_textFragments.swap(tmp);
 }
 
 void CReader::loadFromFile(const QString& filePath)
