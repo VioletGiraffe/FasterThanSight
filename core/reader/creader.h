@@ -27,10 +27,11 @@ public:
 	void resetAndStop();
 
 // Settings
+	size_t readingSpeed() const;
 	void setReadingSpeed(size_t wpm);
 
 private:
-	void onReadNextFragment();
+	void readNextFragment();
 
 private:
 	ReaderInterface * const _interface;

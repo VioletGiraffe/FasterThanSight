@@ -5,7 +5,7 @@
 CReader::CReader(ReaderInterface* interface) : _interface(interface)
 {
 	QObject::connect(&_readingTimer, &QTimer::timeout, [this](){
-		onReadNextFragment();
+		readNextFragment();
 	});
 }
 
@@ -40,12 +40,17 @@ void CReader::resetAndStop()
 	_position = 0;
 }
 
+size_t CReader::readingSpeed() const
+{
+	return _speedWpm;
+}
+
 void CReader::setReadingSpeed(size_t wpm)
 {
 	_speedWpm = wpm;
 }
 
-void CReader::onReadNextFragment()
+void CReader::readNextFragment()
 {
 	if (_position >= _textFragments.size())
 	{

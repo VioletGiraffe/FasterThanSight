@@ -7,3 +7,6 @@
 [submodule "qtutils"]
 	path = qtutils
 	url = https://github.com/VioletGiraffe/qtutils
+[submodule "cpp-template-utils"]
+	path = cpp-template-utils
+	url = https://github.com/VioletGiraffe/cpp-template-utils

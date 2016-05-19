@@ -6,8 +6,8 @@ CONFIG += staticlib
 CONFIG += c++14
 
 mac* | linux*{
-    CONFIG(release, debug|release):CONFIG += Release
-    CONFIG(debug, debug|release):CONFIG += Debug
+	CONFIG(release, debug|release):CONFIG += Release
+	CONFIG(debug, debug|release):CONFIG += Debug
 }
 
 Release:OUTPUT_DIR=release
@@ -44,11 +44,12 @@ win32*:!*msvc2012:*msvc* {
 }
 
 mac*|linux*{
-	PRE_TARGETDEPS += $${DESTDIR}/libcpputils.a
+	PRE_TARGETDEPS += $${DESTDIR}/libcpputils.a $${DESTDIR}/libqtutils.a
 }
 
 INCLUDEPATH += \
-	../cpputils/
+	../cpputils/ \
+	../qtutils/
 
 include (parser/parser.pri)
 include (textfragment/textfragment.pri)

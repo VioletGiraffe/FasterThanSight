@@ -1,5 +1,5 @@
 HEADERS += \
-    $$PWD/creader.h
+	$$PWD/creader.h
 
 SOURCES += \
-    $$PWD/creader.cpp
+	$$PWD/creader.cpp
