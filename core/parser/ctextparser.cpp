@@ -43,6 +43,7 @@ std::vector<TextFragment> CTextParser::parse(const QString& text)
 
 	QString buffer;
 	bool wordEnded = false;
+	bool quoteOpened = false; // The opening quote is not a delimiter; the closing one is.
 	TextFragment::Delimiter lastDelimiter = TextFragment::Space;
 	for (QChar ch: text)
 	{
@@ -65,8 +66,16 @@ std::vector<TextFragment> CTextParser::parse(const QString& text)
 		{
 			lastDelimiter = it->delimiterType;
 			wordEnded = true;
-			if (lastDelimiter != TextFragment::Newline)
-				buffer += ch;
+
+			// The opening quote is not a delimiter; the closing one is.
+			if (lastDelimiter == TextFragment::Quote)
+			{
+				quoteOpened = !quoteOpened;
+				if (quoteOpened)
+					wordEnded = false;
+			}
+
+			buffer += ch;
 		}
 	}
 
