@@ -7,5 +7,15 @@
 class CTextParser
 {
 public:
-	static std::vector<TextFragment> parse(const QString& text);
+	std::vector<TextFragment> parse(const QString& text);
+
+private:
+	void finalizeFragment();
+
+private:
+	std::vector<TextFragment> _fragments;
+	QString _buffer;
+	bool _wordEnded = false;
+	bool _quoteOpened = false;
+	TextFragment::Delimiter _lastDelimiter = TextFragment::Space;
 };

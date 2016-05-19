@@ -20,7 +20,8 @@ void CReader::load(const std::vector<TextFragment>& textFragments)
 
 void CReader::loadFromFile(const QString& filePath)
 {
-	load(CTextParser::parse(CFileDecoder::readDataAndDecodeText(filePath)));
+	CTextParser parser;
+	load(parser.parse(CFileDecoder::readDataAndDecodeText(filePath)));
 }
 
 void CReader::resumeReading()

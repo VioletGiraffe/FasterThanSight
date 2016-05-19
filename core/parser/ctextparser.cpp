@@ -38,45 +38,56 @@ std::vector<TextFragment> CTextParser::parse(const QString& text)
 		{'}', TextFragment::Bracket}
 	};
 
-	std::vector<TextFragment> fragments;
+	_fragments.clear();
 
-	QString buffer;
-	bool wordEnded = false;
-	bool quoteOpened = false; // The opening quote is not a delimiter; the closing one is.
-	TextFragment::Delimiter lastDelimiter = TextFragment::Space;
 	for (QChar ch: text)
 	{
 		if (ch == '\r')
 			continue;
 
 		const auto it = delimiters.find({ch, TextFragment::Space});
+
 		if (it == delimiters.end()) // Not a delimiter
 		{
-			if (wordEnded) // This is the first letter of a new word
-			{
-				fragments.emplace_back(buffer.trimmed(), lastDelimiter);
-				wordEnded = false;
-				buffer = ch;
-			}
-			else
-				buffer += ch;
+			if (_wordEnded) // This is the first letter of a new word
+				finalizeFragment();
 		}
 		else // This is a delimiter. Append it to the current word.
 		{
-			lastDelimiter = it->delimiterType;
-			wordEnded = true;
-
 			// The opening quote is not a delimiter; the closing one is.
-			if (lastDelimiter == TextFragment::Quote)
+			if (it->delimiterType == TextFragment::Quote)
 			{
-				quoteOpened = !quoteOpened;
-				if (quoteOpened)
-					wordEnded = false;
+				_quoteOpened = !_quoteOpened;
+				if (_quoteOpened) // This is an opening quote! Dump the previously accumulated fragment and assign this quote to the new one.
+				{
+					if (!_buffer.isEmpty())
+						finalizeFragment();
+				}
+				else // Business as usual
+				{
+					_lastDelimiter = it->delimiterType;
+					_wordEnded = true;
+				}
 			}
-
-			buffer += ch;
+			else
+			{
+				_lastDelimiter = it->delimiterType;
+				_wordEnded = true;
+			}
 		}
+
+		_buffer += ch;
 	}
 
-	return fragments;
+	if (!_buffer.isEmpty())
+		finalizeFragment();
+
+	return _fragments;
+}
+
+void CTextParser::finalizeFragment()
+{
+	_fragments.emplace_back(_buffer.trimmed(), _lastDelimiter);
+	_wordEnded = false;
+	_buffer.clear();
 }
