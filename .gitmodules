@@ -4,3 +4,6 @@
 [submodule "github-releases-autoupdater"]
 	path = github-releases-autoupdater
 	url = https://github.com/VioletGiraffe/github-releases-autoupdater
+[submodule "qtutils"]
+	path = qtutils
+	url = https://github.com/VioletGiraffe/qtutils
