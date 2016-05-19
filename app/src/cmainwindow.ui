@@ -18,7 +18,7 @@
     <item>
      <widget class="QLabel" name="_text">
       <property name="text">
-       <string notr="true">Text</string>
+       <string notr="true">Click File -&gt; Open..., select a file and click Read</string>
       </property>
       <property name="alignment">
        <set>Qt::AlignCenter</set>
@@ -57,7 +57,7 @@
     <property name="title">
      <string>&amp;Reading</string>
     </property>
-    <addaction name="action_Start_resume"/>
+    <addaction name="action_Read"/>
     <addaction name="action_Pause"/>
     <addaction name="actionStop"/>
    </widget>
@@ -75,7 +75,7 @@
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
-   <addaction name="action_Start_resume"/>
+   <addaction name="action_Read"/>
    <addaction name="action_Pause"/>
   </widget>
   <action name="actionOpen">
@@ -94,9 +94,12 @@
     <string>Ctrl+Alt+F</string>
    </property>
   </action>
-  <action name="action_Start_resume">
+  <action name="action_Read">
    <property name="text">
-    <string>&amp;Start / resume</string>
+    <string>&amp;Read</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+R</string>
    </property>
   </action>
   <action name="action_Pause">
@@ -106,7 +109,7 @@
   </action>
   <action name="actionStop">
    <property name="text">
-    <string>Sto&amp;p</string>
+    <string>&amp;Stop and reset to the beginning</string>
    </property>
   </action>
   <action name="action_Exit">

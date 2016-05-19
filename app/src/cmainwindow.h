@@ -5,6 +5,7 @@
 #include <QMainWindow>
 
 class QSlider;
+class QSpinBox;
 class QToolBar;
 
 namespace Ui {
@@ -30,7 +31,10 @@ private:
 	Ui::CMainWindow *ui;
 
 	QToolBar* _readingSettingsToolbar = nullptr;
-	QSlider * _textSizeSlider;
+	QSlider*  _textSizeSlider = nullptr;
+
+	QSlider*  _readingSpeedSlider = nullptr;
+	QSpinBox* _readingSpeedSpinBox = nullptr;
 
 	CReader _reader;
 };

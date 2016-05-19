@@ -18,10 +18,14 @@ public:
 
 	explicit CReader(ReaderInterface* interface);
 
+// Preparation
 	void load(const std::vector<TextFragment>& textFragments);
 	void loadFromFile(const QString& filePath);
 
-// Reading
+// State
+	State state() const;
+
+// Control
 	void resumeReading();
 	void pauseReading();
 	void resetAndStop();
@@ -39,6 +43,8 @@ private:
 	std::vector<TextFragment> _textFragments;
 	size_t                    _position = 0;
 	size_t                    _speedWpm = 250;
+
+	State _state = Paused;
 
 	QTimer _readingTimer;
 };

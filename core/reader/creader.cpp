@@ -1,12 +1,16 @@
 #include "creader.h"
 #include "../parser/cfiledecoder.h"
 #include "../parser/ctextparser.h"
+#include "settings/csettings.h"
+#include "settings.h"
 
 CReader::CReader(ReaderInterface* interface) : _interface(interface)
 {
 	QObject::connect(&_readingTimer, &QTimer::timeout, [this](){
 		readNextFragment();
 	});
+
+	_speedWpm = CSettings().value(READER_READING_SPEED_SETTING, READER_READING_SPEED_DEFAULT).toUInt();
 }
 
 void CReader::load(const std::vector<TextFragment>& textFragments)
@@ -24,16 +28,25 @@ void CReader::loadFromFile(const QString& filePath)
 	load(parser.parse(CFileDecoder::readDataAndDecodeText(filePath)));
 }
 
+CReader::State CReader::state() const
+{
+	return _state;
+}
+
 void CReader::resumeReading()
 {
 	_readingTimer.start(60 * 1000 / _speedWpm);
-	_interface->stateChanged(Reading);
+
+	_state = Reading;
+	_interface->stateChanged(_state);
 }
 
 void CReader::pauseReading()
 {
 	_readingTimer.stop();
-	_interface->stateChanged(Paused);
+
+	_state = Paused;
+	_interface->stateChanged(_state);
 }
 
 void CReader::resetAndStop()
@@ -49,6 +62,7 @@ size_t CReader::readingSpeed() const
 
 void CReader::setReadingSpeed(size_t wpm)
 {
+	CSettings().setValue(READER_READING_SPEED_SETTING, wpm);
 	_speedWpm = wpm;
 }
 
