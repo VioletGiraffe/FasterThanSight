@@ -90,6 +90,7 @@ void CMainWindow::initActions()
 		fontDialog.exec();
 	});
 
+	ui->actionOpen->setIcon(QApplication::style()->standardIcon(QStyle::SP_DirOpenIcon));
 	connect(ui->actionOpen, &QAction::triggered, [this](){
 		const QString filePath = QFileDialog::getOpenFileName(this, tr("Pick a text file to open"), CSettings().value(UI_OPEN_FILE_LAST_USED_DIR_SETTING).toString());
 		if (!filePath.isEmpty())
@@ -99,6 +100,7 @@ void CMainWindow::initActions()
 		}
 	});
 
+	ui->action_Read->setIcon(QApplication::style()->standardIcon(QStyle::SP_MediaPlay));
 	connect(ui->action_Read, &QAction::triggered, [this](){
 		if (_reader.state() == CReader::Paused)
 			_reader.resumeReading();
@@ -106,10 +108,12 @@ void CMainWindow::initActions()
 			_reader.pauseReading();
 	});
 
+	ui->action_Pause->setIcon(QApplication::style()->standardIcon(QStyle::SP_MediaPause));
 	connect(ui->action_Pause, &QAction::triggered, [this](){
 		_reader.pauseReading();
 	});
 
+	ui->actionStop->setIcon(QApplication::style()->standardIcon(QStyle::SP_MediaSkipBackward));
 	connect(ui->actionStop, &QAction::triggered, [this](){
 		_reader.resetAndStop();
 	});
