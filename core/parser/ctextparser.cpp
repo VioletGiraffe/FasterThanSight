@@ -1,15 +1,9 @@
-#include "ctxtfileparser.h"
-#include "assert/advanced_assert.h"
-
-#include <QFile>
-#include <QTextCodec>
+#include "ctextparser.h"
 
 #include <set>
 
-std::vector<TextFragment> CTxtFileParser::parse(QIODevice& device)
+std::vector<TextFragment> CTextParser::parse(const QString& text)
 {
-	const QString text = readText(device);
-
 	struct Delimiter {
 		QChar delimiterCharacter;
 		TextFragment::Delimiter delimiterType;
@@ -35,6 +29,7 @@ std::vector<TextFragment> CTxtFileParser::parse(QIODevice& device)
 		{'!', TextFragment::ExclamationMark},
 		{'\n', TextFragment::Newline},
 		{'?', TextFragment::QuestionMark},
+		{'\"', TextFragment::Quote},
 
 		{')', TextFragment::Bracket},
 		{'(', TextFragment::Bracket},
@@ -59,7 +54,7 @@ std::vector<TextFragment> CTxtFileParser::parse(QIODevice& device)
 		{
 			if (wordEnded) // This is the first letter of a new word
 			{
-				fragments.emplace_back(buffer, lastDelimiter);
+				fragments.emplace_back(buffer.trimmed(), lastDelimiter);
 				wordEnded = false;
 				buffer = ch;
 			}
@@ -70,30 +65,10 @@ std::vector<TextFragment> CTxtFileParser::parse(QIODevice& device)
 		{
 			lastDelimiter = it->delimiterType;
 			wordEnded = true;
-			buffer += ch;
+			if (lastDelimiter != TextFragment::Newline)
+				buffer += ch;
 		}
 	}
 
 	return fragments;
-}
-
-QString CTxtFileParser::readText(QIODevice& device)
-{
-	assert_and_return_r(device.isOpen(), QString());
-
-	QTextCodec* codec = QTextCodec::codecForName("UTF-8");
-	if (!codec)
-		return QString();
-
-	QTextCodec::ConverterState state;
-	const QByteArray textData = device.readAll();
-	QString text(codec->toUnicode(textData.constData(), textData.size(), &state));
-	if (state.invalidChars == 0)
-		return text; // Valid UTF-8 text
-
-	codec = QTextCodec::codecForLocale();
-	if (!codec)
-		return QString();
-
-	return codec->toUnicode(textData);
 }

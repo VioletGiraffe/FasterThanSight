@@ -15,6 +15,7 @@ struct TextFragment
 		Semicolon,
 		Ellipsis,
 		Bracket,
+		Quote,
 		Newline
 	};
 

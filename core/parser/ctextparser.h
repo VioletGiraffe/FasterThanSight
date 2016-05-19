@@ -4,8 +4,8 @@
 
 #include <vector>
 
-class CFileParser
+class CTextParser
 {
 public:
-	static std::vector<TextFragment> parse(const QString& filePath);
+	static std::vector<TextFragment> parse(const QString& text);
 };

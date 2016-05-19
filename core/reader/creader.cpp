@@ -1,5 +1,6 @@
 #include "creader.h"
-#include "../parser/cfileparser.h"
+#include "../parser/cfiledecoder.h"
+#include "../parser/ctextparser.h"
 
 CReader::CReader(ReaderInterface* interface) : _interface(interface)
 {
@@ -18,7 +19,7 @@ void CReader::load(const std::vector<TextFragment>& textFragments)
 
 void CReader::loadFromFile(const QString& filePath)
 {
-	load(CFileParser::parse(filePath));
+	load(CTextParser::parse(CFileDecoder::readDataAndDecodeText(filePath)));
 }
 
 void CReader::resumeReading()

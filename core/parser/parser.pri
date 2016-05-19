@@ -1,7 +1,9 @@
 HEADERS += \
-    $$PWD/ctxtfileparser.h \
-    $$PWD/cfileparser.h
+    $$PWD/cfiledecoder.h \
+    $$PWD/ctxtfiledecoder.h \
+    $$PWD/ctextparser.h
 
 SOURCES += \
-    $$PWD/ctxtfileparser.cpp \
-    $$PWD/cfileparser.cpp
+    $$PWD/cfiledecoder.cpp \
+    $$PWD/ctxtfiledecoder.cpp \
+    $$PWD/ctextparser.cpp
