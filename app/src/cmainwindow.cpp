@@ -1,15 +1,21 @@
 #include "cmainwindow.h"
 #include "ui_cmainwindow.h"
+#include "compiler/compiler_warnings_control.h"
 
 #include "settings/csettings.h"
 #include "uisettings.h"
 
+DISABLE_COMPILER_WARNINGS
 #include <QFileDialog>
+#include <QFileInfo>
 #include <QFontDialog>
 #include <QPropertyAnimation>
 #include <QSlider>
 #include <QSpinBox>
+#include <QStandardPaths>
+#include <QStringBuilder>
 #include <QToolBar>
+RESTORE_COMPILER_WARNINGS
 
 CMainWindow::CMainWindow(QWidget *parent) :
 	QMainWindow(parent),
@@ -18,34 +24,25 @@ CMainWindow::CMainWindow(QWidget *parent) :
 {
 	ui->setupUi(this);
 
-	initToolBars();
-	initActions();
-
+	// Reading animation
 	_textFadeEffect.setOpacity(1.0f);
 	_textFadeOutAnimation = new QPropertyAnimation(&_textFadeEffect, "opacity", this);
-	_textFadeOutAnimation->setDuration(200);
 	_textFadeOutAnimation->setStartValue(1.0f);
 	_textFadeOutAnimation->setEndValue(0.0f);
-	_textFadeOutAnimation->setEasingCurve(QEasingCurve::OutExpo);
-
-	_textFadeInAnimation = new QPropertyAnimation(&_textFadeEffect, "opacity", this);
-	_textFadeInAnimation->setDuration(200);
-	_textFadeInAnimation->setStartValue(0.0f);
-	_textFadeInAnimation->setEndValue(1.0f);
-	_textFadeInAnimation->setEasingCurve(QEasingCurve::OutExpo);
-
-	connect(_textFadeOutAnimation, &QPropertyAnimation::finished, [this](){
-		_textFadeInAnimation->start();
-	});
 
 	ui->_text->setGraphicsEffect(&_textFadeEffect);
+	updateReadingAnimationDuration();
+	
+// Toolbars
+	initToolBars();
+
+// Actions
+	initActions();
 }
 
 CMainWindow::~CMainWindow()
 {
 	_reader.resetAndStop();
-
-	_textFadeInAnimation->stop();
 	_textFadeOutAnimation->stop();
 
 	delete ui;
@@ -97,6 +94,7 @@ void CMainWindow::initToolBars()
 
 	connect(_readingSpeedSlider, &QSlider::valueChanged, [this](int WPM){
 		_reader.setReadingSpeed(WPM);
+		updateReadingAnimationDuration();
 	});
 
 	_readingSpeedSlider->setValue(_reader.readingSpeed());
@@ -118,10 +116,14 @@ void CMainWindow::initActions()
 
 	ui->actionOpen->setIcon(QApplication::style()->standardIcon(QStyle::SP_DirOpenIcon));
 	connect(ui->actionOpen, &QAction::triggered, [this](){
-		const QString filePath = QFileDialog::getOpenFileName(this, tr("Pick a text file to open"), CSettings().value(UI_OPEN_FILE_LAST_USED_DIR_SETTING).toString());
+		const QString filePath = QFileDialog::getOpenFileName(this,
+			tr("Pick a text file to open"),
+			CSettings().value(UI_OPEN_FILE_LAST_USED_DIR_SETTING, QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation).front()).toString());
+
 		if (!filePath.isEmpty())
 		{
 			CSettings().setValue(UI_OPEN_FILE_LAST_USED_DIR_SETTING, filePath);
+			setWindowTitle(qApp->applicationName() % " - " % QFileInfo(filePath).baseName());
 			_reader.loadFromFile(filePath);
 		}
 	});
@@ -142,6 +144,7 @@ void CMainWindow::initActions()
 	ui->actionStop->setIcon(QApplication::style()->standardIcon(QStyle::SP_MediaSkipBackward));
 	connect(ui->actionStop, &QAction::triggered, [this](){
 		_reader.resetAndStop();
+		ui->_text->clear();
 	});
 
 	connect(ui->action_Exit, &QAction::triggered, qApp, &QApplication::exit);
@@ -149,7 +152,12 @@ void CMainWindow::initActions()
 
 void CMainWindow::displayText(const TextFragment& text)
 {
-	QMetaObject::Connection connection = connect(_textFadeOutAnimation, &QPropertyAnimation::finished, [this, text, connection]() {
+	QMetaObject::Connection* connection = new QMetaObject::Connection();
+	*connection = connect(_textFadeOutAnimation, &QPropertyAnimation::finished, [this, text, connection]() {
+		disconnect(*connection);
+		delete connection;
+
+		_textFadeEffect.setOpacity(1.0f);
 		ui->_text->setText(text._text);
 	});
 
@@ -167,4 +175,12 @@ void CMainWindow::stateChanged(const CReader::State newState)
 	{
 		ui->action_Pause->setEnabled(false);
 	}
+}
+
+void CMainWindow::updateReadingAnimationDuration()
+{
+	const auto animationDurationMs = 60 * 1000 / _reader.readingSpeed() / 2;
+
+	_textFadeOutAnimation->setEasingCurve(animationDurationMs > 90 ? QEasingCurve::Linear : QEasingCurve::InQuad);
+	_textFadeOutAnimation->setDuration(std::min(animationDurationMs, 150U));
 }

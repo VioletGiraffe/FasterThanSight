@@ -29,6 +29,8 @@ private:
 	void displayText(const TextFragment& text) override;
 	void stateChanged(const CReader::State newState) override;
 
+	void updateReadingAnimationDuration();
+
 private:
 	Ui::CMainWindow *ui;
 
@@ -41,7 +43,6 @@ private:
 	CReader _reader;
 
 	QPropertyAnimation* _textFadeOutAnimation = nullptr;
-	QPropertyAnimation* _textFadeInAnimation = nullptr;
 	QGraphicsOpacityEffect _textFadeEffect;
 };
 
