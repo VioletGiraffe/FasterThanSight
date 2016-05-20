@@ -2,10 +2,12 @@
 
 #include "reader/creader.h"
 
+#include <QGraphicsOpacityEffect>
 #include <QMainWindow>
 
 class QSlider;
 class QSpinBox;
+class QPropertyAnimation;
 class QToolBar;
 
 namespace Ui {
@@ -37,5 +39,9 @@ private:
 	QSpinBox* _readingSpeedSpinBox = nullptr;
 
 	CReader _reader;
+
+	QPropertyAnimation* _textFadeOutAnimation = nullptr;
+	QPropertyAnimation* _textFadeInAnimation = nullptr;
+	QGraphicsOpacityEffect _textFadeEffect;
 };
 

@@ -6,6 +6,7 @@
 
 #include <QFileDialog>
 #include <QFontDialog>
+#include <QPropertyAnimation>
 #include <QSlider>
 #include <QSpinBox>
 #include <QToolBar>
@@ -19,6 +20,23 @@ CMainWindow::CMainWindow(QWidget *parent) :
 
 	initToolBars();
 	initActions();
+
+	_textFadeEffect.setOpacity(1.0f);
+	_textFadeOutAnimation = new QPropertyAnimation(&_textFadeEffect, "opacity");
+	_textFadeOutAnimation->setDuration(100);
+	_textFadeOutAnimation->setStartValue(1.0f);
+	_textFadeOutAnimation->setEndValue(0.0f);
+
+	_textFadeInAnimation = new QPropertyAnimation(&_textFadeEffect, "opacity");
+	_textFadeInAnimation->setDuration(100);
+	_textFadeInAnimation->setStartValue(0.0f);
+	_textFadeInAnimation->setEndValue(1.0f);
+
+	connect(_textFadeOutAnimation, &QPropertyAnimation::finished, [this](){
+		_textFadeInAnimation->start();
+	});
+
+	ui->_text->setGraphicsEffect(&_textFadeEffect);
 }
 
 CMainWindow::~CMainWindow()
@@ -123,7 +141,12 @@ void CMainWindow::initActions()
 
 void CMainWindow::displayText(const TextFragment& text)
 {
-	ui->_text->setText(text._text);
+	connect(_textFadeOutAnimation, &QPropertyAnimation::finished, _textFadeOutAnimation, [this, text]() {
+		ui->_text->setText(text._text);
+	}, (Qt::ConnectionType)(Qt::QueuedConnection | Qt::UniqueConnection));
+
+	_textFadeOutAnimation->start();
+
 }
 
 void CMainWindow::stateChanged(const CReader::State newState)
