@@ -22,15 +22,17 @@ CMainWindow::CMainWindow(QWidget *parent) :
 	initActions();
 
 	_textFadeEffect.setOpacity(1.0f);
-	_textFadeOutAnimation = new QPropertyAnimation(&_textFadeEffect, "opacity");
-	_textFadeOutAnimation->setDuration(100);
+	_textFadeOutAnimation = new QPropertyAnimation(&_textFadeEffect, "opacity", this);
+	_textFadeOutAnimation->setDuration(200);
 	_textFadeOutAnimation->setStartValue(1.0f);
 	_textFadeOutAnimation->setEndValue(0.0f);
+	_textFadeOutAnimation->setEasingCurve(QEasingCurve::OutExpo);
 
-	_textFadeInAnimation = new QPropertyAnimation(&_textFadeEffect, "opacity");
-	_textFadeInAnimation->setDuration(100);
+	_textFadeInAnimation = new QPropertyAnimation(&_textFadeEffect, "opacity", this);
+	_textFadeInAnimation->setDuration(200);
 	_textFadeInAnimation->setStartValue(0.0f);
 	_textFadeInAnimation->setEndValue(1.0f);
+	_textFadeInAnimation->setEasingCurve(QEasingCurve::OutExpo);
 
 	connect(_textFadeOutAnimation, &QPropertyAnimation::finished, [this](){
 		_textFadeInAnimation->start();
@@ -41,7 +43,13 @@ CMainWindow::CMainWindow(QWidget *parent) :
 
 CMainWindow::~CMainWindow()
 {
+	_reader.resetAndStop();
+
+	_textFadeInAnimation->stop();
+	_textFadeOutAnimation->stop();
+
 	delete ui;
+	ui = nullptr;
 }
 
 void CMainWindow::initToolBars()
@@ -141,9 +149,9 @@ void CMainWindow::initActions()
 
 void CMainWindow::displayText(const TextFragment& text)
 {
-	connect(_textFadeOutAnimation, &QPropertyAnimation::finished, _textFadeOutAnimation, [this, text]() {
+	QMetaObject::Connection connection = connect(_textFadeOutAnimation, &QPropertyAnimation::finished, [this, text, connection]() {
 		ui->_text->setText(text._text);
-	}, (Qt::ConnectionType)(Qt::QueuedConnection | Qt::UniqueConnection));
+	});
 
 	_textFadeOutAnimation->start();
 
