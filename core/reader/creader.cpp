@@ -11,6 +11,7 @@ CReader::CReader(ReaderInterface* interface) : _interface(interface)
 	});
 
 	_speedWpm = CSettings().value(READER_READING_SPEED_SETTING, READER_READING_SPEED_DEFAULT).toUInt();
+	_readingTimer.setInterval(60 * 1000 / _speedWpm);
 }
 
 void CReader::load(const std::vector<TextFragment>& textFragments)
@@ -35,7 +36,7 @@ CReader::State CReader::state() const
 
 void CReader::resumeReading()
 {
-	_readingTimer.start(60 * 1000 / _speedWpm);
+	_readingTimer.start();
 
 	_state = Reading;
 	_interface->stateChanged(_state);
@@ -64,6 +65,7 @@ void CReader::setReadingSpeed(size_t wpm)
 {
 	CSettings().setValue(READER_READING_SPEED_SETTING, wpm);
 	_speedWpm = wpm;
+	_readingTimer.setInterval(60 * 1000 / _speedWpm);
 }
 
 void CReader::readNextFragment()
