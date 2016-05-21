@@ -7,6 +7,7 @@
 
 DISABLE_COMPILER_WARNINGS
 #include <QDateTime>
+#include <QDebug>
 #include <QFileDialog>
 #include <QFileInfo>
 #include <QFontDialog>
@@ -58,6 +59,12 @@ void CMainWindow::initToolBars()
 	_textSizeSlider->setMinimum(20);
 	_textSizeSlider->setMaximum(300);
 	_textSizeSlider->setValue(CSettings().value(UI_FONT_SIZE_SETTING, UI_FONT_SIZE_DEFAULT).toInt());
+
+	QFont textFont = ui->_text->font();
+	textFont.setFamily(CSettings().value(UI_FONT_FAMILY, textFont.family()).toString());
+	textFont.setStyle((QFont::Style)CSettings().value(UI_FONT_STYLE, textFont.style()).toInt());
+	textFont.setWeight((QFont::Weight)CSettings().value(UI_FONT_WEIGHT, textFont.weight()).toInt());
+	ui->_text->setFont(textFont);
 
 	connect(_textSizeSlider, &QSlider::valueChanged, [this](int size){
 		QFont font = ui->_text->font();
@@ -111,6 +118,9 @@ void CMainWindow::initActions()
 		connect(&fontDialog, &QFontDialog::fontSelected, [this](const QFont &font){
 			ui->_text->setFont(font);
 			_textSizeSlider->setValue(font.pointSize());
+			CSettings().setValue(UI_FONT_STYLE, font.style());
+			CSettings().setValue(UI_FONT_WEIGHT, font.weight());
+			CSettings().setValue(UI_FONT_FAMILY, font.family());
 		});
 		fontDialog.exec();
 	});
