@@ -13,6 +13,7 @@ DISABLE_COMPILER_WARNINGS
 #include <QSlider>
 #include <QSpinBox>
 #include <QStandardPaths>
+#include <QStatusBar>
 #include <QStringBuilder>
 #include <QToolBar>
 RESTORE_COMPILER_WARNINGS
@@ -34,11 +35,9 @@ CMainWindow::CMainWindow(QWidget *parent) :
 	ui->_text->setGraphicsEffect(&_textFadeEffect);
 	updateReadingAnimationDuration();
 	
-// Toolbars
 	initToolBars();
-
-// Actions
 	initActions();
+	initStatusBar();
 }
 
 CMainWindow::~CMainWindow()
@@ -132,6 +131,7 @@ void CMainWindow::initActions()
 			setWindowTitle(qApp->applicationName() % " - " % QFileInfo(filePath).baseName());
 			ui->_text->clear();
 			_reader.loadFromFile(filePath);
+			updateProgressLabel();
 		}
 	});
 
@@ -152,9 +152,17 @@ void CMainWindow::initActions()
 	connect(ui->actionStop, &QAction::triggered, [this](){
 		_reader.resetAndStop();
 		ui->_text->clear();
+		updateProgressLabel();
 	});
 
 	connect(ui->action_Exit, &QAction::triggered, qApp, &QApplication::exit);
+}
+
+void CMainWindow::initStatusBar()
+{
+	_progressLabel = new QLabel(this);
+	_progressLabel->setAlignment(Qt::AlignRight);
+	statusBar()->addWidget(_progressLabel, 1);
 }
 
 void CMainWindow::updateDisplay(const size_t currentTextFragmentIndex)
@@ -185,6 +193,8 @@ void CMainWindow::updateDisplay(const size_t currentTextFragmentIndex)
 
 		_textFadeOutAnimation->start();
 	}
+
+	updateProgressLabel();
 }
 
 void CMainWindow::stateChanged(const CReader::State newState)
@@ -203,4 +213,9 @@ void CMainWindow::updateReadingAnimationDuration()
 {
 	const auto animationDurationMs = 60 * 1000 * 2 / _reader.readingSpeed() / 3;
 	_textFadeOutAnimation->setDuration(std::min(animationDurationMs, 150U));
+}
+
+void CMainWindow::updateProgressLabel()
+{
+	_progressLabel->setText(tr("Reading word %1 out of %2 total (%3%)").arg(_reader.position() + 1).arg(_reader.totalNumWords()).arg(QString::number(100 * (double)_reader.progress(), 'f', 2)));
 }

@@ -5,6 +5,7 @@
 #include <QGraphicsOpacityEffect>
 #include <QMainWindow>
 
+class QLabel;
 class QSlider;
 class QSpinBox;
 class QPropertyAnimation;
@@ -23,6 +24,7 @@ public:
 private:
 	void initToolBars();
 	void initActions();
+	void initStatusBar();
 
 private:
 // Reader callbacks
@@ -31,17 +33,25 @@ private:
 
 	void updateReadingAnimationDuration();
 
+	void updateProgressLabel();
+
 private:
 	Ui::CMainWindow *ui;
 
+// Reading settings controls
 	QToolBar* _readingSettingsToolbar = nullptr;
 	QSlider*  _textSizeSlider = nullptr;
 
 	QSlider*  _readingSpeedSlider = nullptr;
 	QSpinBox* _readingSpeedSpinBox = nullptr;
 
+// Status bar widgets
+	QLabel* _progressLabel = nullptr;
+
+// Reader
 	CReader _reader;
 
+// UI stuff
 	QPropertyAnimation* _textFadeOutAnimation = nullptr;
 	QGraphicsOpacityEffect _textFadeEffect;
 };

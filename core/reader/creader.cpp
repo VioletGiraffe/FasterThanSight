@@ -42,6 +42,22 @@ CReader::State CReader::state() const
 	return _state;
 }
 
+size_t CReader::position() const
+{
+	return _position;
+}
+
+long double CReader::progress() const
+{
+	const size_t numWords = _textFragments.size();
+	return numWords ? _position / (long double)numWords : 0.0;
+}
+
+size_t CReader::totalNumWords() const
+{
+	return _textFragments.size();
+}
+
 void CReader::resumeReading()
 {
 	_state = Reading;

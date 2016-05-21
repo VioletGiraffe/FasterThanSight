@@ -29,6 +29,10 @@ public:
 
 // State
 	State state() const;
+	// Current word index
+	size_t position() const; 
+	size_t totalNumWords() const;
+	long double progress() const; // [0.0; 1.0]
 
 // Data
 	inline const TextFragmentWithPause& textFragment(const size_t fragmentIndex) const {
