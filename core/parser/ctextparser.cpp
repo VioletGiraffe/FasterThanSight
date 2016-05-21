@@ -64,6 +64,7 @@ std::vector<TextFragment> CTextParser::parse(const QString& text)
 				if (_quoteOpened) // This is an opening quote! Dump the previously accumulated fragment and assign this quote to the new one.
 				{
 					finalizeFragment();
+					_wordBuffer += ch;
 				}
 				else // Business as usual
 				{
@@ -72,6 +73,7 @@ std::vector<TextFragment> CTextParser::parse(const QString& text)
 						_lastDelimiter = it->delimiterType;
 
 					_wordEnded = true;
+					_delimitersBuffer += ch;
 				}
 			}
 			else
@@ -81,9 +83,8 @@ std::vector<TextFragment> CTextParser::parse(const QString& text)
 					_lastDelimiter = it->delimiterType;
 
 				_wordEnded = true;
+				_delimitersBuffer += ch;
 			}
-
-			_delimitersBuffer += ch;
 		}
 	}
 
