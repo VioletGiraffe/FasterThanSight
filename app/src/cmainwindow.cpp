@@ -6,6 +6,7 @@
 #include "uisettings.h"
 
 DISABLE_COMPILER_WARNINGS
+#include <QDateTime>
 #include <QFileDialog>
 #include <QFileInfo>
 #include <QFontDialog>
@@ -217,5 +218,11 @@ void CMainWindow::updateReadingAnimationDuration()
 
 void CMainWindow::updateProgressLabel()
 {
-	_progressLabel->setText(tr("Reading word %1 out of %2 total (%3%)").arg(_reader.position() + 1).arg(_reader.totalNumWords()).arg(QString::number(100 * (double)_reader.progress(), 'f', 2)));
+	_progressLabel->setText(
+		tr("Reading word %1 out of %2 total (%3%); estimated time remaining: %4")
+		.arg(_reader.position() + 1)
+		.arg(_reader.totalNumWords())
+		.arg(QString::number(100 * (double)_reader.progress(), 'f', 2))
+		.arg(QDateTime::fromTime_t(_reader.timeRemainingSeconds()).toUTC().toString("HH:mm:ss"))
+		);
 }

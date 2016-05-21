@@ -53,6 +53,19 @@ long double CReader::progress() const
 	return numWords ? _position / (long double)numWords : 0.0;
 }
 
+size_t CReader::timeRemainingSeconds() const
+{
+	//const float basePausePerWordSeconds = 60.0f / _speedWpm;
+	//const float theoreticalSeconds = (_textFragments.size() - _position) * basePausePerWordSeconds;
+	const float actualSeconds = std::accumulate(_textFragments.cbegin() + _position, _textFragments.cend(), 0.0f, [](float acc, const TextFragmentWithPause& fragment) {
+		return acc + fragment._pauseAfter / 1000.0f;
+	});
+
+	//const size_t actualWPM = (size_t)(60 * _textFragments.size() / actualSeconds);
+
+	return (size_t)ceilf(actualSeconds);
+}
+
 size_t CReader::totalNumWords() const
 {
 	return _textFragments.size();
@@ -111,18 +124,18 @@ size_t CReader::pauseForFragment(const TextFragment& fragment) const
 {
 	static const std::map<TextFragment::Delimiter, float /*pauseCoefficient*/> pauseForDelimiter {
 		{TextFragment::NoDelimiter, 0.0f},
-		{TextFragment::Space, 0.9f},
-		{TextFragment::Comma, 1.6f},
-		{TextFragment::Point, 2.2f},
-		{TextFragment::ExclamationMark, 2.2f},
-		{TextFragment::QuestionMark, 2.2f},
-		{TextFragment::Dash, 1.6f},
-		{TextFragment::Colon, 1.9f},
-		{TextFragment::Semicolon, 2.2f},
-		{TextFragment::Ellipsis, 3.0f},
-		{TextFragment::Bracket, 1.6f},
-		{TextFragment::Quote, 1.6f},
-		{TextFragment::Newline, 0.9f} // All too often TXT files have new lines for line with formatting rather than for actual semantical formatting, so it's best to read them same as space
+		{TextFragment::Space, 0.88f},
+		{TextFragment::Comma, 1.5f},
+		{TextFragment::Point, 2.1f},
+		{TextFragment::ExclamationMark, 2.1f},
+		{TextFragment::QuestionMark, 2.1f},
+		{TextFragment::Dash, 1.5f},
+		{TextFragment::Colon, 1.8f},
+		{TextFragment::Semicolon, 2.1f},
+		{TextFragment::Ellipsis, 2.8f},
+		{TextFragment::Bracket, 1.5f},
+		{TextFragment::Quote, 1.5f},
+		{TextFragment::Newline, 0.88f} // All too often TXT files have new lines for line with formatting rather than for actual semantical formatting, so it's best to read them same as space
 	};
 
 	const auto it = pauseForDelimiter.find(fragment.delimiter());
