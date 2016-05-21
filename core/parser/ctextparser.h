@@ -17,5 +17,5 @@ private:
 	QString _buffer;
 	bool _wordEnded = false;
 	bool _quoteOpened = false;
-	TextFragment::Delimiter _lastDelimiter = TextFragment::Space;
+	TextFragment::Delimiter _lastDelimiter = TextFragment::NoDelimiter;
 };

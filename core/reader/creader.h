@@ -37,7 +37,7 @@ public:
 	inline const TextFragmentWithPause& textFragment(const size_t fragmentIndex) const {
 		if (fragmentIndex >= _textFragments.size())
 		{
-			static const TextFragmentWithPause emptyFragment(TextFragment(QString(), TextFragment::Space), 0);
+			static const TextFragmentWithPause emptyFragment(TextFragment(QString(), TextFragment::NoDelimiter), 0);
 			return emptyFragment;
 		}
 		else

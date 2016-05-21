@@ -45,12 +45,14 @@ std::vector<TextFragment> CTextParser::parse(const QString& text)
 		if (ch == '\r')
 			continue;
 
-		const auto it = delimiters.find({ch, TextFragment::Space});
+		const auto it = delimiters.find({ch, TextFragment::NoDelimiter});
 
 		if (it == delimiters.end()) // Not a delimiter
 		{
 			if (_wordEnded) // This is the first letter of a new word
 				finalizeFragment();
+
+			_lastDelimiter = TextFragment::NoDelimiter;
 		}
 		else // This is a delimiter. Append it to the current word.
 		{
@@ -65,13 +67,19 @@ std::vector<TextFragment> CTextParser::parse(const QString& text)
 				}
 				else // Business as usual
 				{
-					_lastDelimiter = it->delimiterType;
+					// Don't let space and newline in e. g. ", " override other punctuation marks
+					if ((it->delimiterType != TextFragment::Space && it->delimiterType != TextFragment::Newline) || _lastDelimiter == TextFragment::NoDelimiter)
+						_lastDelimiter = it->delimiterType;
+
 					_wordEnded = true;
 				}
 			}
 			else
 			{
-				_lastDelimiter = it->delimiterType;
+				// Don't let space and newline in e. g. ", " override other punctuation marks
+				if ((it->delimiterType != TextFragment::Space && it->delimiterType != TextFragment::Newline) || _lastDelimiter == TextFragment::NoDelimiter)
+					_lastDelimiter = it->delimiterType;
+
 				_wordEnded = true;
 			}
 		}

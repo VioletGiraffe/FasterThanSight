@@ -94,18 +94,19 @@ void CReader::readNextFragment()
 size_t CReader::pauseForFragment(const TextFragment& fragment) const
 {
 	static const std::map<TextFragment::Delimiter, float /*pauseCoefficient*/> pauseForDelimiter {
+		{TextFragment::NoDelimiter, 0.0f},
 		{TextFragment::Space, 0.9f},
-		{TextFragment::Comma, 1.1f},
-		{TextFragment::Point, 1.3f},
-		{TextFragment::ExclamationMark, 1.3f},
-		{TextFragment::QuestionMark, 1.3f},
-		{TextFragment::Dash, 1.0f},
-		{TextFragment::Colon, 1.0f},
-		{TextFragment::Semicolon, 1.3f},
-		{TextFragment::Ellipsis, 1.5f},
-		{TextFragment::Bracket, 1.0f},
-		{TextFragment::Quote, 1.0f},
-		{TextFragment::Newline, 1.5f}
+		{TextFragment::Comma, 1.6f},
+		{TextFragment::Point, 2.2f},
+		{TextFragment::ExclamationMark, 2.2f},
+		{TextFragment::QuestionMark, 2.2f},
+		{TextFragment::Dash, 1.6f},
+		{TextFragment::Colon, 1.9f},
+		{TextFragment::Semicolon, 2.2f},
+		{TextFragment::Ellipsis, 3.0f},
+		{TextFragment::Bracket, 1.6f},
+		{TextFragment::Quote, 1.6f},
+		{TextFragment::Newline, 0.9f} // All too often TXT files have new lines for line with formatting rather than for actual semantical formatting, so it's best to read them same as space
 	};
 
 	const auto it = pauseForDelimiter.find(fragment._delimitier);

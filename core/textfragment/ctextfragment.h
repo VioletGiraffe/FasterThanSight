@@ -5,6 +5,7 @@
 struct TextFragment
 {
 	enum Delimiter {
+		NoDelimiter,
 		Space,
 		Comma,
 		Point,
