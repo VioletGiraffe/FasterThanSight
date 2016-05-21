@@ -24,8 +24,8 @@ void CReader::load(const std::vector<TextFragment>& textFragments)
 	resetAndStop();
 
 	_textFragments.clear();
-	std::transform(textFragments.cbegin(), textFragments.cend(), std::back_inserter(_textFragments), [this](const TextFragment& fragment){
-		return fragment;
+	std::transform(textFragments.cbegin(), textFragments.cend(), std::back_inserter(_textFragments), [this](const TextFragment& fragment) -> TextFragmentWithPause {
+		return TextFragmentWithPause{fragment, 0};
 	});
 
 	updatePauseValues();
@@ -109,7 +109,7 @@ size_t CReader::pauseForFragment(const TextFragment& fragment) const
 		{TextFragment::Newline, 0.9f} // All too often TXT files have new lines for line with formatting rather than for actual semantical formatting, so it's best to read them same as space
 	};
 
-	const auto it = pauseForDelimiter.find(fragment._delimitier);
+	const auto it = pauseForDelimiter.find(fragment.delimiter());
 	assert(it != pauseForDelimiter.end());
 
 	const size_t basePause = 60 * 1000 / _speedWpm;

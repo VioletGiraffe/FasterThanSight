@@ -53,6 +53,7 @@ std::vector<TextFragment> CTextParser::parse(const QString& text)
 				finalizeFragment();
 
 			_lastDelimiter = TextFragment::NoDelimiter;
+			_wordBuffer += ch;
 		}
 		else // This is a delimiter. Append it to the current word.
 		{
@@ -62,8 +63,7 @@ std::vector<TextFragment> CTextParser::parse(const QString& text)
 				_quoteOpened = !_quoteOpened;
 				if (_quoteOpened) // This is an opening quote! Dump the previously accumulated fragment and assign this quote to the new one.
 				{
-					if (!_buffer.isEmpty())
-						finalizeFragment();
+					finalizeFragment();
 				}
 				else // Business as usual
 				{
@@ -82,20 +82,23 @@ std::vector<TextFragment> CTextParser::parse(const QString& text)
 
 				_wordEnded = true;
 			}
-		}
 
-		_buffer += ch;
+			_delimitersBuffer += ch;
+		}
 	}
 
-	if (!_buffer.isEmpty())
-		finalizeFragment();
+	finalizeFragment();
 
 	return _fragments;
 }
 
 void CTextParser::finalizeFragment()
 {
-	_fragments.emplace_back(_buffer.trimmed(), _lastDelimiter);
+	_delimitersBuffer = _delimitersBuffer.trimmed();
+	if (!_delimitersBuffer.isEmpty() || !_wordBuffer.isEmpty())
+		_fragments.emplace_back(_wordBuffer, _delimitersBuffer, _lastDelimiter);
+
 	_wordEnded = false;
-	_buffer.clear();
+	_delimitersBuffer.clear();
+	_wordBuffer.clear();
 }

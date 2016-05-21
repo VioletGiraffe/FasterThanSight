@@ -29,7 +29,7 @@ CMainWindow::CMainWindow(QWidget *parent) :
 	_textFadeOutAnimation = new QPropertyAnimation(&_textFadeEffect, "opacity", this);
 	_textFadeOutAnimation->setStartValue(1.0f);
 	_textFadeOutAnimation->setEndValue(0.0f);
-	_textFadeOutAnimation->setEasingCurve(QEasingCurve::OutCubic);
+	_textFadeOutAnimation->setEasingCurve(QEasingCurve::OutQuad);
 
 	ui->_text->setGraphicsEffect(&_textFadeEffect);
 	updateReadingAnimationDuration();
@@ -154,7 +154,7 @@ void CMainWindow::initActions()
 
 void CMainWindow::updateDisplay(const size_t currentTextFragmentIndex)
 {
-	const QString text = _reader.textFragment(currentTextFragmentIndex)._textFragment._text;
+	const QString text = _reader.textFragment(currentTextFragmentIndex)._textFragment.entireTextFragment();
 
 	// If the new text fragment equals the previous one, use animation to make it obvious 
 	if (ui->_text->text() != text)

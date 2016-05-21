@@ -2,8 +2,9 @@
 
 #include <QString>
 
-struct TextFragment
+class TextFragment
 {
+public:
 	enum Delimiter {
 		NoDelimiter,
 		Space,
@@ -20,11 +21,18 @@ struct TextFragment
 		Newline
 	};
 
-	inline TextFragment(const QString& text, Delimiter delimiter) : _text(text), _delimitier(delimiter) {}
-	inline TextFragment(const TextFragment& other) : _text(other._text), _delimitier(other._delimitier) {}
+	inline TextFragment() {};
+	TextFragment(const QString& word, const QString& punctuation, Delimiter delimiter = NoDelimiter);
 
-	const QString _text;
-	const Delimiter _delimitier;
+	QString word() const;
+	QString punctuation() const;
+	QString entireTextFragment() const;
+	Delimiter delimiter() const;
 
-	TextFragment& operator=(const TextFragment&) = delete;
+	int pivotLetterIndex() const;
+
+private:
+	QString _word;
+	QString _punctuationText;
+	Delimiter _delimitier = NoDelimiter;
 };

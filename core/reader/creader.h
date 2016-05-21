@@ -10,11 +10,8 @@ class CReader
 {
 public:
 	struct TextFragmentWithPause {
-		inline TextFragmentWithPause(const TextFragment& fragment) : _textFragment(fragment) {}
-		inline TextFragmentWithPause(const TextFragment& fragment, size_t pause) : _textFragment(fragment), _pauseAfter(pause) {}
-
-		const TextFragment _textFragment;
-		size_t _pauseAfter = 0;
+		TextFragment _textFragment;
+		size_t _pauseAfter;
 	};
 
 	enum State {Reading, Paused};
@@ -37,7 +34,7 @@ public:
 	inline const TextFragmentWithPause& textFragment(const size_t fragmentIndex) const {
 		if (fragmentIndex >= _textFragments.size())
 		{
-			static const TextFragmentWithPause emptyFragment(TextFragment(QString(), TextFragment::NoDelimiter), 0);
+			static const TextFragmentWithPause emptyFragment {TextFragment(), 0};
 			return emptyFragment;
 		}
 		else

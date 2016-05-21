@@ -14,7 +14,8 @@ private:
 
 private:
 	std::vector<TextFragment> _fragments;
-	QString _buffer;
+	QString _wordBuffer;
+	QString _delimitersBuffer;
 	bool _wordEnded = false;
 	bool _quoteOpened = false;
 	TextFragment::Delimiter _lastDelimiter = TextFragment::NoDelimiter;
