@@ -26,7 +26,6 @@ public:
 
 	QString word() const;
 	QString punctuation() const;
-	QString entireTextFragment() const;
 	Delimiter delimiter() const;
 
 	int pivotLetterIndex() const;

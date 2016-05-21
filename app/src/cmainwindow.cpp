@@ -115,6 +115,11 @@ void CMainWindow::initActions()
 		fontDialog.exec();
 	});
 
+	connect(ui->actionShow_pivot, &QAction::triggered, [this](bool checked) {
+		CSettings().setValue(UI_SHOW_PIVOT_SETTING, checked);
+	});
+	ui->actionShow_pivot->setChecked(CSettings().value(UI_SHOW_PIVOT_SETTING, UI_SHOW_PIVOT_DEFAULT).toBool());
+
 	ui->actionOpen->setIcon(QApplication::style()->standardIcon(QStyle::SP_DirOpenIcon));
 	connect(ui->actionOpen, &QAction::triggered, [this](){
 		const QString filePath = QFileDialog::getOpenFileName(this,
@@ -154,7 +159,15 @@ void CMainWindow::initActions()
 
 void CMainWindow::updateDisplay(const size_t currentTextFragmentIndex)
 {
-	const QString text = _reader.textFragment(currentTextFragmentIndex)._textFragment.entireTextFragment();
+	static const auto pivotize = [this](const QString& text, int pivotCharacterIndex) -> QString {
+		if (ui->actionShow_pivot->isChecked())
+			return text.left(pivotCharacterIndex) % "<font color=\"red\">" % text[pivotCharacterIndex] % "</font>" % text.mid(pivotCharacterIndex + 1);
+		else
+			return text;
+	};
+
+	const auto& currentFragment = _reader.textFragment(currentTextFragmentIndex);
+	const QString text = pivotize(currentFragment._textFragment.word(), currentFragment._textFragment.pivotLetterIndex()) + currentFragment._textFragment.punctuation();
 
 	// If the new text fragment equals the previous one, use animation to make it obvious 
 	if (ui->_text->text() != text)
