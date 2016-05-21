@@ -26,7 +26,7 @@ private:
 
 private:
 // Reader callbacks
-	void displayText(const TextFragment& text) override;
+	void updateDisplay(const size_t currentTextFragmentIndex) override;
 	void stateChanged(const CReader::State newState) override;
 
 	void updateReadingAnimationDuration();

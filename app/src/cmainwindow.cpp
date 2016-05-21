@@ -150,15 +150,16 @@ void CMainWindow::initActions()
 	connect(ui->action_Exit, &QAction::triggered, qApp, &QApplication::exit);
 }
 
-void CMainWindow::displayText(const TextFragment& text)
+void CMainWindow::updateDisplay(const size_t currentTextFragmentIndex)
 {
 	QMetaObject::Connection* connection = new QMetaObject::Connection();
+	const QString text = _reader.textFragment(currentTextFragmentIndex)._textFragment._text;
 	*connection = connect(_textFadeOutAnimation, &QPropertyAnimation::finished, [this, text, connection]() {
 		disconnect(*connection);
 		delete connection;
 
 		_textFadeEffect.setOpacity(1.0f);
-		ui->_text->setText(text._text);
+		ui->_text->setText(text);
 	});
 
 	_textFadeOutAnimation->start();

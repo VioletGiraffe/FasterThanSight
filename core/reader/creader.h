@@ -9,10 +9,18 @@
 class CReader
 {
 public:
+	struct TextFragmentWithPause {
+		inline TextFragmentWithPause(const TextFragment& fragment) : _textFragment(fragment) {}
+		inline TextFragmentWithPause(const TextFragment& fragment, size_t pause) : _textFragment(fragment), _pauseAfter(pause) {}
+
+		const TextFragment _textFragment;
+		size_t _pauseAfter = 0;
+	};
+
 	enum State {Reading, Paused};
 
 	struct ReaderInterface {
-		virtual void displayText(const TextFragment& text) = 0;
+		virtual void updateDisplay(const size_t currentTextFragmentIndex) = 0;
 		virtual void stateChanged(const State newState) = 0;
 	};
 
@@ -24,6 +32,17 @@ public:
 
 // State
 	State state() const;
+
+// Data
+	inline const TextFragmentWithPause& textFragment(const size_t fragmentIndex) const {
+		if (fragmentIndex >= _textFragments.size())
+		{
+			static const TextFragmentWithPause emptyFragment(TextFragment(QString(), TextFragment::Space), 0);
+			return emptyFragment;
+		}
+		else
+			return _textFragments[fragmentIndex];
+	}
 
 // Control
 	void resumeReading();
@@ -37,10 +56,15 @@ public:
 private:
 	void readNextFragment();
 
+	// Calculates the pause after the specific fragment in ms
+	size_t pauseForFragment(const TextFragment& fragment) const;
+	// Recalculate all the pauses for the entire text
+	void updatePauseValues();
+
 private:
 	ReaderInterface * const _interface;
 
-	std::vector<TextFragment> _textFragments;
+	std::vector<TextFragmentWithPause> _textFragments;
 	size_t                    _position = 0;
 	size_t                    _speedWpm = 250;
 

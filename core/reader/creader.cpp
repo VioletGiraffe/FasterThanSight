@@ -3,24 +3,32 @@
 #include "../parser/ctextparser.h"
 #include "settings/csettings.h"
 #include "settings.h"
+#include "assert/advanced_assert.h"
+
+#include <algorithm>
+#include <map>
+#include <iterator>
 
 CReader::CReader(ReaderInterface* interface) : _interface(interface)
 {
+	_readingTimer.setSingleShot(true);
 	QObject::connect(&_readingTimer, &QTimer::timeout, [this](){
 		readNextFragment();
 	});
 
 	_speedWpm = CSettings().value(READER_READING_SPEED_SETTING, READER_READING_SPEED_DEFAULT).toUInt();
-	_readingTimer.setInterval(60 * 1000 / _speedWpm);
 }
 
 void CReader::load(const std::vector<TextFragment>& textFragments)
 {
-	pauseReading();
+	resetAndStop();
 
-	_position = 0;
-	std::vector<TextFragment> tmp(textFragments);
-	_textFragments.swap(tmp);
+	_textFragments.clear();
+	std::transform(textFragments.cbegin(), textFragments.cend(), std::back_inserter(_textFragments), [this](const TextFragment& fragment){
+		return fragment;
+	});
+
+	updatePauseValues();
 }
 
 void CReader::loadFromFile(const QString& filePath)
@@ -36,10 +44,9 @@ CReader::State CReader::state() const
 
 void CReader::resumeReading()
 {
-	_readingTimer.start();
-
 	_state = Reading;
 	_interface->stateChanged(_state);
+	readNextFragment();
 }
 
 void CReader::pauseReading()
@@ -65,7 +72,7 @@ void CReader::setReadingSpeed(size_t wpm)
 {
 	CSettings().setValue(READER_READING_SPEED_SETTING, wpm);
 	_speedWpm = wpm;
-	_readingTimer.setInterval(60 * 1000 / _speedWpm);
+	updatePauseValues();
 }
 
 void CReader::readNextFragment()
@@ -73,8 +80,44 @@ void CReader::readNextFragment()
 	if (_position >= _textFragments.size())
 	{
 		resetAndStop();
-		return;
 	}
+	else if (_state == Reading)
+	{
+		_interface->updateDisplay(_position);
+		// Queue up the next word
+		_readingTimer.start(_textFragments[_position]._pauseAfter);
+		++_position;
+	}
+}
 
-	_interface->displayText(_textFragments[_position++]);
+// Calculates the pause after the specific fragment in ms
+size_t CReader::pauseForFragment(const TextFragment& fragment) const
+{
+	static const std::map<TextFragment::Delimiter, float /*pauseCoefficient*/> pauseForDelimiter {
+		{TextFragment::Space, 0.9f},
+		{TextFragment::Comma, 1.1f},
+		{TextFragment::Point, 1.3f},
+		{TextFragment::ExclamationMark, 1.3f},
+		{TextFragment::QuestionMark, 1.3f},
+		{TextFragment::Dash, 1.0f},
+		{TextFragment::Colon, 1.0f},
+		{TextFragment::Semicolon, 1.3f},
+		{TextFragment::Ellipsis, 1.5f},
+		{TextFragment::Bracket, 1.0f},
+		{TextFragment::Quote, 1.0f},
+		{TextFragment::Newline, 1.5f}
+	};
+
+	const auto it = pauseForDelimiter.find(fragment._delimitier);
+	assert(it != pauseForDelimiter.end());
+
+	const size_t basePause = 60 * 1000 / _speedWpm;
+	return static_cast<size_t>(it->second * basePause);
+}
+
+// Recalculate all the pauses for the entire text
+void CReader::updatePauseValues()
+{
+	for (auto& fragment: _textFragments)
+		fragment._pauseAfter = pauseForFragment(fragment._textFragment);
 }
