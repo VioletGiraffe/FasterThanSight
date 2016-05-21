@@ -29,6 +29,7 @@ CMainWindow::CMainWindow(QWidget *parent) :
 	_textFadeOutAnimation = new QPropertyAnimation(&_textFadeEffect, "opacity", this);
 	_textFadeOutAnimation->setStartValue(1.0f);
 	_textFadeOutAnimation->setEndValue(0.0f);
+	_textFadeOutAnimation->setEasingCurve(QEasingCurve::OutCubic);
 
 	ui->_text->setGraphicsEffect(&_textFadeEffect);
 	updateReadingAnimationDuration();
@@ -124,6 +125,7 @@ void CMainWindow::initActions()
 		{
 			CSettings().setValue(UI_OPEN_FILE_LAST_USED_DIR_SETTING, filePath);
 			setWindowTitle(qApp->applicationName() % " - " % QFileInfo(filePath).baseName());
+			ui->_text->clear();
 			_reader.loadFromFile(filePath);
 		}
 	});
@@ -152,18 +154,24 @@ void CMainWindow::initActions()
 
 void CMainWindow::updateDisplay(const size_t currentTextFragmentIndex)
 {
-	QMetaObject::Connection* connection = new QMetaObject::Connection();
 	const QString text = _reader.textFragment(currentTextFragmentIndex)._textFragment._text;
-	*connection = connect(_textFadeOutAnimation, &QPropertyAnimation::finished, [this, text, connection]() {
-		disconnect(*connection);
-		delete connection;
 
-		_textFadeEffect.setOpacity(1.0f);
+	// If the new text fragment equals the previous one, use animation to make it obvious 
+	if (ui->_text->text() != text)
 		ui->_text->setText(text);
-	});
+	else
+	{
+		QMetaObject::Connection* connection = new QMetaObject::Connection();
+		*connection = connect(_textFadeOutAnimation, &QPropertyAnimation::finished, [this, text, connection]() {
+			disconnect(*connection);
+			delete connection;
 
-	_textFadeOutAnimation->start();
+			_textFadeEffect.setOpacity(1.0f);
+			ui->_text->setText(text);
+		});
 
+		_textFadeOutAnimation->start();
+	}
 }
 
 void CMainWindow::stateChanged(const CReader::State newState)
@@ -180,8 +188,6 @@ void CMainWindow::stateChanged(const CReader::State newState)
 
 void CMainWindow::updateReadingAnimationDuration()
 {
-	const auto animationDurationMs = 60 * 1000 / _reader.readingSpeed() / 2;
-
-	_textFadeOutAnimation->setEasingCurve(animationDurationMs > 90 ? QEasingCurve::Linear : QEasingCurve::InQuad);
+	const auto animationDurationMs = 60 * 1000 * 2 / _reader.readingSpeed() / 3;
 	_textFadeOutAnimation->setDuration(std::min(animationDurationMs, 150U));
 }
