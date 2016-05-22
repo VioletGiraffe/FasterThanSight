@@ -1,6 +1,8 @@
 #include "cmainwindow.h"
 #include "compiler/compiler_warnings_control.h"
 
+#include "widgets/creaderview.h"
+
 #include "settings/csettings.h"
 #include "uisettings.h"
 
@@ -12,6 +14,7 @@ DISABLE_COMPILER_WARNINGS
 #include <QFileDialog>
 #include <QFileInfo>
 #include <QFontDialog>
+#include <QLabel>
 #include <QPropertyAnimation>
 #include <QSlider>
 #include <QSpinBox>
@@ -179,28 +182,22 @@ void CMainWindow::initStatusBar()
 
 void CMainWindow::updateDisplay(const size_t currentTextFragmentIndex)
 {
-	static const auto pivotize = [this](const QString& text, int pivotCharacterIndex) -> QString {
-		if (ui->actionShow_pivot->isChecked())
-			return text.left(pivotCharacterIndex) % "<font color=\"red\">" % text[pivotCharacterIndex] % "</font>" % text.mid(pivotCharacterIndex + 1);
-		else
-			return text;
-	};
-
 	const auto& currentFragment = _reader.textFragment(currentTextFragmentIndex);
-	const QString text = pivotize(currentFragment._textFragment.word(), currentFragment._textFragment.pivotLetterIndex()) + currentFragment._textFragment.punctuation();
+	const QString text = currentFragment._textFragment.word() + currentFragment._textFragment.punctuation();
+	const int pivotCharIndex = ui->actionShow_pivot->isChecked() ? currentFragment._textFragment.pivotLetterIndex() : -1;
 
 	// If the new text fragment equals the previous one, use animation to make it obvious 
 	if (ui->_text->text() != text)
-		ui->_text->setText(text);
+		ui->_text->setText(text, pivotCharIndex);
 	else
 	{
 		QMetaObject::Connection* connection = new QMetaObject::Connection();
-		*connection = connect(_textFadeOutAnimation, &QPropertyAnimation::finished, [this, text, connection]() {
+		*connection = connect(_textFadeOutAnimation, &QPropertyAnimation::finished, [this, text, connection, pivotCharIndex]() {
 			disconnect(*connection);
 			delete connection;
 
 			_textFadeEffect.setOpacity(1.0f);
-			ui->_text->setText(text);
+			ui->_text->setText(text, pivotCharIndex);
 		});
 
 		_textFadeOutAnimation->start();

@@ -51,12 +51,13 @@ INCLUDEPATH += \
 	../cpputils/ \
 	../qtutils/
 
+include (src/widgets/widgets.pri)
 
 SOURCES += \
 	src\main.cpp\
 	src\cmainwindow.cpp
 
 HEADERS  += src\cmainwindow.h \
-    src/uisettings.h
+	src/uisettings.h
 
 FORMS    += src\cmainwindow.ui
