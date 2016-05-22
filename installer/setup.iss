@@ -35,6 +35,9 @@ Source: binaries/msvcr/*; DestDir: {app}; Flags: ignoreversion
 Name: {group}\Faster Than Sight; Filename: {app}\FasterThanSight.exe;
 Name: {group}\{cm:UninstallProgram,Faster Than Sight}; Filename: {uninstallexe}
 
+[Tasks]
+Name: desktopicon; Description: {cm:CreateDesktopIcon}; GroupDescription: {cm:AdditionalIcons};
+
 [Run]
 Filename: {app}\FasterThanSight.exe; Description: {cm:LaunchProgram,Faster Than Sight}; Flags: nowait postinstall skipifsilent
 
