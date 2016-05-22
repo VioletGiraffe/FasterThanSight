@@ -3,8 +3,10 @@
 #include "assert/advanced_assert.h"
 #include "settings/csettings.h"
 
+DISABLE_COMPILER_WARNINGS
 #include <QApplication>
 #include <QDebug>
+RESTORE_COMPILER_WARNINGS
 
 int main(int argc, char *argv[])
 {

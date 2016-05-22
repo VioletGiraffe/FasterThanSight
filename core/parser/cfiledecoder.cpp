@@ -2,8 +2,10 @@
 
 #include "ctxtfiledecoder.h"
 
+DISABLE_COMPILER_WARNINGS
 #include <QDebug>
 #include <QFileInfo>
+RESTORE_COMPILER_WARNINGS
 
 QString CFileDecoder::readDataAndDecodeText(const QString& filePath)
 {

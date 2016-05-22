@@ -1,6 +1,9 @@
 #pragma once
+#include "compiler/compiler_warnings_control.h"
 
+DISABLE_COMPILER_WARNINGS
 #include <QString>
+RESTORE_COMPILER_WARNINGS
 
 #define UI_FONT_SIZE_SETTING QStringLiteral("UI/Font/Size")
 #define UI_FONT_SIZE_DEFAULT 24

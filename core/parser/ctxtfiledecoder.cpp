@@ -1,8 +1,10 @@
 #include "ctxtfiledecoder.h"
 #include "assert/advanced_assert.h"
 
+DISABLE_COMPILER_WARNINGS
 #include <QIODevice>
 #include <QTextCodec>
+RESTORE_COMPILER_WARNINGS
 
 QString CTxtFileDecoder::readDataAndDecodeText(QIODevice& device)
 {

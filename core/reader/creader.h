@@ -2,7 +2,9 @@
 
 #include "../textfragment/ctextfragment.h"
 
+DISABLE_COMPILER_WARNINGS
 #include <QTimer>
+RESTORE_COMPILER_WARNINGS
 
 #include <vector>
 

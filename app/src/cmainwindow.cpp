@@ -1,11 +1,12 @@
 #include "cmainwindow.h"
-#include "ui_cmainwindow.h"
 #include "compiler/compiler_warnings_control.h"
 
 #include "settings/csettings.h"
 #include "uisettings.h"
 
 DISABLE_COMPILER_WARNINGS
+#include "ui_cmainwindow.h"
+
 #include <QDateTime>
 #include <QDebug>
 #include <QFileDialog>
