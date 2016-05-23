@@ -5,6 +5,8 @@
 #include "settings.h"
 #include "assert/advanced_assert.h"
 
+#include <math.h>
+
 #include <algorithm>
 #include <map>
 #include <iterator>
@@ -99,7 +101,7 @@ size_t CReader::readingSpeed() const
 
 void CReader::setReadingSpeed(size_t wpm)
 {
-	CSettings().setValue(READER_READING_SPEED_SETTING, wpm);
+	CSettings().setValue(READER_READING_SPEED_SETTING, (quint64)wpm);
 	_speedWpm = wpm;
 	updatePauseValues();
 }

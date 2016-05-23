@@ -29,10 +29,12 @@ CMainWindow::CMainWindow(QWidget *parent) :
 	_reader(this)
 {
 	ui->setupUi(this);
-	
+
 	initToolBars();
 	initActions();
 	initStatusBar();
+
+	setUnifiedTitleAndToolBarOnMac(true);
 }
 
 CMainWindow::~CMainWindow()
