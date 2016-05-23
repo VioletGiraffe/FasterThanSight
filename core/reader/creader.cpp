@@ -142,7 +142,8 @@ size_t CReader::pauseForFragment(const TextFragment& fragment) const
 	assert(it != pauseForDelimiter.end());
 
 	const size_t basePause = 60 * 1000 / _speedWpm;
-	return static_cast<size_t>(it->second * basePause);
+	const int wordLength = fragment.word().length();
+	return static_cast<size_t>(it->second * basePause * (wordLength > 6 ? (wordLength - 6) * 1.2f : 1.0f));
 }
 
 // Recalculate all the pauses for the entire text
