@@ -4,14 +4,12 @@
 #include "compiler/compiler_warnings_control.h"
 
 DISABLE_COMPILER_WARNINGS
-#include <QGraphicsOpacityEffect>
 #include <QMainWindow>
 RESTORE_COMPILER_WARNINGS
 
 class QLabel;
 class QSlider;
 class QSpinBox;
-class QPropertyAnimation;
 class QToolBar;
 
 namespace Ui {
@@ -34,8 +32,6 @@ private:
 	void updateDisplay(const size_t currentTextFragmentIndex) override;
 	void stateChanged(const CReader::State newState) override;
 
-	void updateReadingAnimationDuration();
-
 	void updateProgressLabel();
 
 private:
@@ -53,9 +49,5 @@ private:
 
 // Reader
 	CReader _reader;
-
-// UI stuff
-	QPropertyAnimation* _textFadeOutAnimation = nullptr;
-	QGraphicsOpacityEffect _textFadeEffect;
 };
 

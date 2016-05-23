@@ -15,7 +15,6 @@ DISABLE_COMPILER_WARNINGS
 #include <QFileInfo>
 #include <QFontDialog>
 #include <QLabel>
-#include <QPropertyAnimation>
 #include <QSlider>
 #include <QSpinBox>
 #include <QStandardPaths>
@@ -30,16 +29,6 @@ CMainWindow::CMainWindow(QWidget *parent) :
 	_reader(this)
 {
 	ui->setupUi(this);
-
-	// Reading animation
-	_textFadeEffect.setOpacity(1.0f);
-	_textFadeOutAnimation = new QPropertyAnimation(&_textFadeEffect, "opacity", this);
-	_textFadeOutAnimation->setStartValue(1.0f);
-	_textFadeOutAnimation->setEndValue(0.0f);
-	_textFadeOutAnimation->setEasingCurve(QEasingCurve::OutQuad);
-
-	ui->_text->setGraphicsEffect(&_textFadeEffect);
-	updateReadingAnimationDuration();
 	
 	initToolBars();
 	initActions();
@@ -49,7 +38,6 @@ CMainWindow::CMainWindow(QWidget *parent) :
 CMainWindow::~CMainWindow()
 {
 	_reader.resetAndStop();
-	_textFadeOutAnimation->stop();
 
 	delete ui;
 	ui = nullptr;
@@ -106,7 +94,6 @@ void CMainWindow::initToolBars()
 
 	connect(_readingSpeedSlider, &QSlider::valueChanged, [this](int WPM){
 		_reader.setReadingSpeed(WPM);
-		updateReadingAnimationDuration();
 	});
 
 	_readingSpeedSlider->setValue(_reader.readingSpeed());
@@ -186,22 +173,7 @@ void CMainWindow::updateDisplay(const size_t currentTextFragmentIndex)
 	const QString text = currentFragment._textFragment.word() + currentFragment._textFragment.punctuation();
 	const int pivotCharIndex = ui->actionShow_pivot->isChecked() ? currentFragment._textFragment.pivotLetterIndex() : -1;
 
-	// If the new text fragment equals the previous one, use animation to make it obvious 
-	if (ui->_text->text() != text)
-		ui->_text->setText(text, pivotCharIndex);
-	else
-	{
-		QMetaObject::Connection* connection = new QMetaObject::Connection();
-		*connection = connect(_textFadeOutAnimation, &QPropertyAnimation::finished, [this, text, connection, pivotCharIndex]() {
-			disconnect(*connection);
-			delete connection;
-
-			_textFadeEffect.setOpacity(1.0f);
-			ui->_text->setText(text, pivotCharIndex);
-		});
-
-		_textFadeOutAnimation->start();
-	}
+	ui->_text->setText(text, pivotCharIndex);
 
 	updateProgressLabel();
 }
@@ -216,12 +188,6 @@ void CMainWindow::stateChanged(const CReader::State newState)
 	{
 		ui->action_Pause->setEnabled(false);
 	}
-}
-
-void CMainWindow::updateReadingAnimationDuration()
-{
-	const auto animationDurationMs = 60 * 1000 * 2 / _reader.readingSpeed() / 3;
-	_textFadeOutAnimation->setDuration(std::min(animationDurationMs, 150U));
 }
 
 void CMainWindow::updateProgressLabel()
