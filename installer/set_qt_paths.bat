@@ -1,1 +1,0 @@
-set QTDIR32=k:\Qt\5.6\msvc2013\
