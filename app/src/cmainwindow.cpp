@@ -31,9 +31,10 @@ CMainWindow::CMainWindow(QWidget *parent) :
 {
 	ui->setupUi(this);
 
+	// Status bar should be inited first so that the rest of the init code can call updateProgressLabel and such
+	initStatusBar();
 	initToolBars();
 	initActions();
-	initStatusBar();
 
 	setUnifiedTitleAndToolBarOnMac(true);
 }
@@ -97,6 +98,7 @@ void CMainWindow::initToolBars()
 
 	connect(_readingSpeedSlider, &QSlider::valueChanged, [this](int WPM){
 		_reader.setReadingSpeed(WPM);
+		updateProgressLabel(); // To re-calculate remaining reading time based on the new speed
 	});
 
 	_readingSpeedSlider->setValue(_reader.readingSpeed());
