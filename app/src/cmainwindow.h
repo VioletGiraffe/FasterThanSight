@@ -22,17 +22,22 @@ public:
 	explicit CMainWindow(QWidget *parent = 0);
 	~CMainWindow();
 
+protected:
+	void dragEnterEvent(QDragEnterEvent * event) override;
+	void dropEvent(QDropEvent * event) override;
+
 private:
 	void initToolBars();
 	void initActions();
 	void initStatusBar();
 
+	void updateProgressLabel();
+	void openFile(const QString& filePath);
+
 private:
 // Reader callbacks
 	void updateDisplay(const size_t currentTextFragmentIndex) override;
 	void stateChanged(const CReader::State newState) override;
-
-	void updateProgressLabel();
 
 private:
 	Ui::CMainWindow *ui;

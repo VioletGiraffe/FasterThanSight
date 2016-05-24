@@ -11,11 +11,13 @@ DISABLE_COMPILER_WARNINGS
 
 #include <QDateTime>
 #include <QDebug>
+#include <QDragEnterEvent>
 #include <QFileDialog>
 #include <QFileInfo>
 #include <QFontDialog>
 #include <QInputDialog>
 #include <QLabel>
+#include <QMimeData>
 #include <QSlider>
 #include <QSpinBox>
 #include <QStandardPaths>
@@ -37,6 +39,7 @@ CMainWindow::CMainWindow(QWidget *parent) :
 	initActions();
 
 	setUnifiedTitleAndToolBarOnMac(true);
+	setAcceptDrops(true);
 }
 
 CMainWindow::~CMainWindow()
@@ -45,6 +48,19 @@ CMainWindow::~CMainWindow()
 
 	delete ui;
 	ui = nullptr;
+}
+
+void CMainWindow::dragEnterEvent(QDragEnterEvent *event)
+{
+	if (event->mimeData()->hasUrls())
+		event->acceptProposedAction();
+}
+
+void CMainWindow::dropEvent(QDropEvent *event)
+{
+	const auto urls = event->mimeData()->urls();
+	if (!urls.empty())
+		openFile(urls.front().toLocalFile());
 }
 
 void CMainWindow::initToolBars()
@@ -132,14 +148,7 @@ void CMainWindow::initActions()
 			tr("Pick a text file to open"),
 			CSettings().value(UI_OPEN_FILE_LAST_USED_DIR_SETTING, QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation).front()).toString());
 
-		if (!filePath.isEmpty())
-		{
-			CSettings().setValue(UI_OPEN_FILE_LAST_USED_DIR_SETTING, filePath);
-			setWindowTitle(qApp->applicationName() % " - " % QFileInfo(filePath).baseName());
-			ui->_text->clear();
-			_reader.loadFromFile(filePath);
-			updateProgressLabel();
-		}
+		openFile(filePath);
 	});
 
 	ui->action_Read->setIcon(QApplication::style()->standardIcon(QStyle::SP_MediaPlay));
@@ -190,6 +199,28 @@ void CMainWindow::initStatusBar()
 	statusBar()->addWidget(_progressLabel, 1);
 }
 
+void CMainWindow::updateProgressLabel()
+{
+	_progressLabel->setText(
+		tr("Reading word %1 out of %2 total (%3%); estimated time remaining: %4")
+		.arg(_reader.position() + 1)
+		.arg(_reader.totalNumWords())
+		.arg(QString::number(100 * (double)_reader.progress(), 'f', 2))
+		.arg(QDateTime::fromTime_t(_reader.timeRemainingSeconds()).toUTC().toString("HH:mm:ss"))
+	);
+}
+
+void CMainWindow::openFile(const QString &filePath)
+{
+	if (!filePath.isEmpty() && _reader.loadFromFile(filePath))
+	{
+		CSettings().setValue(UI_OPEN_FILE_LAST_USED_DIR_SETTING, filePath);
+		setWindowTitle(qApp->applicationName() % " - " % QFileInfo(filePath).baseName());
+		ui->_text->clear();
+		updateProgressLabel();
+	}
+}
+
 void CMainWindow::updateDisplay(const size_t currentTextFragmentIndex)
 {
 	const auto& currentFragment = _reader.textFragment(currentTextFragmentIndex);
@@ -211,15 +242,4 @@ void CMainWindow::stateChanged(const CReader::State newState)
 	{
 		ui->action_Pause->setEnabled(false);
 	}
-}
-
-void CMainWindow::updateProgressLabel()
-{
-	_progressLabel->setText(
-		tr("Reading word %1 out of %2 total (%3%); estimated time remaining: %4")
-		.arg(_reader.position() + 1)
-		.arg(_reader.totalNumWords())
-		.arg(QString::number(100 * (double)_reader.progress(), 'f', 2))
-		.arg(QDateTime::fromTime_t(_reader.timeRemainingSeconds()).toUTC().toString("HH:mm:ss"))
-		);
 }

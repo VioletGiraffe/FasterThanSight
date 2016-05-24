@@ -27,12 +27,12 @@ public:
 
 // Preparation
 	void load(const std::vector<TextFragment>& textFragments);
-	void loadFromFile(const QString& filePath);
+	bool loadFromFile(const QString& filePath);
 
 // State
 	State state() const;
 	// Current word index
-	size_t position() const; 
+	size_t position() const;
 	size_t totalNumWords() const;
 	long double progress() const; // [0.0; 1.0]
 	size_t timeRemainingSeconds() const;

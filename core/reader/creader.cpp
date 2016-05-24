@@ -35,10 +35,12 @@ void CReader::load(const std::vector<TextFragment>& textFragments)
 	updatePauseValues();
 }
 
-void CReader::loadFromFile(const QString& filePath)
+bool CReader::loadFromFile(const QString& filePath)
 {
 	CTextParser parser;
 	load(parser.parse(CFileDecoder::readDataAndDecodeText(filePath)));
+
+	return !_textFragments.empty();
 }
 
 CReader::State CReader::state() const
