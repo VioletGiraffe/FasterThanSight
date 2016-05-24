@@ -26,7 +26,7 @@
      <x>0</x>
      <y>0</y>
      <width>652</width>
-     <height>21</height>
+     <height>20</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -41,14 +41,9 @@
     <property name="title">
      <string>&amp;Settings</string>
     </property>
-    <widget class="QMenu" name="menu_Reading_2">
-     <property name="title">
-      <string>&amp;Reading</string>
-     </property>
-     <addaction name="action_Font"/>
-     <addaction name="actionShow_pivot"/>
-    </widget>
-    <addaction name="menu_Reading_2"/>
+    <addaction name="action_Font"/>
+    <addaction name="actionShow_pivot"/>
+    <addaction name="action_Colors_and_styling"/>
    </widget>
    <widget class="QMenu" name="menu_Reading">
     <property name="title">
@@ -131,6 +126,11 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+G</string>
+   </property>
+  </action>
+  <action name="action_Colors_and_styling">
+   <property name="text">
+    <string>&amp;Colors and styling...</string>
    </property>
   </action>
  </widget>
