@@ -203,7 +203,7 @@ void CMainWindow::updateProgressLabel()
 {
 	_progressLabel->setText(
 		tr("Reading word %1 out of %2 total (%3%); estimated time remaining: %4")
-		.arg(_reader.position() + 1)
+		.arg(_reader.totalNumWords() > 0 ? _reader.position() + 1 : 0)
 		.arg(_reader.totalNumWords())
 		.arg(QString::number(100 * (double)_reader.progress(), 'f', 2))
 		.arg(QDateTime::fromTime_t(_reader.timeRemainingSeconds()).toUTC().toString("HH:mm:ss"))
