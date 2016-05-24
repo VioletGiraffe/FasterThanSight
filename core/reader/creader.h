@@ -52,6 +52,8 @@ public:
 	void resumeReading();
 	void pauseReading();
 	void resetAndStop();
+	// Specify 0-based word index to go to
+	void goToWord(size_t wordIndex);
 
 // Settings
 	size_t readingSpeed() const;

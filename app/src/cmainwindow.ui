@@ -57,6 +57,8 @@
     <addaction name="action_Read"/>
     <addaction name="action_Pause"/>
     <addaction name="actionStop"/>
+    <addaction name="separator"/>
+    <addaction name="actionGo_to_word"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menu_Reading"/>
@@ -121,6 +123,14 @@
    </property>
    <property name="text">
     <string>&amp;Show pivot</string>
+   </property>
+  </action>
+  <action name="actionGo_to_word">
+   <property name="text">
+    <string>&amp;Go to word...</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+G</string>
    </property>
   </action>
  </widget>

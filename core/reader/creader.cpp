@@ -13,6 +13,8 @@
 
 CReader::CReader(ReaderInterface* interface) : _interface(interface)
 {
+	assert_r(_interface);
+
 	_readingTimer.setSingleShot(true);
 	QObject::connect(&_readingTimer, &QTimer::timeout, [this](){
 		readNextFragment();
@@ -92,6 +94,12 @@ void CReader::resetAndStop()
 {
 	pauseReading();
 	_position = 0;
+}
+
+void CReader::goToWord(size_t wordIndex)
+{
+	_position = wordIndex;
+	_interface->updateDisplay(_position);
 }
 
 size_t CReader::readingSpeed() const

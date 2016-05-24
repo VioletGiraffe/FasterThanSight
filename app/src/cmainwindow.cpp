@@ -14,6 +14,7 @@ DISABLE_COMPILER_WARNINGS
 #include <QFileDialog>
 #include <QFileInfo>
 #include <QFontDialog>
+#include <QInputDialog>
 #include <QLabel>
 #include <QSlider>
 #include <QSpinBox>
@@ -157,6 +158,24 @@ void CMainWindow::initActions()
 		_reader.resetAndStop();
 		ui->_text->clear();
 		updateProgressLabel();
+	});
+
+	connect(ui->actionGo_to_word, &QAction::triggered, [this](){
+
+		const int maxValue = (int)_reader.totalNumWords();
+		const int minValue = maxValue > 0 ? 1 : 0;
+		bool ok = false;
+		const int word = QInputDialog::getInt(this,
+			tr("Go to word"),
+			tr("Enter the word number to go to, %1 to %2").arg(minValue).arg(maxValue),
+			maxValue / 2,
+			0,
+			maxValue,
+			1,
+			&ok);
+
+		if (ok)
+			_reader.goToWord(word - 1);
 	});
 
 	connect(ui->action_Exit, &QAction::triggered, qApp, &QApplication::exit);
