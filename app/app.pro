@@ -56,9 +56,11 @@ include (src/widgets/widgets.pri)
 
 SOURCES += \
 	src\main.cpp\
-	src\cmainwindow.cpp
+	src\cmainwindow.cpp \
+    src/cbookmark.cpp
 
 HEADERS += src\cmainwindow.h \
-	src/uisettings.h
+	src/uisettings.h \
+    src/cbookmark.h
 
 FORMS += src\cmainwindow.ui

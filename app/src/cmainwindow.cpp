@@ -1,5 +1,6 @@
 #include "cmainwindow.h"
 #include "compiler/compiler_warnings_control.h"
+#include "assert/advanced_assert.h"
 
 #include "widgets/creaderview.h"
 
@@ -42,6 +43,8 @@ CMainWindow::CMainWindow(QWidget *parent) :
 	initStatusBar();
 	initToolBars();
 	initActions();
+
+	loadBookmarksFromSettings();
 
 	setUnifiedTitleAndToolBarOnMac(true);
 	setAcceptDrops(true);
@@ -194,6 +197,15 @@ void CMainWindow::initActions()
 			_reader.goToWord(word - 1);
 	});
 
+	connect(ui->action_Bookmark_current_position, &QAction::triggered, [this](){
+		if (_reader.filePath().isEmpty())
+			return;
+
+		_bookmarks.emplace_back(_reader.filePath(), _reader.position());
+		saveBookmarksToSettings();
+		registerBookmarkInUi(_bookmarks.back());
+	});
+
 	connect(ui->action_Exit, &QAction::triggered, qApp, &QApplication::exit);
 }
 
@@ -235,6 +247,36 @@ void CMainWindow::keepScreenFromTurningOff(bool keepFromTurningOff)
 #else
 	#pragma message ("Not implemented")
 #endif
+}
+
+void CMainWindow::loadBookmarksFromSettings()
+{
+	_bookmarks.clear();
+	const QStringList serializedBookmarks = CSettings().value(UI_BOOKMARKS_STORAGE).toStringList();
+	for (const QString& entry: serializedBookmarks)
+	{
+		const QStringList components = entry.split(';');
+		assert_and_return_r(components.size() == 2, );
+		_bookmarks.emplace_back(components[0], (size_t)components[1].toULongLong());
+		registerBookmarkInUi(_bookmarks.back());
+	}
+}
+
+void CMainWindow::saveBookmarksToSettings() const
+{
+	QStringList serialzedBookmarks;
+	for (const CBookmark& bm : _bookmarks)
+		serialzedBookmarks.push_back(bm.filePath % ';' % QString::number(bm.wordIndex));
+
+	CSettings().setValue(UI_BOOKMARKS_STORAGE, serialzedBookmarks);
+}
+
+void CMainWindow::registerBookmarkInUi(const CBookmark& bookmark)
+{
+	ui->menu_Bookmarks->addAction(bookmark.filePath % ": " % QString::number(bookmark.wordIndex + 1), [this, bookmark](){
+		_reader.loadFromFile(bookmark.filePath);
+		_reader.goToWord(bookmark.wordIndex);
+	});
 }
 
 void CMainWindow::updateDisplay(const size_t currentTextFragmentIndex)

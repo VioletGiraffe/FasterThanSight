@@ -16,3 +16,5 @@ RESTORE_COMPILER_WARNINGS
 
 #define UI_SHOW_PIVOT_SETTING QStringLiteral("UI/Reading/ShowPivot")
 #define UI_SHOW_PIVOT_DEFAULT false
+
+#define UI_BOOKMARKS_STORAGE QStringLiteral("UI/Bookmarks/Bookrmarks")

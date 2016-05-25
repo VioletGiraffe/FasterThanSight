@@ -31,6 +31,7 @@ public:
 
 // State
 	State state() const;
+	QString filePath() const;
 	// Current word index
 	size_t position() const;
 	size_t totalNumWords() const;
@@ -69,6 +70,8 @@ private:
 
 private:
 	ReaderInterface * const _interface;
+
+	QString _filePath;
 
 	std::vector<TextFragmentWithPause> _textFragments;
 	size_t                    _position = 0;

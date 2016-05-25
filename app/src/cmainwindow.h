@@ -1,11 +1,14 @@
 #pragma once
 
+#include "cbookmark.h"
 #include "reader/creader.h"
 #include "compiler/compiler_warnings_control.h"
 
 DISABLE_COMPILER_WARNINGS
 #include <QMainWindow>
 RESTORE_COMPILER_WARNINGS
+
+#include <deque>
 
 class QLabel;
 class QSlider;
@@ -36,6 +39,10 @@ private:
 
 	void keepScreenFromTurningOff(bool keepFromTurningOff);
 
+	void loadBookmarksFromSettings();
+	void saveBookmarksToSettings() const;
+	void registerBookmarkInUi(const CBookmark& bookmark);
+
 private:
 // Reader callbacks
 	void updateDisplay(const size_t currentTextFragmentIndex) override;
@@ -56,5 +63,8 @@ private:
 
 // Reader
 	CReader _reader;
+
+// Bookmarks
+	std::deque<CBookmark> _bookmarks;
 };
 

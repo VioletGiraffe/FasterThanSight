@@ -55,7 +55,16 @@
     <addaction name="separator"/>
     <addaction name="actionGo_to_word"/>
    </widget>
+   <widget class="QMenu" name="menu_Bookmarks">
+    <property name="title">
+     <string>&amp;Bookmarks</string>
+    </property>
+    <addaction name="separator"/>
+    <addaction name="action_Bookmark_current_position"/>
+    <addaction name="separator"/>
+   </widget>
    <addaction name="menuFile"/>
+   <addaction name="menu_Bookmarks"/>
    <addaction name="menu_Reading"/>
    <addaction name="menu_Settings"/>
   </widget>
@@ -131,6 +140,11 @@
   <action name="action_Colors_and_styling">
    <property name="text">
     <string>&amp;Colors and styling...</string>
+   </property>
+  </action>
+  <action name="action_Bookmark_current_position">
+   <property name="text">
+    <string>&amp;Bookmark current position</string>
    </property>
   </action>
  </widget>

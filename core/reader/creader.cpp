@@ -40,12 +40,23 @@ bool CReader::loadFromFile(const QString& filePath)
 	CTextParser parser;
 	load(parser.parse(CFileDecoder::readDataAndDecodeText(filePath)));
 
-	return !_textFragments.empty();
+	if (!_textFragments.empty())
+	{
+		_filePath = filePath;
+		return true;
+	}
+	else
+		return false;
 }
 
 CReader::State CReader::state() const
 {
 	return _state;
+}
+
+QString CReader::filePath() const
+{
+	return _filePath;
 }
 
 size_t CReader::position() const
