@@ -24,6 +24,11 @@ DISABLE_COMPILER_WARNINGS
 #include <QStatusBar>
 #include <QStringBuilder>
 #include <QToolBar>
+
+#ifdef _WIN32
+#include <Windows.h>
+#endif
+
 RESTORE_COMPILER_WARNINGS
 
 CMainWindow::CMainWindow(QWidget *parent) :
@@ -221,6 +226,17 @@ void CMainWindow::openFile(const QString &filePath)
 	}
 }
 
+void CMainWindow::keepScreenFromTurningOff(bool keepFromTurningOff)
+{
+#if defined _WIN32
+	SetThreadExecutionState(keepFromTurningOff ? (ES_CONTINUOUS | ES_DISPLAY_REQUIRED) : ES_CONTINUOUS);
+#elif defined __APPLE__
+	#pragma message ("Not implemented")
+#else
+	#pragma message ("Not implemented")
+#endif
+}
+
 void CMainWindow::updateDisplay(const size_t currentTextFragmentIndex)
 {
 	const auto& currentFragment = _reader.textFragment(currentTextFragmentIndex);
@@ -237,9 +253,11 @@ void CMainWindow::stateChanged(const CReader::State newState)
 	if (newState == CReader::Reading)
 	{
 		ui->action_Pause->setEnabled(true);
+		keepScreenFromTurningOff(true);
 	}
 	else if (newState == CReader::Paused)
 	{
 		ui->action_Pause->setEnabled(false);
+		keepScreenFromTurningOff(false);
 	}
 }

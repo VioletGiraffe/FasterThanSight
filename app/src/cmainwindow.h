@@ -34,6 +34,8 @@ private:
 	void updateProgressLabel();
 	void openFile(const QString& filePath);
 
+	void keepScreenFromTurningOff(bool keepFromTurningOff);
+
 private:
 // Reader callbacks
 	void updateDisplay(const size_t currentTextFragmentIndex) override;
