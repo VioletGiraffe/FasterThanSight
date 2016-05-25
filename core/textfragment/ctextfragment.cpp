@@ -6,31 +6,52 @@ TextFragment::TextFragment(const QString& word, const QString& punctuation, Deli
 
 int TextFragment::pivotLetterIndex() const
 {
-	switch (_word.length())
+	int pivotIndex = -1;
+	const int wordLength = _word.length();
+	switch (wordLength)
 	{
 	case 1:
-		return 0; // First letter
+		pivotIndex = 0; // First letter
+		break;
 	case 2:
 	case 3:
 	case 4:
 	case 5:
-		return 1; // Second letter
+		pivotIndex = 1; // Second letter
+		break;
 	case 6:
 	case 7:
 	case 8:
 	case 9:
-		return 2; // Third letter
+		pivotIndex = 2; // Third letter
+		break;
 	case 10:
 	case 11:
 	case 12:
 	case 13:
-		return 3; // Fourth letter
+		pivotIndex = 3; // Fourth letter
 		break;
 	case 0:
-		return -1;
+		pivotIndex = -1;
+		break;
 	default:
-		return 5; // Fifth letter
+		pivotIndex = 4; // Fifth letter
+		break;
 	}
+
+	if (pivotIndex == -1)
+		return -1;
+	else if (wordLength > 1 && !_word[pivotIndex].isLetterOrNumber())
+	{
+		if (pivotIndex > wordLength/2)
+			return pivotIndex - 1;
+		else if (pivotIndex < wordLength/2)
+			return pivotIndex + 1;
+		else
+			return pivotIndex - 1;
+	}
+	else
+		return pivotIndex;
 }
 
 QString TextFragment::word() const
