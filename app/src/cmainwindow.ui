@@ -26,7 +26,7 @@
      <x>0</x>
      <y>0</y>
      <width>652</width>
-     <height>20</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -61,6 +61,7 @@
     </property>
     <addaction name="separator"/>
     <addaction name="action_Bookmark_current_position"/>
+    <addaction name="action_Remove_bookmarks"/>
     <addaction name="separator"/>
    </widget>
    <addaction name="menuFile"/>
@@ -145,6 +146,11 @@
   <action name="action_Bookmark_current_position">
    <property name="text">
     <string>&amp;Bookmark current position</string>
+   </property>
+  </action>
+  <action name="action_Remove_bookmarks">
+   <property name="text">
+    <string>&amp;Remove bookmarks...</string>
    </property>
   </action>
  </widget>

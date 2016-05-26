@@ -55,12 +55,15 @@ INCLUDEPATH += \
 include (src/widgets/widgets.pri)
 
 SOURCES += \
-	src\main.cpp\
-	src\cmainwindow.cpp \
-    src/cbookmark.cpp
+	src/main.cpp\
+	src/cmainwindow.cpp \
+	src/bookmarks/cbookmark.cpp \
+	src/bookmarks/cbookmarkseditor.cpp
 
 HEADERS += src\cmainwindow.h \
-	src/uisettings.h \
-    src/cbookmark.h
+    src/uisettings.h \
+    src/bookmarks/cbookmark.h \
+    src/bookmarks/cbookmarkseditor.h
 
-FORMS += src\cmainwindow.ui
+FORMS += src\cmainwindow.ui \
+    src/bookmarks/cbookmarkseditor.ui

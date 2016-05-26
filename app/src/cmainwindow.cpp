@@ -3,6 +3,7 @@
 #include "assert/advanced_assert.h"
 
 #include "widgets/creaderview.h"
+#include "bookmarks/cbookmarkseditor.h"
 
 #include "settings/csettings.h"
 #include "uisettings.h"
@@ -203,7 +204,16 @@ void CMainWindow::initActions()
 
 		_bookmarks.emplace_back(_reader.filePath(), _reader.position());
 		saveBookmarksToSettings();
-		registerBookmarkInUi(_bookmarks.back());
+		updateBookmarksMenuItemsList();
+	});
+
+	connect(ui->action_Remove_bookmarks, &QAction::triggered, [this](){
+		CBookmarksEditor editor(_bookmarks, this);
+		editor.exec();
+
+		_bookmarks = editor.bookmarks();
+		saveBookmarksToSettings();
+		loadBookmarksFromSettings(); // to update the menu items list
 	});
 
 	connect(ui->action_Exit, &QAction::triggered, qApp, &QApplication::exit);
@@ -258,8 +268,9 @@ void CMainWindow::loadBookmarksFromSettings()
 		const QStringList components = entry.split(';');
 		assert_and_return_r(components.size() == 2, );
 		_bookmarks.emplace_back(components[0], (size_t)components[1].toULongLong());
-		registerBookmarkInUi(_bookmarks.back());
 	}
+
+	updateBookmarksMenuItemsList();
 }
 
 void CMainWindow::saveBookmarksToSettings() const
@@ -271,12 +282,19 @@ void CMainWindow::saveBookmarksToSettings() const
 	CSettings().setValue(UI_BOOKMARKS_STORAGE, serialzedBookmarks);
 }
 
-void CMainWindow::registerBookmarkInUi(const CBookmark& bookmark)
+void CMainWindow::updateBookmarksMenuItemsList()
 {
-	ui->menu_Bookmarks->addAction(bookmark.filePath % ": " % QString::number(bookmark.wordIndex + 1), [this, bookmark](){
-		_reader.loadFromFile(bookmark.filePath);
-		_reader.goToWord(bookmark.wordIndex);
-	});
+	for (QAction* action: ui->menu_Bookmarks->actions())
+		if (action != ui->action_Bookmark_current_position && action != ui->action_Remove_bookmarks && !action->isSeparator())
+			ui->menu_Bookmarks->removeAction(action);
+
+	for (const CBookmark& bm: _bookmarks)
+	{
+		ui->menu_Bookmarks->addAction(bm.filePath % ": " % QString::number(bm.wordIndex + 1), [this, bm](){
+			_reader.loadFromFile(bm.filePath);
+			_reader.goToWord(bm.wordIndex);
+		});
+	}
 }
 
 void CMainWindow::updateDisplay(const size_t currentTextFragmentIndex)

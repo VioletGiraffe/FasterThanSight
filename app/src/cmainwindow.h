@@ -1,6 +1,6 @@
 #pragma once
 
-#include "cbookmark.h"
+#include "bookmarks/cbookmark.h"
 #include "reader/creader.h"
 #include "compiler/compiler_warnings_control.h"
 
@@ -41,7 +41,7 @@ private:
 
 	void loadBookmarksFromSettings();
 	void saveBookmarksToSettings() const;
-	void registerBookmarkInUi(const CBookmark& bookmark);
+	void updateBookmarksMenuItemsList();
 
 private:
 // Reader callbacks
