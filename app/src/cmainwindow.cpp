@@ -36,7 +36,8 @@ RESTORE_COMPILER_WARNINGS
 CMainWindow::CMainWindow(QWidget *parent) :
 	QMainWindow(parent),
 	ui(new Ui::CMainWindow),
-	_reader(this)
+	_reader(this),
+	_colorsSetupDialog(this)
 {
 	ui->setupUi(this);
 
@@ -150,6 +151,10 @@ void CMainWindow::initActions()
 		CSettings().setValue(UI_SHOW_PIVOT_SETTING, checked);
 	});
 	ui->actionShow_pivot->setChecked(CSettings().value(UI_SHOW_PIVOT_SETTING, UI_SHOW_PIVOT_DEFAULT).toBool());
+
+	connect(ui->action_Colors_and_styling, &QAction::triggered, [this]() {
+		_colorsSetupDialog.show();
+	});
 
 	ui->actionOpen->setIcon(QApplication::style()->standardIcon(QStyle::SP_DirOpenIcon));
 	connect(ui->actionOpen, &QAction::triggered, [this](){

@@ -58,12 +58,15 @@ SOURCES += \
 	src/main.cpp\
 	src/cmainwindow.cpp \
 	src/bookmarks/cbookmark.cpp \
-	src/bookmarks/cbookmarkseditor.cpp
+	src/bookmarks/cbookmarkseditor.cpp \
+    src/styling/ccolorsdialog.cpp
 
 HEADERS += src\cmainwindow.h \
     src/uisettings.h \
     src/bookmarks/cbookmark.h \
-    src/bookmarks/cbookmarkseditor.h
+    src/bookmarks/cbookmarkseditor.h \
+    src/styling/ccolorsdialog.h
 
 FORMS += src\cmainwindow.ui \
-    src/bookmarks/cbookmarkseditor.ui
+    src/bookmarks/cbookmarkseditor.ui \
+    src/styling/ccolorsdialog.ui
