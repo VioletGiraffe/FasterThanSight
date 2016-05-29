@@ -2,6 +2,7 @@
 
 #include "assert/advanced_assert.h"
 #include "settings/csettings.h"
+#include "styling/ccolorsdialog.h"
 
 DISABLE_COMPILER_WARNINGS
 #include <QApplication>
@@ -24,6 +25,8 @@ int main(int argc, char *argv[])
 
 	CMainWindow w;
 	w.show();
+
+	app.setStyleSheet(CColorsDialog::storedStyle());
 
 	return app.exec();
 }

@@ -25,6 +25,16 @@ CReaderView::~CReaderView()
 	_textFadeOutAnimation->stop();
 }
 
+void CReaderView::setPivotCharacterColor(const QColor& color)
+{
+	_pivotCharacterColor = color;
+}
+
+void CReaderView::setTextBackgroundColor(const QColor& color)
+{
+	_textBackgroundColor = color;
+}
+
 void CReaderView::setText(const QString& text, int pivotCharacterIndex /*= -1*/)
 {
 	const auto setTextImplementation = [text, pivotCharacterIndex, this]() {
@@ -66,14 +76,19 @@ void CReaderView::clear()
 	update();
 }
 
-void CReaderView::paintEvent(QPaintEvent* e)
+inline QString coloredHtmlText(const QString& text, const QColor& color)
 {
-	QWidget::paintEvent(e);
+	return "<font color=\"" % color.name() % "\">" % text % "</font>";
+}
+
+void CReaderView::paintEvent(QPaintEvent* /*e*/)
+{
+	QPainter p(this);
+	p.fillRect(rect(), palette().color(QPalette::Background));
 
 	if (_text.isEmpty())
 		return;
 
-	QPainter p(this);
 	QFontMetrics fontMetrics(font());
 // 	p.drawLine(width() / 2, 0, width() / 2, height());
 // 	p.drawLine(0, height() / 2, width(), height() / 2);
@@ -85,15 +100,19 @@ void CReaderView::paintEvent(QPaintEvent* e)
 	doc.setDefaultFont(font());
 	if (_pivotCharacterIndex >= 0)
 	{
-		p.drawLine(width() / 2, height() / 2 - 3 * fontMetrics.height() / 2, width() / 2, height() / 2 - fontMetrics.height());
-		p.drawLine(width() / 2, height() / 2 + fontMetrics.height(), width() / 2, height() / 2 + 3 * fontMetrics.height() / 2);
+		p.fillRect(0, height() / 2 - 3 * fontMetrics.height() / 2, width(), 3 * fontMetrics.height(), _textBackgroundColor);
+		p.drawLine(width() / 2, height() / 2 - 3 * fontMetrics.height() / 2, width() / 2, height() / 2 - 8 * fontMetrics.height() / 10);
+		p.drawLine(width() / 2, height() / 2 + 8 * fontMetrics.height() / 10, width() / 2, height() / 2 + 3 * fontMetrics.height() / 2);
 
-		doc.setHtml(_text.left(_pivotCharacterIndex) % "<font color=\"red\">" % _text[_pivotCharacterIndex] % "</font>" % _text.mid(_pivotCharacterIndex + 1));
+		doc.setHtml(
+			coloredHtmlText(_text.left(_pivotCharacterIndex), palette().color(QPalette::Text))
+			% coloredHtmlText(QString(_text[_pivotCharacterIndex]), _pivotCharacterColor.name())
+			% coloredHtmlText(_text.mid(_pivotCharacterIndex + 1), palette().color(QPalette::Text))
+			);
 	}
 	else
 		doc.setPlainText(_text);
 
 	p.translate(textOffset);
-
 	doc.drawContents(&p);
 }
