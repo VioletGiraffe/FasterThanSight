@@ -46,6 +46,10 @@ mac*|linux*{
 	PRE_TARGETDEPS += $${DESTDIR}/libcore.a $${DESTDIR}/libautoupdater.a
 }
 
+win*{
+	RC_FILE = resources/FTS.rc
+}
+
 INCLUDEPATH += \
 	src/ \
 	../core/ \
@@ -59,7 +63,7 @@ SOURCES += \
 	src/cmainwindow.cpp \
 	src/bookmarks/cbookmark.cpp \
 	src/bookmarks/cbookmarkseditor.cpp \
-    src/styling/ccolorsdialog.cpp
+	src/styling/ccolorsdialog.cpp
 
 HEADERS += src\cmainwindow.h \
     src/uisettings.h \
