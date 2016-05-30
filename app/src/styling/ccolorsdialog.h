@@ -7,6 +7,8 @@ DISABLE_COMPILER_WARNINGS
 #include <QDialog>
 RESTORE_COMPILER_WARNINGS
 
+#include <deque>
+
 namespace Ui {
 class CColorsDialog;
 }
@@ -15,6 +17,16 @@ class QToolButton;
 
 class CColorsDialog : public QDialog
 {
+	struct Theme {
+		QColor _windowBgColor;
+		QColor _textBgColor;
+		QColor _textColor;
+		QColor _pivotColor;
+
+		QString toString() const;
+		void fromString(const QString& str);
+	};
+
 public:
 	explicit CColorsDialog(QWidget *parent = 0);
 	~CColorsDialog();
@@ -27,15 +39,12 @@ public:
 private:
 	QString temporaryStyle() const;
 
-private:
+	void loadThemes();
 	void initColorPicker(QToolButton* btn, QColor& color);
 
 private:
 	Ui::CColorsDialog *ui;
 
-	QColor _windowBgColor;
-	QColor _textBgColor;
-	QColor _textColor;
-	QColor _pivotColor;
+	std::deque<Theme> _themes;
 };
 

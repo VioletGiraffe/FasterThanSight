@@ -1,12 +1,15 @@
 #include "ccolorsdialog.h"
-#include "ui_ccolorsdialog.h"
 
 #include "settings/csettings.h"
+#include "assert/advanced_assert.h"
 
 DISABLE_COMPILER_WARNINGS
+#include "ui_ccolorsdialog.h"
+
 #include <QApplication>
 #include <QColorDialog>
 #include <QDebug>
+#include <QStringBuilder>
 RESTORE_COMPILER_WARNINGS
 
 #define WINDOW_BG_COLOR QStringLiteral("Color/WindowBgColor")
@@ -21,15 +24,15 @@ CColorsDialog::CColorsDialog(QWidget *parent) :
 	ui->setupUi(this);
 
 	CSettings s;
-	_windowBgColor = s.value(WINDOW_BG_COLOR, qApp->palette().background().color()).value<QColor>();
-	_textBgColor = s.value(TEXT_BG_COLOR, qApp->palette().background().color()).value<QColor>();
-	_textColor = s.value(TEXT_COLOR, qApp->palette().text().color()).value<QColor>();
-	_pivotColor = s.value(PIVOT_COLOR, QColor::fromRgb(255, 36, 0)).value<QColor>();
-
-	initColorPicker(ui->btnWindowBackgroundColor, _windowBgColor);
-	initColorPicker(ui->btnTextBackgroundColor, _textBgColor);
-	initColorPicker(ui->btnTextColor, _textColor);
-	initColorPicker(ui->btnPivotColor, _pivotColor);
+// 	_windowBgColor = s.value(WINDOW_BG_COLOR, qApp->palette().background().color()).value<QColor>();
+// 	_textBgColor = s.value(TEXT_BG_COLOR, qApp->palette().background().color()).value<QColor>();
+// 	_textColor = s.value(TEXT_COLOR, qApp->palette().text().color()).value<QColor>();
+// 	_pivotColor = s.value(PIVOT_COLOR, QColor::fromRgb(255, 36, 0)).value<QColor>();
+// 
+// 	initColorPicker(ui->btnWindowBackgroundColor, _windowBgColor);
+// 	initColorPicker(ui->btnTextBackgroundColor, _textBgColor);
+// 	initColorPicker(ui->btnTextColor, _textColor);
+// 	initColorPicker(ui->btnPivotColor, _pivotColor);
 }
 
 CColorsDialog::~CColorsDialog()
@@ -39,11 +42,11 @@ CColorsDialog::~CColorsDialog()
 
 void CColorsDialog::accept()
 {
-	CSettings s;
-	s.setValue(WINDOW_BG_COLOR, _windowBgColor);
-	s.setValue(TEXT_BG_COLOR, _textBgColor);
-	s.setValue(TEXT_COLOR, _textColor);
-	s.setValue(PIVOT_COLOR, _pivotColor);
+// 	CSettings s;
+// 	s.setValue(WINDOW_BG_COLOR, _windowBgColor);
+// 	s.setValue(TEXT_BG_COLOR, _textBgColor);
+// 	s.setValue(TEXT_COLOR, _textColor);
+// 	s.setValue(PIVOT_COLOR, _pivotColor);
 
 	QDialog::accept();
 }
@@ -74,11 +77,18 @@ QString CColorsDialog::storedStyle()
 
 QString CColorsDialog::temporaryStyle() const
 {
-	return styleTemplate
-		.arg(_windowBgColor.name())
-		.arg(_textBgColor.name())
-		.arg(_textColor.name())
-		.arg(_pivotColor.name());
+// 	return styleTemplate
+// 		.arg(_windowBgColor.name())
+// 		.arg(_textBgColor.name())
+// 		.arg(_textColor.name())
+// 		.arg(_pivotColor.name());
+
+	return "";
+}
+
+void CColorsDialog::loadThemes()
+{
+
 }
 
 void CColorsDialog::initColorPicker(QToolButton* btn, QColor& color)
@@ -94,4 +104,25 @@ void CColorsDialog::initColorPicker(QToolButton* btn, QColor& color)
 		btn->setStyleSheet(QString("background-color: %1;").arg(color.name()));
 		qApp->setStyleSheet(temporaryStyle());
 	});
+}
+
+QString CColorsDialog::Theme::toString() const
+{
+	return
+		QVariant(_windowBgColor).toString() % ';' % 
+		QVariant(_textBgColor).toString() % ';' % 
+		QVariant(_textColor).toString() % ';' % 
+		QVariant(_pivotColor).toString()
+		;
+}
+
+void CColorsDialog::Theme::fromString(const QString& str)
+{
+	const auto colors = str.split(';');
+	assert_and_return_r(colors.size() == 4, );
+
+	_windowBgColor = QVariant(colors[0]).value<QColor>();
+	_textBgColor = QVariant(colors[1]).value<QColor>();
+	_textColor = QVariant(colors[2]).value<QColor>();
+	_pivotColor = QVariant(colors[3]).value<QColor>();
 }
