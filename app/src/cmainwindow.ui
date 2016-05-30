@@ -58,7 +58,7 @@
     </property>
     <addaction name="action_Font"/>
     <addaction name="actionShow_pivot"/>
-    <addaction name="action_Colors_and_styling"/>
+    <addaction name="action_Themes"/>
    </widget>
    <widget class="QMenu" name="menu_Reading">
     <property name="title">
@@ -153,9 +153,9 @@
     <string>Ctrl+G</string>
    </property>
   </action>
-  <action name="action_Colors_and_styling">
+  <action name="action_Themes">
    <property name="text">
-    <string>&amp;Colors and styling...</string>
+    <string>Themes...</string>
    </property>
   </action>
   <action name="action_Bookmark_current_position">

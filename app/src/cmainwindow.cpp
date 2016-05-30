@@ -152,7 +152,7 @@ void CMainWindow::initActions()
 	});
 	ui->actionShow_pivot->setChecked(CSettings().value(UI_SHOW_PIVOT_SETTING, UI_SHOW_PIVOT_DEFAULT).toBool());
 
-	connect(ui->action_Colors_and_styling, &QAction::triggered, [this]() {
+	connect(ui->action_Themes, &QAction::triggered, [this]() {
 		_colorsSetupDialog.show();
 	});
 

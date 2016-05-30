@@ -12,10 +12,9 @@ DISABLE_COMPILER_WARNINGS
 #include <QStringBuilder>
 RESTORE_COMPILER_WARNINGS
 
-#define WINDOW_BG_COLOR QStringLiteral("Color/WindowBgColor")
-#define TEXT_BG_COLOR QStringLiteral("Color/TextBgColor")
-#define TEXT_COLOR QStringLiteral("Color/TextColor")
-#define PIVOT_COLOR QStringLiteral("Color/PivotColor")
+#define THEMES_SETTING QStringLiteral("Themes/ThemesList")
+#define CURRENT_THEME_SETTING QStringLiteral("Themes/CurrentTheme")
+#define DEFAULT_THEMES_LIST QStringList {"1337;#191919;#272727;#fffbe6;#ff5e5e;"}
 
 CColorsDialog::CColorsDialog(QWidget *parent) :
 	QDialog(parent),
@@ -23,16 +22,20 @@ CColorsDialog::CColorsDialog(QWidget *parent) :
 {
 	ui->setupUi(this);
 
-	CSettings s;
-// 	_windowBgColor = s.value(WINDOW_BG_COLOR, qApp->palette().background().color()).value<QColor>();
-// 	_textBgColor = s.value(TEXT_BG_COLOR, qApp->palette().background().color()).value<QColor>();
-// 	_textColor = s.value(TEXT_COLOR, qApp->palette().text().color()).value<QColor>();
-// 	_pivotColor = s.value(PIVOT_COLOR, QColor::fromRgb(255, 36, 0)).value<QColor>();
-// 
-// 	initColorPicker(ui->btnWindowBackgroundColor, _windowBgColor);
-// 	initColorPicker(ui->btnTextBackgroundColor, _textBgColor);
-// 	initColorPicker(ui->btnTextColor, _textColor);
-// 	initColorPicker(ui->btnPivotColor, _pivotColor);
+	const auto themes = themesFromSettings();
+	_themes = themes.first;
+	_currentThemeIndex = themes.second;
+	for (const auto& theme: _themes)
+		ui->_cbTheme->addItem(theme._name);
+
+	ui->_cbTheme->setCurrentIndex(_currentThemeIndex);
+
+	assert_and_return_r(_currentThemeIndex < _themes.size(), );
+	Theme& theme = _themes[_currentThemeIndex];
+	initColorPicker(ui->btnWindowBackgroundColor, theme._windowBgColor);
+	initColorPicker(ui->btnTextBackgroundColor, theme._textBgColor);
+	initColorPicker(ui->btnTextColor, theme._textColor);
+	initColorPicker(ui->btnPivotColor, theme._pivotColor);
 }
 
 CColorsDialog::~CColorsDialog()
@@ -40,55 +43,42 @@ CColorsDialog::~CColorsDialog()
 	delete ui;
 }
 
-void CColorsDialog::accept()
+QString CColorsDialog::currentAcceptedStyle()
 {
-// 	CSettings s;
-// 	s.setValue(WINDOW_BG_COLOR, _windowBgColor);
-// 	s.setValue(TEXT_BG_COLOR, _textBgColor);
-// 	s.setValue(TEXT_COLOR, _textColor);
-// 	s.setValue(PIVOT_COLOR, _pivotColor);
+	const auto themes = themesFromSettings();
+	assert_and_return_r(themes.second < themes.first.size(), QString());
 
-	QDialog::accept();
+	return themes.first[themes.second].style();
 }
 
-void CColorsDialog::reject()
+QString CColorsDialog::currentStyle() const
 {
-	qApp->setStyleSheet(storedStyle());
-	QDialog::reject();
+	assert_and_return_r(_currentThemeIndex < _themes.size(), QString());
+
+	const Theme& theme = _themes[_currentThemeIndex];
+	return theme.style();
 }
 
-static const QString styleTemplate =
-"CReaderView {"
-"background-color: %1;"
-"qproperty-textBackgroundColor: %2;"
-"color: %3;"
-"qproperty-pivotCharacterColor: %4;"
-"}";
-
-QString CColorsDialog::storedStyle()
+std::pair<std::deque<CColorsDialog::Theme>, size_t> CColorsDialog::themesFromSettings()
 {
-	CSettings s;
-	return styleTemplate
-		.arg(s.value(WINDOW_BG_COLOR, qApp->palette().background().color()).value<QColor>().name())
-		.arg(s.value(TEXT_BG_COLOR, qApp->palette().background().color()).value<QColor>().name())
-		.arg(s.value(TEXT_COLOR, qApp->palette().text().color()).value<QColor>().name())
-		.arg(s.value(PIVOT_COLOR, QColor::fromRgb(255, 36, 0)).value<QColor>().name());
+	std::deque<Theme> themesContainer;
+
+	const QStringList themes = CSettings().value(THEMES_SETTING, DEFAULT_THEMES_LIST).toStringList();
+	for (const QString& theme: themes)
+		themesContainer.emplace_back(theme);
+
+	const size_t currentThemeIndex = (size_t)CSettings().value(CURRENT_THEME_SETTING, 0).toULongLong();
+	return std::make_pair(themesContainer, currentThemeIndex);
 }
 
-QString CColorsDialog::temporaryStyle() const
+void CColorsDialog::saveThemes() const
 {
-// 	return styleTemplate
-// 		.arg(_windowBgColor.name())
-// 		.arg(_textBgColor.name())
-// 		.arg(_textColor.name())
-// 		.arg(_pivotColor.name());
+	QStringList list;
+	for (const Theme& theme :_themes)
+		list.push_back(theme.toString() + ';');
 
-	return "";
-}
-
-void CColorsDialog::loadThemes()
-{
-
+	CSettings().setValue(THEMES_SETTING, list);
+	CSettings().setValue(CURRENT_THEME_SETTING, _currentThemeIndex);
 }
 
 void CColorsDialog::initColorPicker(QToolButton* btn, QColor& color)
@@ -102,27 +92,46 @@ void CColorsDialog::initColorPicker(QToolButton* btn, QColor& color)
 
 		color = c;
 		btn->setStyleSheet(QString("background-color: %1;").arg(color.name()));
-		qApp->setStyleSheet(temporaryStyle());
+		qApp->setStyleSheet(currentStyle());
 	});
+}
+
+CColorsDialog::Theme::Theme(const QString& str)
+{
+	const auto components = str.split(';', QString::SkipEmptyParts);
+	assert_and_return_r(components.size() == 5, );
+
+	_name = components[0];
+	_windowBgColor = QVariant(components[1]).value<QColor>();
+	_textBgColor = QVariant(components[2]).value<QColor>();
+	_textColor = QVariant(components[3]).value<QColor>();
+	_pivotColor = QVariant(components[4]).value<QColor>();
 }
 
 QString CColorsDialog::Theme::toString() const
 {
 	return
-		QVariant(_windowBgColor).toString() % ';' % 
-		QVariant(_textBgColor).toString() % ';' % 
-		QVariant(_textColor).toString() % ';' % 
+		_name % ';' %
+		QVariant(_windowBgColor).toString() % ';' %
+		QVariant(_textBgColor).toString() % ';' %
+		QVariant(_textColor).toString() % ';' %
 		QVariant(_pivotColor).toString()
 		;
 }
 
-void CColorsDialog::Theme::fromString(const QString& str)
+QString CColorsDialog::Theme::style() const
 {
-	const auto colors = str.split(';');
-	assert_and_return_r(colors.size() == 4, );
+	static const QString styleTemplate =
+		"CReaderView {"
+		"background-color: %1;"
+		"qproperty-textBackgroundColor: %2;"
+		"color: %3;"
+		"qproperty-pivotCharacterColor: %4;"
+		"}";
 
-	_windowBgColor = QVariant(colors[0]).value<QColor>();
-	_textBgColor = QVariant(colors[1]).value<QColor>();
-	_textColor = QVariant(colors[2]).value<QColor>();
-	_pivotColor = QVariant(colors[3]).value<QColor>();
+	return styleTemplate
+		.arg(_windowBgColor.name())
+		.arg(_textBgColor.name())
+		.arg(_textColor.name())
+		.arg(_pivotColor.name());
 }

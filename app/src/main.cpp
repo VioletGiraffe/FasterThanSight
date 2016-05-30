@@ -26,7 +26,7 @@ int main(int argc, char *argv[])
 	CMainWindow w;
 	w.show();
 
-	app.setStyleSheet(CColorsDialog::storedStyle());
+	app.setStyleSheet(CColorsDialog::currentAcceptedStyle());
 
 	return app.exec();
 }
