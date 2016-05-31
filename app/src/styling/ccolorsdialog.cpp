@@ -14,7 +14,7 @@ RESTORE_COMPILER_WARNINGS
 
 #define THEMES_SETTING QStringLiteral("Themes/ThemesList")
 #define CURRENT_THEME_SETTING QStringLiteral("Themes/CurrentTheme")
-#define DEFAULT_THEMES_LIST QStringList {"1337;#191919;#272727;#fffbe6;#ff5e5e;"}
+#define DEFAULT_THEMES_LIST QStringList {"1337;#191919;#272727;#fffbe6;#ff5e5e;", "Blue Dawn;#0f1318;#0f1318;#effbff;#e9ee00;", "Bliess;#191919;#282A2E;#CED1CF;#abfdd8;"}
 
 CColorsDialog::CColorsDialog(QWidget *parent) :
 	QDialog(parent),
@@ -28,14 +28,20 @@ CColorsDialog::CColorsDialog(QWidget *parent) :
 	for (const auto& theme: _themes)
 		ui->_cbTheme->addItem(theme._name);
 
-	ui->_cbTheme->setCurrentIndex(_currentThemeIndex);
+	connect(ui->_cbTheme, (void (QComboBox::*)(int))&QComboBox::currentIndexChanged, [this](int index){
+		_currentThemeIndex = (size_t)index;
+		assert_and_return_r(_currentThemeIndex < _themes.size(), );
+		Theme& theme = _themes[_currentThemeIndex];
+		initColorPicker(ui->btnWindowBackgroundColor, theme._windowBgColor);
+		initColorPicker(ui->btnTextBackgroundColor, theme._textBgColor);
+		initColorPicker(ui->btnTextColor, theme._textColor);
+		initColorPicker(ui->btnPivotColor, theme._pivotColor);
 
-	assert_and_return_r(_currentThemeIndex < _themes.size(), );
-	Theme& theme = _themes[_currentThemeIndex];
-	initColorPicker(ui->btnWindowBackgroundColor, theme._windowBgColor);
-	initColorPicker(ui->btnTextBackgroundColor, theme._textBgColor);
-	initColorPicker(ui->btnTextColor, theme._textColor);
-	initColorPicker(ui->btnPivotColor, theme._pivotColor);
+		qApp->setStyleSheet(theme.style());
+	});
+
+	ui->_cbTheme->setCurrentIndex(_currentThemeIndex);
+	ui->_cbTheme->currentIndexChanged(_currentThemeIndex);
 }
 
 CColorsDialog::~CColorsDialog()
