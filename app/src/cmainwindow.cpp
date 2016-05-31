@@ -54,7 +54,8 @@ CMainWindow::CMainWindow(QWidget *parent) :
 
 CMainWindow::~CMainWindow()
 {
-	_reader.resetAndStop();
+	_reader.pauseReading();
+	_recentFiles.updateWith(_reader.filePath(), _reader.position());
 
 	delete ui;
 	ui = nullptr;
@@ -244,8 +245,12 @@ void CMainWindow::updateProgressLabel()
 
 void CMainWindow::openFile(const QString &filePath)
 {
+	const CBookmark lastPosition(_reader.filePath(), _reader.position());
 	if (!filePath.isEmpty() && _reader.loadFromFile(filePath))
 	{
+		// Opening a new file - store the previous one in the Recents
+		_recentFiles.updateWith(lastPosition);
+
 		CSettings().setValue(UI_OPEN_FILE_LAST_USED_DIR_SETTING, filePath);
 		setWindowTitle(qApp->applicationName() % " - " % QFileInfo(filePath).baseName());
 		ui->_text->clear();
