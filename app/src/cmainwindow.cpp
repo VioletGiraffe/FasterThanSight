@@ -51,6 +51,11 @@ CMainWindow::CMainWindow(QWidget *parent) :
 
 	loadBookmarksFromSettings();
 	updateRecentFilesMenu();
+	if (!_recentFiles.items().empty())
+	{
+		const CBookmark& lastBookmark = _recentFiles.items().front();
+		openBookmark(lastBookmark);
+	}
 }
 
 CMainWindow::~CMainWindow()
@@ -73,7 +78,7 @@ void CMainWindow::dropEvent(QDropEvent *event)
 {
 	const auto urls = event->mimeData()->urls();
 	if (!urls.empty())
-		openFile(urls.front().toLocalFile());
+		openFile(urls.front().toLocalFile(), 0);
 }
 
 void CMainWindow::initToolBars()
@@ -165,7 +170,7 @@ void CMainWindow::initActions()
 			tr("Pick a text file to open"),
 			CSettings().value(UI_OPEN_FILE_LAST_USED_DIR_SETTING, QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation).front()).toString());
 
-		openFile(filePath);
+		openFile(filePath, 0);
 	});
 
 	ui->action_Read->setIcon(QApplication::style()->standardIcon(QStyle::SP_MediaPlay));
@@ -245,7 +250,12 @@ void CMainWindow::updateProgressLabel()
 	);
 }
 
-void CMainWindow::openFile(const QString &filePath)
+void CMainWindow::openBookmark(const CBookmark& bookmark)
+{
+	openFile(bookmark.filePath, bookmark.wordIndex);
+}
+
+void CMainWindow::openFile(const QString &filePath, size_t position)
 {
 	const CBookmark lastPosition(_reader.filePath(), _reader.position());
 	if (!filePath.isEmpty() && _reader.loadFromFile(filePath))
@@ -257,9 +267,10 @@ void CMainWindow::openFile(const QString &filePath)
 			updateRecentFilesMenu();
 		}
 
+		_reader.goToWord(position);
+
 		CSettings().setValue(UI_OPEN_FILE_LAST_USED_DIR_SETTING, filePath);
 		setWindowTitle(qApp->applicationName() % " - " % QFileInfo(filePath).baseName());
-		ui->_text->clear();
 		updateProgressLabel();
 	}
 }
@@ -303,8 +314,7 @@ void CMainWindow::updateBookmarksMenuItemsList()
 	for (const CBookmark& bm: _bookmarks)
 	{
 		ui->menu_Bookmarks->addAction(bm.filePath % ": " % QString::number(bm.wordIndex + 1), [this, bm](){
-			openFile(bm.filePath);
-			_reader.goToWord(bm.wordIndex);
+			openBookmark(bm);
 		});
 	}
 }

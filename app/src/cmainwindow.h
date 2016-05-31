@@ -37,7 +37,8 @@ private:
 	void initStatusBar();
 
 	void updateProgressLabel();
-	void openFile(const QString& filePath);
+	void openBookmark(const CBookmark& bookmark);
+	void openFile(const QString& filePath, size_t position);
 
 	void keepScreenFromTurningOff(bool keepFromTurningOff);
 
