@@ -41,21 +41,23 @@ CMainWindow::CMainWindow(QWidget *parent) :
 {
 	ui->setupUi(this);
 
+	setUnifiedTitleAndToolBarOnMac(true);
+	setAcceptDrops(true);
+
 	// Status bar should be inited first so that the rest of the init code can call updateProgressLabel and such
 	initStatusBar();
 	initToolBars();
 	initActions();
 
 	loadBookmarksFromSettings();
-
-	setUnifiedTitleAndToolBarOnMac(true);
-	setAcceptDrops(true);
+	updateRecentFilesMenu();
 }
 
 CMainWindow::~CMainWindow()
 {
 	_reader.pauseReading();
-	_recentFiles.updateWith(_reader.filePath(), _reader.position());
+	if (!_reader.filePath().isEmpty())
+		_recentFiles.updateWith(_reader.filePath(), _reader.position());
 
 	delete ui;
 	ui = nullptr;
@@ -248,8 +250,12 @@ void CMainWindow::openFile(const QString &filePath)
 	const CBookmark lastPosition(_reader.filePath(), _reader.position());
 	if (!filePath.isEmpty() && _reader.loadFromFile(filePath))
 	{
-		// Opening a new file - store the previous one in the Recents
-		_recentFiles.updateWith(lastPosition);
+		// Opening a new file - store the previous one in the Recent files list
+		if (!lastPosition.filePath.isEmpty())
+		{
+			_recentFiles.updateWith(lastPosition);
+			updateRecentFilesMenu();
+		}
 
 		CSettings().setValue(UI_OPEN_FILE_LAST_USED_DIR_SETTING, filePath);
 		setWindowTitle(qApp->applicationName() % " - " % QFileInfo(filePath).baseName());
@@ -297,8 +303,22 @@ void CMainWindow::updateBookmarksMenuItemsList()
 	for (const CBookmark& bm: _bookmarks)
 	{
 		ui->menu_Bookmarks->addAction(bm.filePath % ": " % QString::number(bm.wordIndex + 1), [this, bm](){
-			_reader.loadFromFile(bm.filePath);
+			openFile(bm.filePath);
 			_reader.goToWord(bm.wordIndex);
+		});
+	}
+}
+
+void CMainWindow::updateRecentFilesMenu()
+{
+	QMenu * menu = ui->menuOpen_recent;
+	menu->clear();
+
+	for (const CBookmark& item : _recentFiles.items())
+	{
+		menu->addAction(item.filePath, [item, this](){
+			_reader.loadFromFile(item.filePath);
+			_reader.goToWord(item.wordIndex);
 		});
 	}
 }

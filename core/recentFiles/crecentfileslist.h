@@ -13,6 +13,8 @@ public:
 	explicit CRecentFilesList(size_t maxNumEntries = 10);
 	CRecentFilesList& operator=(const CRecentFilesList&) = delete;
 
+	const std::deque<CBookmark>& items() const;
+
 	void updateWith(const CBookmark& bookMark);
 	void updateWith(const QString& filePath, const size_t wordIndex);
 

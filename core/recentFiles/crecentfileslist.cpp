@@ -14,6 +14,11 @@ CRecentFilesList::CRecentFilesList(size_t maxNumEntries) : _maxNumEntries(maxNum
 		_entries.emplace_back(entry);
 }
 
+const std::deque<CBookmark>& CRecentFilesList::items() const
+{
+	return _entries;
+}
+
 void CRecentFilesList::updateWith(const QString &filePath, const size_t wordIndex)
 {
 	updateWith(CBookmark(filePath, wordIndex));
@@ -21,9 +26,25 @@ void CRecentFilesList::updateWith(const QString &filePath, const size_t wordInde
 
 void CRecentFilesList::updateWith(const CBookmark& bookMark)
 {
-	_entries.emplace_front(bookMark);
-	if (_entries.size() > _maxNumEntries)
-		_entries.pop_back();
+	if (bookMark.filePath.isEmpty())
+		return;
+
+	auto existingEntry = std::find_if(_entries.begin(), _entries.end(), [&bookMark](const CBookmark& item){
+		return item.filePath == bookMark.filePath;
+	});
+
+	if (existingEntry != _entries.end())
+	{
+		// This file is already in the list; update the position and move it to front
+		existingEntry->wordIndex = bookMark.wordIndex;
+		std::rotate(_entries.begin(), existingEntry, existingEntry + 1);
+	}
+	else
+	{
+		_entries.emplace_front(bookMark);
+		if (_entries.size() > _maxNumEntries)
+			_entries.pop_back();
+	}
 
 	saveToSettings();
 }

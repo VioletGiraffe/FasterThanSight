@@ -44,6 +44,7 @@ private:
 	void loadBookmarksFromSettings();
 	void saveBookmarksToSettings() const;
 	void updateBookmarksMenuItemsList();
+	void updateRecentFilesMenu();
 
 private:
 // Reader callbacks
