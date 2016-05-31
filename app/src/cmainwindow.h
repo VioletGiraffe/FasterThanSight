@@ -4,6 +4,7 @@
 #include "reader/creader.h"
 #include "compiler/compiler_warnings_control.h"
 #include "styling/ccolorsdialog.h"
+#include "recentFiles/crecentfileslist.h"
 
 DISABLE_COMPILER_WARNINGS
 #include <QMainWindow>
@@ -67,6 +68,7 @@ private:
 
 // Bookmarks
 	std::deque<CBookmark> _bookmarks;
+	CRecentFilesList _recentFiles;
 
 // Settings
 	CColorsDialog _colorsSetupDialog;

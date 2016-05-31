@@ -52,6 +52,7 @@ INCLUDEPATH += \
 	../qtutils/
 
 include (bookmarks/bookmarks.pri)
+include (recentFiles/recentFiles.pri)
 include (parser/parser.pri)
 include (textfragment/textfragment.pri)
 include (reader/reader.pri)
