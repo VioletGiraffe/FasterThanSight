@@ -1,7 +1,7 @@
 #pragma once
 
 #include "compiler/compiler_warnings_control.h"
-#include "cbookmark.h"
+#include "bookmarks/cbookmark.h"
 
 DISABLE_COMPILER_WARNINGS
 #include <QDialog>

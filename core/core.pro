@@ -51,6 +51,7 @@ INCLUDEPATH += \
 	../cpputils/ \
 	../qtutils/
 
+include (bookmarks/bookmarks.pri)
 include (parser/parser.pri)
 include (textfragment/textfragment.pri)
 include (reader/reader.pri)
