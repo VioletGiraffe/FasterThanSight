@@ -14,7 +14,7 @@ RESTORE_COMPILER_WARNINGS
 
 #define THEMES_SETTING QStringLiteral("Themes/ThemesList")
 #define CURRENT_THEME_SETTING QStringLiteral("Themes/CurrentTheme")
-#define DEFAULT_THEMES_LIST QStringList {"1337;#191919;#272727;#fffbe6;#ff5e5e;", "Blue Dawn;#0f1318;#0f1318;#effbff;#e9ee00;", "Bliess;#191919;#282A2E;#CED1CF;#abfdd8;"}
+#define DEFAULT_THEMES_LIST QStringList {"1337;#191919;#272727;#fffbe6;#ff5e5e;", "Blue Dawn;#0f1318;#0f1318;#effbff;#e9ee00;", "Bliss;#191919;#282A2E;#CED1CF;#abfdd8;"}
 
 CColorsDialog::CColorsDialog(QWidget *parent) :
 	QDialog(parent),
@@ -90,6 +90,8 @@ void CColorsDialog::saveThemes() const
 void CColorsDialog::initColorPicker(QToolButton* btn, QColor& color)
 {
 	btn->setStyleSheet(QString("background-color: %1;").arg(color.name()));
+
+	btn->disconnect();
 
 	connect(btn, &QToolButton::clicked, [this, &color, btn](){
 		const QColor c = QColorDialog::getColor(color, this, "Pick a color");
