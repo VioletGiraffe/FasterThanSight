@@ -269,11 +269,7 @@ void CMainWindow::loadBookmarksFromSettings()
 	_bookmarks.clear();
 	const QStringList serializedBookmarks = CSettings().value(UI_BOOKMARKS_STORAGE).toStringList();
 	for (const QString& entry: serializedBookmarks)
-	{
-		const QStringList components = entry.split(';');
-		assert_and_return_r(components.size() == 2, );
-		_bookmarks.emplace_back(components[0], (size_t)components[1].toULongLong());
-	}
+		_bookmarks.emplace_back(entry);
 
 	updateBookmarksMenuItemsList();
 }
@@ -282,7 +278,7 @@ void CMainWindow::saveBookmarksToSettings() const
 {
 	QStringList serialzedBookmarks;
 	for (const CBookmark& bm : _bookmarks)
-		serialzedBookmarks.push_back(bm.filePath % ';' % QString::number(bm.wordIndex));
+		serialzedBookmarks.push_back(bm.toString());
 
 	CSettings().setValue(UI_BOOKMARKS_STORAGE, serialzedBookmarks);
 }

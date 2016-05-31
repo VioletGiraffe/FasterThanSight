@@ -48,7 +48,13 @@
     <property name="title">
      <string>&amp;File</string>
     </property>
+    <widget class="QMenu" name="menuOpen_recent">
+     <property name="title">
+      <string>Open &amp;recent</string>
+     </property>
+    </widget>
     <addaction name="actionOpen"/>
+    <addaction name="menuOpen_recent"/>
     <addaction name="separator"/>
     <addaction name="action_Exit"/>
    </widget>
