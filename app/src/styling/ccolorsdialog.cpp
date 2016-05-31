@@ -42,6 +42,14 @@ CColorsDialog::CColorsDialog(QWidget *parent) :
 
 	ui->_cbTheme->setCurrentIndex(_currentThemeIndex);
 	ui->_cbTheme->currentIndexChanged(_currentThemeIndex);
+
+	connect(this, &QDialog::rejected, [this]() {
+		qApp->setStyleSheet(currentAcceptedStyle());
+	});
+
+	connect(this, &QDialog::accepted, [this]() {
+		saveThemes();
+	});
 }
 
 CColorsDialog::~CColorsDialog()
