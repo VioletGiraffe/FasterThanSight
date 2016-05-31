@@ -9,6 +9,7 @@ OutputDir=.
 OutputBaseFilename=FasterThanSight
 UsePreviousAppDir=yes
 
+SetupIconFile=..\app\resources\FTS_icon.ico
 UninstallDisplayIcon={app}\FasterThanSight.exe
 
 WizardImageBackColor=clWhite
