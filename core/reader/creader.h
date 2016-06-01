@@ -52,6 +52,8 @@ public:
 // Control
 	void resumeReading();
 	void pauseReading();
+	void togglePause();
+
 	void resetAndStop();
 	// Specify 0-based word index to go to
 	void goToWord(size_t wordIndex);

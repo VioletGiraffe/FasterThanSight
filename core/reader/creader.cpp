@@ -103,6 +103,14 @@ void CReader::pauseReading()
 	_interface->stateChanged(_state);
 }
 
+void CReader::togglePause()
+{
+	if (_state == Reading)
+		pauseReading();
+	else
+		resumeReading();
+}
+
 void CReader::resetAndStop()
 {
 	pauseReading();

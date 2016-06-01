@@ -44,6 +44,8 @@ CMainWindow::CMainWindow(QWidget *parent) :
 	setUnifiedTitleAndToolBarOnMac(true);
 	setAcceptDrops(true);
 
+	ui->_text->installEventFilter(this);
+
 	// Status bar should be inited first so that the rest of the init code can call updateProgressLabel and such
 	initStatusBar();
 	initToolBars();
@@ -79,6 +81,17 @@ void CMainWindow::dropEvent(QDropEvent *event)
 	const auto urls = event->mimeData()->urls();
 	if (!urls.empty())
 		openFile(urls.front().toLocalFile(), 0);
+}
+
+bool CMainWindow::eventFilter(QObject* /*o*/, QEvent* e)
+{
+	if (e->type() == QEvent::MouseButtonRelease)
+	{
+		_reader.togglePause();
+		return true;
+	}
+
+	return false;
 }
 
 void CMainWindow::initToolBars()
@@ -175,10 +188,7 @@ void CMainWindow::initActions()
 
 	ui->action_Read->setIcon(QApplication::style()->standardIcon(QStyle::SP_MediaPlay));
 	connect(ui->action_Read, &QAction::triggered, [this](){
-		if (_reader.state() == CReader::Paused)
-			_reader.resumeReading();
-		else
-			_reader.pauseReading();
+		_reader.togglePause();
 	});
 
 	ui->action_Pause->setIcon(QApplication::style()->standardIcon(QStyle::SP_MediaPause));

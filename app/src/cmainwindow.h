@@ -31,6 +31,8 @@ protected:
 	void dragEnterEvent(QDragEnterEvent * event) override;
 	void dropEvent(QDropEvent * event) override;
 
+	bool eventFilter(QObject* o, QEvent* e) override;
+
 private:
 	void initToolBars();
 	void initActions();
