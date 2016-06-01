@@ -24,13 +24,10 @@ CThemesDialog::CThemesDialog(QWidget *parent) :
 {
 	ui->setupUi(this);
 
-	const auto themes = themesFromSettings();
-	_themes = themes.first;
-	_currentThemeIndex = themes.second;
-	for (const auto& theme: _themes)
-		ui->_cbTheme->addItem(theme._name);
-
 	connect(ui->_cbTheme, (void (QComboBox::*)(int))&QComboBox::currentIndexChanged, [this](int index){
+		if (index < 0)
+			return;
+
 		_currentThemeIndex = (size_t)index;
 		assert_and_return_r(_currentThemeIndex < _themes.size(), );
 		Theme& theme = currentTheme();
@@ -42,8 +39,7 @@ CThemesDialog::CThemesDialog(QWidget *parent) :
 		qApp->setStyleSheet(theme.style());
 	});
 
-	ui->_cbTheme->setCurrentIndex(_currentThemeIndex);
-	ui->_cbTheme->currentIndexChanged(_currentThemeIndex);
+	loadThemes();
 
 	connect(ui->_btnCopy, &QPushButton::clicked, [this](){
 		createNewTheme();
@@ -152,11 +148,43 @@ void CThemesDialog::createNewTheme()
 		QMessageBox::information(this, "Name already exists", "A theme named \"" % themeName % "\" already exists, pick a different name.");
 		return;
 	}
+
+	Theme newTheme = currentTheme();
+	newTheme._name = themeName;
+	_themes.push_back(newTheme);
+	ui->_cbTheme->addItem(themeName);
+	ui->_cbTheme->setCurrentIndex(ui->_cbTheme->count() - 1);
 }
 
 void CThemesDialog::deleteTheme()
 {
+	assert_and_return_r(_currentThemeIndex < _themes.size(), );
+	_themes.erase(_themes.begin() + _currentThemeIndex);
+	ui->_cbTheme->removeItem(_currentThemeIndex);
+}
 
+void CThemesDialog::loadThemes()
+{
+	ui->_cbTheme->blockSignals(true);
+	ui->_cbTheme->clear();
+
+	const auto themes = themesFromSettings();
+	_themes = themes.first;
+	_currentThemeIndex = themes.second;
+	
+	for (const auto& theme : _themes)
+		ui->_cbTheme->addItem(theme._name);
+
+	ui->_cbTheme->blockSignals(false);
+	
+	ui->_cbTheme->setCurrentIndex(_currentThemeIndex);
+	ui->_cbTheme->currentIndexChanged(_currentThemeIndex);
+}
+
+void CThemesDialog::showEvent(QShowEvent* e)
+{
+	loadThemes();
+	QDialog::showEvent(e);
 }
 
 CThemesDialog::Theme::Theme(const QString& str)

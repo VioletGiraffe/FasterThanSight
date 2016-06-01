@@ -39,7 +39,12 @@ public:
 
 	static QString currentAcceptedStyle();
 
+protected:
+	void showEvent(QShowEvent* e) override;
+
 private:
+	void loadThemes();
+
 	QString currentStyle() const;
 	Theme& currentTheme();
 	const Theme& currentTheme() const;
