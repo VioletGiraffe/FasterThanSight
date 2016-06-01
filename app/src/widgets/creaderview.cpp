@@ -98,9 +98,10 @@ void CReaderView::paintEvent(QPaintEvent* /*e*/)
 
 	QTextDocument doc;
 	doc.setDefaultFont(font());
+	p.fillRect(0, height() / 2 - 3 * fontMetrics.height() / 2, width(), 3 * fontMetrics.height(), _textBackgroundColor);
+
 	if (_pivotCharacterIndex >= 0)
 	{
-		p.fillRect(0, height() / 2 - 3 * fontMetrics.height() / 2, width(), 3 * fontMetrics.height(), _textBackgroundColor);
 		p.drawLine(width() / 2, height() / 2 - 3 * fontMetrics.height() / 2, width() / 2, height() / 2 - 8 * fontMetrics.height() / 10);
 		p.drawLine(width() / 2, height() / 2 + 8 * fontMetrics.height() / 10, width() / 2, height() / 2 + 3 * fontMetrics.height() / 2);
 
@@ -108,10 +109,10 @@ void CReaderView::paintEvent(QPaintEvent* /*e*/)
 			coloredHtmlText(_text.left(_pivotCharacterIndex), palette().color(QPalette::Text))
 			% coloredHtmlText(QString(_text[_pivotCharacterIndex]), _pivotCharacterColor.name())
 			% coloredHtmlText(_text.mid(_pivotCharacterIndex + 1), palette().color(QPalette::Text))
-			);
+		);
 	}
 	else
-		doc.setPlainText(_text);
+		doc.setHtml(coloredHtmlText(_text, palette().color(QPalette::Text)));
 
 	p.translate(textOffset);
 	doc.drawContents(&p);

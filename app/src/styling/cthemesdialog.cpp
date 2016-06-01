@@ -139,10 +139,10 @@ QString CThemesDialog::Theme::style() const
 {
 	static const QString styleTemplate =
 		"CReaderView {"
-		"background-color: %1;"
-		"qproperty-textBackgroundColor: %2;"
-		"color: %3;"
-		"qproperty-pivotCharacterColor: %4;"
+		"background-color: %1; "
+		"qproperty-textBackgroundColor: %2; "
+		"color: %3; "
+		"qproperty-pivotCharacterColor: %4; "
 		"}";
 
 	return styleTemplate
