@@ -1,10 +1,10 @@
-#include "ccolorsdialog.h"
+#include "cthemesdialog.h"
 
 #include "settings/csettings.h"
 #include "assert/advanced_assert.h"
 
 DISABLE_COMPILER_WARNINGS
-#include "ui_ccolorsdialog.h"
+#include "ui_cthemesdialog.h"
 
 #include <QApplication>
 #include <QColorDialog>
@@ -16,7 +16,7 @@ RESTORE_COMPILER_WARNINGS
 #define CURRENT_THEME_SETTING QStringLiteral("Themes/CurrentTheme")
 #define DEFAULT_THEMES_LIST QStringList {"1337;#191919;#272727;#fffbe6;#ff5e5e;", "Blue Dawn;#0f1318;#0f1318;#effbff;#e9ee00;", "Bliss;#191919;#282A2E;#CED1CF;#abfdd8;"}
 
-CColorsDialog::CColorsDialog(QWidget *parent) :
+CThemesDialog::CThemesDialog(QWidget *parent) :
 	QDialog(parent),
 	ui(new Ui::CColorsDialog)
 {
@@ -52,12 +52,12 @@ CColorsDialog::CColorsDialog(QWidget *parent) :
 	});
 }
 
-CColorsDialog::~CColorsDialog()
+CThemesDialog::~CThemesDialog()
 {
 	delete ui;
 }
 
-QString CColorsDialog::currentAcceptedStyle()
+QString CThemesDialog::currentAcceptedStyle()
 {
 	const auto themes = themesFromSettings();
 	assert_and_return_r(themes.second < themes.first.size(), QString());
@@ -65,7 +65,7 @@ QString CColorsDialog::currentAcceptedStyle()
 	return themes.first[themes.second].style();
 }
 
-QString CColorsDialog::currentStyle() const
+QString CThemesDialog::currentStyle() const
 {
 	assert_and_return_r(_currentThemeIndex < _themes.size(), QString());
 
@@ -73,7 +73,7 @@ QString CColorsDialog::currentStyle() const
 	return theme.style();
 }
 
-std::pair<std::deque<CColorsDialog::Theme>, size_t> CColorsDialog::themesFromSettings()
+std::pair<std::deque<CThemesDialog::Theme>, size_t> CThemesDialog::themesFromSettings()
 {
 	std::deque<Theme> themesContainer;
 
@@ -85,7 +85,7 @@ std::pair<std::deque<CColorsDialog::Theme>, size_t> CColorsDialog::themesFromSet
 	return std::make_pair(themesContainer, currentThemeIndex);
 }
 
-void CColorsDialog::saveThemes() const
+void CThemesDialog::saveThemes() const
 {
 	QStringList list;
 	for (const Theme& theme :_themes)
@@ -95,7 +95,7 @@ void CColorsDialog::saveThemes() const
 	CSettings().setValue(CURRENT_THEME_SETTING, _currentThemeIndex);
 }
 
-void CColorsDialog::initColorPicker(QToolButton* btn, QColor& color)
+void CThemesDialog::initColorPicker(QToolButton* btn, QColor& color)
 {
 	btn->setStyleSheet(QString("background-color: %1;").arg(color.name()));
 
@@ -112,7 +112,7 @@ void CColorsDialog::initColorPicker(QToolButton* btn, QColor& color)
 	});
 }
 
-CColorsDialog::Theme::Theme(const QString& str)
+CThemesDialog::Theme::Theme(const QString& str)
 {
 	const auto components = str.split(';', QString::SkipEmptyParts);
 	assert_and_return_r(components.size() == 5, );
@@ -124,7 +124,7 @@ CColorsDialog::Theme::Theme(const QString& str)
 	_pivotColor = QVariant(components[4]).value<QColor>();
 }
 
-QString CColorsDialog::Theme::toString() const
+QString CThemesDialog::Theme::toString() const
 {
 	return
 		_name % ';' %
@@ -135,7 +135,7 @@ QString CColorsDialog::Theme::toString() const
 		;
 }
 
-QString CColorsDialog::Theme::style() const
+QString CThemesDialog::Theme::style() const
 {
 	static const QString styleTemplate =
 		"CReaderView {"

@@ -17,7 +17,7 @@ class CColorsDialog;
 
 class QToolButton;
 
-class CColorsDialog : public QDialog
+class CThemesDialog : public QDialog
 {
 	struct Theme {
 		explicit Theme(const QString& str);
@@ -34,8 +34,8 @@ class CColorsDialog : public QDialog
 	};
 
 public:
-	explicit CColorsDialog(QWidget *parent = 0);
-	~CColorsDialog();
+	explicit CThemesDialog(QWidget *parent = 0);
+	~CThemesDialog();
 
 	static QString currentAcceptedStyle();
 
