@@ -16,7 +16,22 @@ RESTORE_COMPILER_WARNINGS
 
 #define THEMES_SETTING QStringLiteral("Themes/ThemesList")
 #define CURRENT_THEME_SETTING QStringLiteral("Themes/CurrentTheme")
-#define DEFAULT_THEMES_LIST QStringList {"1337;#191919;#272727;#fffbe6;#ff5e5e;", "Blue Dawn;#0f1318;#0f1318;#effbff;#e9ee00;", "Bliss;#191919;#282A2E;#CED1CF;#abfdd8;"}
+static const QStringList DEFAULT_THEMES_LIST {
+	"1337;#191919;#272727;#fffbe6;#ff5e5e;",
+	"Blue Dawn;#0e1217;#10151c;#effbff;#e9ee00;",
+	"Bliss;#191919;#282a2e;#ced1cf;#abfdd8;",
+	"Dark Room (Contrast);#000000;#000000;#cda869;#399364;",
+	"Dark Krystal;#000000;#0c0c13;#e7ffd2;#06b67e;",
+	"FireCode;#191919;#191919;#cbcbda;#c93234;",
+	"GitHub v2;#eee9cb;#eee9cb;#2b2b2b;#a71d5d;",
+	"Green;#141610;#1b1d16;#a9ff47;#e6ffa4;",
+	"Grunge;#21231d;#2d2f28;#e4f8f2;#a8f27f;",
+	"Hail;#0d1115;#14191f;#aec2e0;#99fefe;",
+	"Lavender*;#120f15;#1f1a24;#e0ceed;#989dfa;",
+	"Legacy Pack;#040708;#080c0d;#dae8e1;#e8370d;",
+	"NaturalContrast;#0f120c;#1b2016;#ffffff;#ff635f;",
+	"Patriot;#1f2224;#2d3133;#cad9d0;#3790de;"
+};
 
 CThemesDialog::CThemesDialog(QWidget *parent) :
 	QDialog(parent),
@@ -109,7 +124,7 @@ std::pair<std::deque<CThemesDialog::Theme>, size_t> CThemesDialog::themesFromSet
 	for (const QString& theme: themes)
 		themesContainer.emplace_back(theme);
 
-	const size_t currentThemeIndex = (size_t)CSettings().value(CURRENT_THEME_SETTING, 0).toULongLong();
+	const size_t currentThemeIndex = (size_t)CSettings().value(CURRENT_THEME_SETTING, 12).toULongLong();
 	return std::make_pair(themesContainer, currentThemeIndex);
 }
 
