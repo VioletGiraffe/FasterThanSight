@@ -20,6 +20,7 @@ DISABLE_COMPILER_WARNINGS
 #include <QInputDialog>
 #include <QLabel>
 #include <QMimeData>
+#include <QShortcut>
 #include <QSlider>
 #include <QSpinBox>
 #include <QStandardPaths>
@@ -88,7 +89,6 @@ bool CMainWindow::eventFilter(QObject* /*o*/, QEvent* e)
 	if (e->type() == QEvent::MouseButtonRelease)
 	{
 		_reader.togglePause();
-		return true;
 	}
 
 	return false;
@@ -221,6 +221,10 @@ void CMainWindow::initActions()
 			_reader.goToWord(word - 1);
 	});
 
+	auto f11 = new QShortcut(QKeySequence("F11"), this);
+	connect(f11, &QShortcut::activated, this, &CMainWindow::toggleFullScreen);
+	connect(ui->action_Fullscreen, &QAction::triggered, this, &CMainWindow::toggleFullScreen);
+
 	connect(ui->action_Bookmark_current_position, &QAction::triggered, [this](){
 		if (_reader.filePath().isEmpty())
 			return;
@@ -340,6 +344,22 @@ void CMainWindow::updateRecentFilesMenu()
 			_reader.loadFromFile(item.filePath);
 			_reader.goToWord(item.wordIndex);
 		});
+	}
+}
+
+void CMainWindow::toggleFullScreen()
+{
+	if (!isFullScreen())
+	{
+		showFullScreen();
+		menuBar()->hide();
+		statusBar()->hide();
+	}
+	else
+	{
+		showNormal();
+		menuBar()->show();
+		statusBar()->show();
 	}
 }
 

@@ -85,9 +85,16 @@
     <addaction name="action_Remove_bookmarks"/>
     <addaction name="separator"/>
    </widget>
+   <widget class="QMenu" name="menu_View">
+    <property name="title">
+     <string>&amp;View</string>
+    </property>
+    <addaction name="action_Fullscreen"/>
+   </widget>
    <addaction name="menuFile"/>
    <addaction name="menu_Bookmarks"/>
    <addaction name="menu_Reading"/>
+   <addaction name="menu_View"/>
    <addaction name="menu_Settings"/>
   </widget>
   <widget class="QToolBar" name="toolBar">
@@ -172,6 +179,11 @@
   <action name="action_Remove_bookmarks">
    <property name="text">
     <string>&amp;Remove bookmarks...</string>
+   </property>
+  </action>
+  <action name="action_Fullscreen">
+   <property name="text">
+    <string>&amp;Fullscreen (F11)</string>
    </property>
   </action>
  </widget>

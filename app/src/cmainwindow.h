@@ -49,6 +49,8 @@ private:
 	void updateBookmarksMenuItemsList();
 	void updateRecentFilesMenu();
 
+	void toggleFullScreen();
+
 private:
 // Reader callbacks
 	void updateDisplay(const size_t currentTextFragmentIndex) override;
