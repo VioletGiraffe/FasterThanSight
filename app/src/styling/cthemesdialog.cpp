@@ -9,6 +9,8 @@ DISABLE_COMPILER_WARNINGS
 #include <QApplication>
 #include <QColorDialog>
 #include <QDebug>
+#include <QInputDialog>
+#include <QMessageBox>
 #include <QStringBuilder>
 RESTORE_COMPILER_WARNINGS
 
@@ -31,7 +33,7 @@ CThemesDialog::CThemesDialog(QWidget *parent) :
 	connect(ui->_cbTheme, (void (QComboBox::*)(int))&QComboBox::currentIndexChanged, [this](int index){
 		_currentThemeIndex = (size_t)index;
 		assert_and_return_r(_currentThemeIndex < _themes.size(), );
-		Theme& theme = _themes[_currentThemeIndex];
+		Theme& theme = currentTheme();
 		initColorPicker(ui->btnWindowBackgroundColor, theme._windowBgColor);
 		initColorPicker(ui->btnTextBackgroundColor, theme._textBgColor);
 		initColorPicker(ui->btnTextColor, theme._textColor);
@@ -42,6 +44,14 @@ CThemesDialog::CThemesDialog(QWidget *parent) :
 
 	ui->_cbTheme->setCurrentIndex(_currentThemeIndex);
 	ui->_cbTheme->currentIndexChanged(_currentThemeIndex);
+
+	connect(ui->_btnCopy, &QPushButton::clicked, [this](){
+		createNewTheme();
+	});
+
+	connect(ui->_btnDelete, &QPushButton::clicked, [this]() {
+		deleteTheme();
+	});
 
 	connect(this, &QDialog::rejected, [this]() {
 		qApp->setStyleSheet(currentAcceptedStyle());
@@ -71,6 +81,28 @@ QString CThemesDialog::currentStyle() const
 
 	const Theme& theme = _themes[_currentThemeIndex];
 	return theme.style();
+}
+
+CThemesDialog::Theme& CThemesDialog::currentTheme()
+{
+	if (_currentThemeIndex >= _themes.size())
+	{
+		static Theme dummy(QString::null);
+		return dummy;
+	}
+
+	return _themes[_currentThemeIndex];
+}
+
+const CThemesDialog::Theme& CThemesDialog::currentTheme() const
+{
+	if (_currentThemeIndex >= _themes.size())
+	{
+		static const Theme dummy(QString::null);
+		return dummy;
+	}
+
+	return _themes[_currentThemeIndex];
 }
 
 std::pair<std::deque<CThemesDialog::Theme>, size_t> CThemesDialog::themesFromSettings()
@@ -110,6 +142,21 @@ void CThemesDialog::initColorPicker(QToolButton* btn, QColor& color)
 		btn->setStyleSheet(QString("background-color: %1;").arg(color.name()));
 		qApp->setStyleSheet(currentStyle());
 	});
+}
+
+void CThemesDialog::createNewTheme()
+{
+	const QString themeName = QInputDialog::getText(this, "New theme", "Enter a name for the new theme:", QLineEdit::Normal, currentTheme()._name + " (Copy)");
+	if (std::find_if(_themes.begin(), _themes.end(), [&themeName](const Theme& theme){return theme._name.toLower() == themeName.toLower();}) != _themes.end())
+	{
+		QMessageBox::information(this, "Name already exists", "A theme named \"" % themeName % "\" already exists, pick a different name.");
+		return;
+	}
+}
+
+void CThemesDialog::deleteTheme()
+{
+
 }
 
 CThemesDialog::Theme::Theme(const QString& str)

@@ -32,7 +32,7 @@
      <item>
       <widget class="QPushButton" name="_btnCopy">
        <property name="text">
-        <string>New copy</string>
+        <string>New copy..</string>
        </property>
       </widget>
      </item>
@@ -140,7 +140,7 @@
    <item>
     <widget class="QDialogButtonBox" name="buttonBox">
      <property name="standardButtons">
-      <set>QDialogButtonBox::Discard|QDialogButtonBox::Save</set>
+      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Save</set>
      </property>
     </widget>
    </item>

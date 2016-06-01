@@ -41,11 +41,16 @@ public:
 
 private:
 	QString currentStyle() const;
+	Theme& currentTheme();
+	const Theme& currentTheme() const;
 
 	static std::pair<std::deque<Theme>, size_t> themesFromSettings();
 	void saveThemes() const;
 
 	void initColorPicker(QToolButton* btn, QColor& color);
+
+	void createNewTheme();
+	void deleteTheme();
 
 private:
 	Ui::CColorsDialog *ui;
