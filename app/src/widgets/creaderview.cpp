@@ -10,14 +10,11 @@ RESTORE_COMPILER_WARNINGS
 
 CReaderView::CReaderView(QWidget* parent) : QWidget(parent)
 {
-	_textFadeEffect.setOpacity(1.0f);
-	_textFadeOutAnimation = new QPropertyAnimation(&_textFadeEffect, "opacity", this);
+	_textFadeOutAnimation = new QPropertyAnimation(this, "textOpacity", this);
 	_textFadeOutAnimation->setStartValue(1.0f);
 	_textFadeOutAnimation->setEndValue(0.0f);
 	_textFadeOutAnimation->setEasingCurve(QEasingCurve::OutQuad);
 	_textFadeOutAnimation->setDuration(100);
-
-	setGraphicsEffect(&_textFadeEffect);
 }
 
 CReaderView::~CReaderView()
@@ -25,29 +22,13 @@ CReaderView::~CReaderView()
 	_textFadeOutAnimation->stop();
 }
 
-void CReaderView::setPivotCharacterColor(const QColor& color)
-{
-	_pivotCharacterColor = color;
-}
-
-void CReaderView::setTextBackgroundColor(const QColor& color)
-{
-	_textBackgroundColor = color;
-}
-
 void CReaderView::setText(const QString& text, int pivotCharacterIndex /*= -1*/)
 {
-	_text = text;
-	_pivotCharacterIndex = pivotCharacterIndex;
-	update();
-
-	return;
-
 	const auto setTextImplementation = [text, pivotCharacterIndex, this]() {
 		_text = text;
 		_pivotCharacterIndex = pivotCharacterIndex;
 
-		_textFadeEffect.setOpacity(1.0f);
+		_textOpacity = 1.0f;
 
 		update();
 	};
@@ -82,6 +63,12 @@ void CReaderView::clear()
 	update();
 }
 
+void CReaderView::setTextOpacity(qreal opacity)
+{
+	_textOpacity = opacity;
+	update();
+}
+
 inline QString coloredHtmlText(const QString& text, const QColor& color)
 {
 	return "<font color=\"" % color.name() % "\">" % text % "</font>";
@@ -89,37 +76,46 @@ inline QString coloredHtmlText(const QString& text, const QColor& color)
 
 void CReaderView::paintEvent(QPaintEvent* /*e*/)
 {
-	QPainter p(this);
-	p.fillRect(rect(), palette().color(QPalette::Background));
+	_backgroundPixmap = QPixmap(size());
+	QPainter backgroundPainter(&_backgroundPixmap);
+	backgroundPainter.fillRect(rect(), palette().color(QPalette::Background));
 
 	if (_text.isEmpty())
+	{
+		QPainter(this).drawPixmap(0, 0, _backgroundPixmap);
 		return;
+	}
 
 	QFontMetrics fontMetrics(font());
-// 	p.drawLine(width() / 2, 0, width() / 2, height());
-// 	p.drawLine(0, height() / 2, width(), height() / 2);
 
 	const int centerCharIndex = _pivotCharacterIndex >= 0 ? _pivotCharacterIndex : _text.length() / 2;
 	const QPoint textOffset(width() / 2 - fontMetrics.width(_text, centerCharIndex) - fontMetrics.width(_text[centerCharIndex]) / 2, height() / 2 - fontMetrics.height() / 2);
 
+	backgroundPainter.fillRect(0, height() / 2 - 3 * fontMetrics.height() / 2, width(), 3 * fontMetrics.height(), _textBackgroundColor);
+
 	QTextDocument doc;
 	doc.setDefaultFont(font());
-	p.fillRect(0, height() / 2 - 3 * fontMetrics.height() / 2, width(), 3 * fontMetrics.height(), _textBackgroundColor);
+
+	const QColor& textColor = palette().color(QPalette::Text);
 
 	if (_pivotCharacterIndex >= 0)
 	{
-		p.drawLine(width() / 2, height() / 2 - 3 * fontMetrics.height() / 2, width() / 2, height() / 2 - 8 * fontMetrics.height() / 10);
-		p.drawLine(width() / 2, height() / 2 + 8 * fontMetrics.height() / 10, width() / 2, height() / 2 + 3 * fontMetrics.height() / 2);
+		backgroundPainter.setPen(textColor);
+		backgroundPainter.drawLine(width() / 2, height() / 2 - 3 * fontMetrics.height() / 2, width() / 2, height() / 2 - 8 * fontMetrics.height() / 10);
+		backgroundPainter.drawLine(width() / 2, height() / 2 + 8 * fontMetrics.height() / 10, width() / 2, height() / 2 + 3 * fontMetrics.height() / 2);
 
 		doc.setHtml(
-			coloredHtmlText(_text.left(_pivotCharacterIndex), palette().color(QPalette::Text))
+			coloredHtmlText(_text.left(_pivotCharacterIndex), textColor)
 			% coloredHtmlText(QString(_text[_pivotCharacterIndex]), _pivotCharacterColor.name())
-			% coloredHtmlText(_text.mid(_pivotCharacterIndex + 1), palette().color(QPalette::Text))
+			% coloredHtmlText(_text.mid(_pivotCharacterIndex + 1), textColor)
 		);
 	}
 	else
-		doc.setHtml(coloredHtmlText(_text, palette().color(QPalette::Text)));
+		doc.setHtml(coloredHtmlText(_text, textColor));
 
-	p.translate(textOffset);
-	doc.drawContents(&p);
+	QPainter mainPainter(this);
+	mainPainter.drawPixmap(0, 0, _backgroundPixmap);
+	mainPainter.translate(textOffset);
+	mainPainter.setOpacity(_textOpacity);
+	doc.drawContents(&mainPainter);
 }
