@@ -45,8 +45,8 @@ void CBookmarksEditor::updateUi()
 	{
 		QTreeWidgetItem * item = new QTreeWidgetItem(QStringList{_bookmarks[i].filePath, QString::number(_bookmarks[i].wordIndex + 1)}); // +1 is conversion from 0-based index to human-readable 1-based natural number
 		item->setData(ColumnFilePath, Qt::UserRole, _bookmarks[i].filePath);
-		item->setData(ColumnWordNumber, Qt::UserRole, _bookmarks[i].wordIndex);
-		items.push_back(item); 
+		item->setData(ColumnWordNumber, Qt::UserRole, (qulonglong)_bookmarks[i].wordIndex);
+		items.push_back(item);
 	}
 
 	ui->list->addTopLevelItems(items);

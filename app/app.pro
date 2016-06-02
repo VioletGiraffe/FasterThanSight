@@ -50,6 +50,10 @@ win*{
 	RC_FILE = resources/FTS.rc
 }
 
+mac*{
+	ICON = resources/fts_icon.icns
+}
+
 INCLUDEPATH += \
 	src/ \
 	../core/ \

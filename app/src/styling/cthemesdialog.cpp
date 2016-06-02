@@ -135,7 +135,7 @@ void CThemesDialog::saveThemes() const
 		list.push_back(theme.toString() + ';');
 
 	CSettings().setValue(THEMES_SETTING, list);
-	CSettings().setValue(CURRENT_THEME_SETTING, _currentThemeIndex);
+	CSettings().setValue(CURRENT_THEME_SETTING, (qulonglong)_currentThemeIndex);
 }
 
 void CThemesDialog::initColorPicker(QToolButton* btn, QColor& color)
@@ -186,12 +186,12 @@ void CThemesDialog::loadThemes()
 	const auto themes = themesFromSettings();
 	_themes = themes.first;
 	_currentThemeIndex = themes.second;
-	
+
 	for (const auto& theme : _themes)
 		ui->_cbTheme->addItem(theme._name);
 
 	ui->_cbTheme->blockSignals(false);
-	
+
 	ui->_cbTheme->setCurrentIndex(_currentThemeIndex);
 	ui->_cbTheme->currentIndexChanged(_currentThemeIndex);
 }
