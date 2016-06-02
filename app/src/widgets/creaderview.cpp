@@ -14,7 +14,7 @@ CReaderView::CReaderView(QWidget* parent) : QWidget(parent)
 	_textFadeOutAnimation->setStartValue(1.0f);
 	_textFadeOutAnimation->setEndValue(0.0f);
 	_textFadeOutAnimation->setEasingCurve(QEasingCurve::OutQuad);
-	_textFadeOutAnimation->setDuration(100);
+	_textFadeOutAnimation->setDuration(75);
 }
 
 CReaderView::~CReaderView()
@@ -22,18 +22,22 @@ CReaderView::~CReaderView()
 	_textFadeOutAnimation->stop();
 }
 
-void CReaderView::setText(const QString& text, int pivotCharacterIndex /*= -1*/)
+QString CReaderView::text() const
 {
-	const auto setTextImplementation = [text, pivotCharacterIndex, this]() {
-		_text = text;
-		_pivotCharacterIndex = pivotCharacterIndex;
+	return _text;
+}
 
+void CReaderView::setText(const TextFragment& textFragment, bool showPivot, TextFragment::PivotCalculationMethod pivotCalculationMethod)
+{
+	const auto setTextImplementation = [textFragment, showPivot, pivotCalculationMethod, this]() {
+		_text = textFragment.text();
+		_pivotCharacterIndex = showPivot ? textFragment.pivotLetterIndex(pivotCalculationMethod) : -1;
 		_textOpacity = 1.0f;
 
 		update();
 	};
 
-	if (_text == text)
+	if (_text == textFragment.text())
 	{
 		QMetaObject::Connection* connection = new QMetaObject::Connection();
 		*connection = connect(_textFadeOutAnimation, &QPropertyAnimation::finished, [this, connection, setTextImplementation]() {
@@ -48,11 +52,6 @@ void CReaderView::setText(const QString& text, int pivotCharacterIndex /*= -1*/)
 	else
 		setTextImplementation();
 
-}
-
-QString CReaderView::text() const
-{
-	return _text;
 }
 
 void CReaderView::clear()

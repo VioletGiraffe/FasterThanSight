@@ -376,10 +376,7 @@ void CMainWindow::toggleFullScreen()
 void CMainWindow::updateDisplay(const size_t currentTextFragmentIndex)
 {
 	const auto& currentFragment = _reader.textFragment(currentTextFragmentIndex);
-	const QString text = currentFragment._textFragment.word() + currentFragment._textFragment.punctuation();
-	const int pivotCharIndex = ui->actionShow_pivot->isChecked() ? currentFragment._textFragment.pivotLetterIndex((TextFragment::PivotCalculationMethod)CSettings().value(PIVOT_CALCULATION_METHOD, DEFAULT_PIVOT_CALCULATION_METHOD).toInt()) : -1;
-
-	ui->_text->setText(text, pivotCharIndex);
+	ui->_text->setText(currentFragment._textFragment, ui->actionShow_pivot->isChecked(), (TextFragment::PivotCalculationMethod)CSettings().value(PIVOT_CALCULATION_METHOD, DEFAULT_PIVOT_CALCULATION_METHOD).toInt());
 
 	updateProgressLabel();
 }

@@ -71,6 +71,11 @@ int TextFragment::pivotLetterIndex(PivotCalculationMethod method) const
 		return pivotIndex;
 }
 
+QString TextFragment::text() const
+{
+	return _word + _punctuationText;
+}
+
 QString TextFragment::word() const
 {
 	return _word;
@@ -84,4 +89,9 @@ QString TextFragment::punctuation() const
 TextFragment::Delimiter TextFragment::delimiter() const
 {
 	return _delimitier;
+}
+
+bool TextFragment::isEndOfSentence() const
+{
+	return _delimitier == Point || _delimitier == QuestionMark || _delimitier == ExclamationMark || _delimitier == Ellipsis;
 }

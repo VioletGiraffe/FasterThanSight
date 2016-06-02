@@ -1,6 +1,7 @@
 #pragma once
 
 #include "compiler/compiler_warnings_control.h"
+#include "textfragment/ctextfragment.h"
 
 DISABLE_COMPILER_WARNINGS
 #include <QWidget>
@@ -20,8 +21,8 @@ public:
 	CReaderView(QWidget* parent = 0);
 	~CReaderView();
 
-	void setText(const QString& text, int pivotCharacterIndex = -1);
 	QString text() const;
+	void setText(const TextFragment& textFragment, bool showPivot, TextFragment::PivotCalculationMethod pivotCalculationMethod = TextFragment::pcmMagic);
 	void clear();
 
 	void setTextOpacity(qreal opacity);
@@ -30,12 +31,15 @@ protected:
 	void paintEvent(QPaintEvent* e) override;
 
 private:
-	QColor _textBackgroundColor;
-	QColor _pivotCharacterColor;
-
+// Data
 	QString _text;
 	int _pivotCharacterIndex = -1;
 
+// Style
+	QColor _textBackgroundColor;
+	QColor _pivotCharacterColor;
+
+// Rendering
 	QPropertyAnimation* _textFadeOutAnimation = nullptr;
 
 	QPixmap _backgroundPixmap;
