@@ -37,6 +37,12 @@ void CReaderView::setTextBackgroundColor(const QColor& color)
 
 void CReaderView::setText(const QString& text, int pivotCharacterIndex /*= -1*/)
 {
+	_text = text;
+	_pivotCharacterIndex = pivotCharacterIndex;
+	update();
+
+	return;
+
 	const auto setTextImplementation = [text, pivotCharacterIndex, this]() {
 		_text = text;
 		_pivotCharacterIndex = pivotCharacterIndex;
