@@ -87,6 +87,7 @@
     <addaction name="separator"/>
     <addaction name="action_Themes"/>
     <addaction name="action_Font"/>
+    <addaction name="actionSettings"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menu_Bookmarks"/>
@@ -151,7 +152,7 @@
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>&amp;Show pivot</string>
+    <string>Show &amp;pivot</string>
    </property>
    <property name="shortcut">
     <string>Alt+P</string>
@@ -183,6 +184,14 @@
   <action name="action_Fullscreen">
    <property name="text">
     <string>&amp;Fullscreen (F11)</string>
+   </property>
+  </action>
+  <action name="actionSettings">
+   <property name="text">
+    <string>&amp;Settings...</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Alt+S</string>
    </property>
   </action>
  </widget>

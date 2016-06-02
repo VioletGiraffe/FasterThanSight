@@ -6,6 +6,9 @@
 #include "bookmarks/cbookmarkseditor.h"
 
 #include "settings/csettings.h"
+#include "settings/settings.h"
+#include "settingsui/csettingsdialog.h"
+#include "settings/csettingspagepivot.h"
 #include "uisettings.h"
 
 DISABLE_COMPILER_WARNINGS
@@ -243,6 +246,12 @@ void CMainWindow::initActions()
 		loadBookmarksFromSettings(); // to update the menu items list
 	});
 
+	connect(ui->actionSettings, &QAction::triggered, [this](){
+		CSettingsDialog(this)
+			.addSettingsPage(new CSettingsPagePivot)
+			.exec();
+	});
+
 	connect(ui->action_Exit, &QAction::triggered, qApp, &QApplication::exit);
 }
 
@@ -367,7 +376,7 @@ void CMainWindow::updateDisplay(const size_t currentTextFragmentIndex)
 {
 	const auto& currentFragment = _reader.textFragment(currentTextFragmentIndex);
 	const QString text = currentFragment._textFragment.word() + currentFragment._textFragment.punctuation();
-	const int pivotCharIndex = ui->actionShow_pivot->isChecked() ? currentFragment._textFragment.pivotLetterIndex() : -1;
+	const int pivotCharIndex = ui->actionShow_pivot->isChecked() ? currentFragment._textFragment.pivotLetterIndex((TextFragment::PivotCalculationMethod)CSettings().value(PIVOT_CALCULATION_METHOD, DEFAULT_PIVOT_CALCULATION_METHOD).toInt()) : -1;
 
 	ui->_text->setText(text, pivotCharIndex);
 

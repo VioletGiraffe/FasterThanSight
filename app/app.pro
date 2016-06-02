@@ -57,18 +57,21 @@ INCLUDEPATH += \
 	../qtutils/
 
 include (src/widgets/widgets.pri)
+include (src/settings/settings.pri)
 
 SOURCES += \
 	src/main.cpp\
 	src/cmainwindow.cpp \
 	src/bookmarks/cbookmarkseditor.cpp \
-    src/styling/cthemesdialog.cpp
+	src/styling/cthemesdialog.cpp
 
-HEADERS += src\cmainwindow.h \
-    src/uisettings.h \
-    src/bookmarks/cbookmarkseditor.h \
-    src/styling/cthemesdialog.h
+HEADERS += \
+	src\cmainwindow.h \
+	src/uisettings.h \
+	src/bookmarks/cbookmarkseditor.h \
+	src/styling/cthemesdialog.h
 
-FORMS += src\cmainwindow.ui \
-    src/bookmarks/cbookmarkseditor.ui \
-    src/styling/cthemesdialog.ui
+FORMS += \
+	src\cmainwindow.ui \
+	src/bookmarks/cbookmarkseditor.ui \
+	src/styling/cthemesdialog.ui

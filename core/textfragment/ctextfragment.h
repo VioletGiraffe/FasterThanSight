@@ -24,6 +24,16 @@ public:
 		Newline
 	};
 
+	enum PivotCalculationMethod {
+		pcmMagic,
+
+		pcmMiddle,
+		pcmQuarter,
+		pcmSquareRoot,
+		pcmCubicRoot,
+		pcmLogarithm
+	};
+
 	inline TextFragment() {};
 	TextFragment(const QString& word, const QString& punctuation, Delimiter delimiter = NoDelimiter);
 
@@ -31,7 +41,7 @@ public:
 	QString punctuation() const;
 	Delimiter delimiter() const;
 
-	int pivotLetterIndex() const;
+	int pivotLetterIndex(PivotCalculationMethod method) const;
 
 private:
 	QString _word;
