@@ -84,6 +84,7 @@
     <addaction name="action_Fullscreen"/>
     <addaction name="separator"/>
     <addaction name="actionShow_pivot"/>
+    <addaction name="actionClear_screen_after_sentence_end"/>
     <addaction name="separator"/>
     <addaction name="action_Themes"/>
     <addaction name="action_Font"/>
@@ -170,6 +171,9 @@
    <property name="text">
     <string>Themes...</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+Alt+T</string>
+   </property>
   </action>
   <action name="action_Bookmark_current_position">
    <property name="text">
@@ -194,6 +198,14 @@
     <string>Ctrl+Alt+S</string>
    </property>
   </action>
+  <action name="actionClear_screen_after_sentence_end">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>&amp;Clear screen after sentence end</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <customwidgets>
@@ -205,5 +217,22 @@
   </customwidget>
  </customwidgets>
  <resources/>
- <connections/>
+ <connections>
+  <connection>
+   <sender>action_Exit</sender>
+   <signal>triggered()</signal>
+   <receiver>CMainWindow</receiver>
+   <slot>close()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>325</x>
+     <y>284</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>

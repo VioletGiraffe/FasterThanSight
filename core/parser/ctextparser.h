@@ -9,6 +9,8 @@ class CTextParser
 public:
 	std::vector<TextFragment> parse(const QString& text);
 
+	void setAddEmptyFragmentAfterSentence(bool add);
+
 private:
 	void finalizeFragment();
 
@@ -19,4 +21,5 @@ private:
 	bool _wordEnded = false;
 	bool _quoteOpened = false;
 	TextFragment::Delimiter _lastDelimiter = TextFragment::NoDelimiter;
+	bool _addEmptyFragmentAfterSentenceEnd = false;
 };

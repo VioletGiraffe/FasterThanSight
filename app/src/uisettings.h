@@ -17,4 +17,10 @@ RESTORE_COMPILER_WARNINGS
 #define UI_SHOW_PIVOT_SETTING QStringLiteral("UI/Reading/ShowPivot")
 #define UI_SHOW_PIVOT_DEFAULT true
 
+#define UI_CLEAR_SCREEN_AFTER_SENTENCE_END QStringLiteral("UI/Reading/FadeOutAfterSentenceEnd")
+#define UI_CLEAR_SCREEN_AFTER_SENTENCE_END_DEFAULT true
+
 #define UI_BOOKMARKS_STORAGE QStringLiteral("UI/Bookmarks/Bookrmarks")
+
+#define UI_PIVOT_CALCULATION_METHOD QStringLiteral("Settings/Pivot/CalculationMethod")
+#define UI_PIVOT_CALCULATION_METHOD_DEFAULT TextFragment::pcmMagic

@@ -2,8 +2,7 @@ FORMS += \
     $$PWD/csettingspagepivot.ui
 
 HEADERS += \
-    $$PWD/csettingspagepivot.h \
-    $$PWD/settings.h
+    $$PWD/csettingspagepivot.h
 
 SOURCES += \
     $$PWD/csettingspagepivot.cpp

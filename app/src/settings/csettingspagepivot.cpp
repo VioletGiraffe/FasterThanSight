@@ -2,7 +2,6 @@
 
 #include "textfragment/ctextfragment.h"
 #include "settings/csettings.h"
-#include "settings.h"
 #include "../uisettings.h"
 
 DISABLE_COMPILER_WARNINGS
@@ -37,7 +36,7 @@ CSettingsPagePivot::CSettingsPagePivot(QWidget *parent) :
 		ui->_demo->setText(fragment, true, method);
 	});
 
-	ui->_cbPivotCalculationMethod->setCurrentIndex(CSettings().value(PIVOT_CALCULATION_METHOD, TextFragment::pcmMagic).toInt());
+	ui->_cbPivotCalculationMethod->setCurrentIndex(CSettings().value(UI_PIVOT_CALCULATION_METHOD, UI_PIVOT_CALCULATION_METHOD_DEFAULT).toInt());
 	ui->_cbPivotCalculationMethod->currentIndexChanged(ui->_cbPivotCalculationMethod->currentIndex());
 }
 
@@ -49,5 +48,5 @@ CSettingsPagePivot::~CSettingsPagePivot()
 void CSettingsPagePivot::acceptSettings()
 {
 	CSettings s;
-	s.setValue(PIVOT_CALCULATION_METHOD, ui->_cbPivotCalculationMethod->currentIndex());
+	s.setValue(UI_PIVOT_CALCULATION_METHOD, ui->_cbPivotCalculationMethod->currentIndex());
 }

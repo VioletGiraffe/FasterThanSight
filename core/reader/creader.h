@@ -29,6 +29,8 @@ public:
 	void load(const std::vector<TextFragment>& textFragments);
 	bool loadFromFile(const QString& filePath);
 
+	void setClearScreenAfterSentenceEnd(bool clear);
+
 // State
 	State state() const;
 	QString filePath() const;
@@ -85,4 +87,6 @@ private:
 	State _state = Paused;
 
 	QTimer _readingTimer;
+
+	bool _clearScreenAfterSentenceEnd = false;
 };

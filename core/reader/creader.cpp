@@ -38,6 +38,7 @@ void CReader::load(const std::vector<TextFragment>& textFragments)
 bool CReader::loadFromFile(const QString& filePath)
 {
 	CTextParser parser;
+	parser.setAddEmptyFragmentAfterSentence(_clearScreenAfterSentenceEnd);
 	load(parser.parse(CFileDecoder::readDataAndDecodeText(filePath)));
 
 	if (!_textFragments.empty())
@@ -47,6 +48,11 @@ bool CReader::loadFromFile(const QString& filePath)
 	}
 	else
 		return false;
+}
+
+void CReader::setClearScreenAfterSentenceEnd(bool clear)
+{
+	_clearScreenAfterSentenceEnd = clear;
 }
 
 CReader::State CReader::state() const

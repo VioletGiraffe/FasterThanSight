@@ -93,11 +93,26 @@ std::vector<TextFragment> CTextParser::parse(const QString& text)
 	return _fragments;
 }
 
+void CTextParser::setAddEmptyFragmentAfterSentence(bool add)
+{
+	_addEmptyFragmentAfterSentenceEnd = add;
+}
+
 void CTextParser::finalizeFragment()
 {
 	_delimitersBuffer = _delimitersBuffer.trimmed();
 	if (!_delimitersBuffer.isEmpty() || !_wordBuffer.isEmpty())
-		_fragments.emplace_back(_wordBuffer, _delimitersBuffer, _lastDelimiter);
+	{
+		TextFragment fragment(_wordBuffer, _delimitersBuffer, _lastDelimiter);
+		if (_addEmptyFragmentAfterSentenceEnd && fragment.isEndOfSentence())
+		{
+			_fragments.emplace_back(_wordBuffer, _delimitersBuffer, TextFragment::Comma);
+			// Moving the end-of-sentence delimiter off to a dummy fragment with no text - just so that we can fade the text out and hold the screen empty for a bit
+			_fragments.emplace_back(QString::null, QString::null, _lastDelimiter);
+		}
+		else
+			_fragments.push_back(fragment);
+	}
 
 	_wordEnded = false;
 	_delimitersBuffer.clear();

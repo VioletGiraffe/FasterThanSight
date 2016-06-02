@@ -29,15 +29,16 @@ QString CReaderView::text() const
 
 void CReaderView::setText(const TextFragment& textFragment, bool showPivot, TextFragment::PivotCalculationMethod pivotCalculationMethod)
 {
-	const auto setTextImplementation = [textFragment, showPivot, pivotCalculationMethod, this]() {
-		_text = textFragment.text();
+	const QString newText = textFragment.text();
+	const auto setTextImplementation = [textFragment, showPivot, pivotCalculationMethod, newText, this]() {
+		_text = newText;
 		_pivotCharacterIndex = showPivot ? textFragment.pivotLetterIndex(pivotCalculationMethod) : -1;
 		_textOpacity = 1.0f;
 
 		update();
 	};
 
-	if (_text == textFragment.text())
+	if (_text == newText || newText.isEmpty())
 	{
 		QMetaObject::Connection* connection = new QMetaObject::Connection();
 		*connection = connect(_textFadeOutAnimation, &QPropertyAnimation::finished, [this, connection, setTextImplementation]() {
@@ -78,12 +79,6 @@ void CReaderView::paintEvent(QPaintEvent* /*e*/)
 	_backgroundPixmap = QPixmap(size());
 	QPainter backgroundPainter(&_backgroundPixmap);
 	backgroundPainter.fillRect(rect(), palette().color(QPalette::Background));
-
-	if (_text.isEmpty())
-	{
-		QPainter(this).drawPixmap(0, 0, _backgroundPixmap);
-		return;
-	}
 
 	QFontMetrics fontMetrics(font());
 

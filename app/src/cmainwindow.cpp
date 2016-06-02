@@ -6,7 +6,6 @@
 #include "bookmarks/cbookmarkseditor.h"
 
 #include "settings/csettings.h"
-#include "settings/settings.h"
 #include "settingsui/csettingsdialog.h"
 #include "settings/csettingspagepivot.h"
 #include "uisettings.h"
@@ -22,6 +21,7 @@ DISABLE_COMPILER_WARNINGS
 #include <QFontDialog>
 #include <QInputDialog>
 #include <QLabel>
+#include <QMessageBox>
 #include <QMimeData>
 #include <QShortcut>
 #include <QSlider>
@@ -49,6 +49,8 @@ CMainWindow::CMainWindow(QWidget *parent) :
 	setAcceptDrops(true);
 
 	ui->_text->installEventFilter(this);
+
+	_reader.setClearScreenAfterSentenceEnd(CSettings().value(UI_CLEAR_SCREEN_AFTER_SENTENCE_END, UI_CLEAR_SCREEN_AFTER_SENTENCE_END_DEFAULT).toBool());
 
 	// Status bar should be inited first so that the rest of the init code can call updateProgressLabel and such
 	initStatusBar();
@@ -177,6 +179,14 @@ void CMainWindow::initActions()
 	});
 	ui->actionShow_pivot->setChecked(CSettings().value(UI_SHOW_PIVOT_SETTING, UI_SHOW_PIVOT_DEFAULT).toBool());
 
+	connect(ui->actionClear_screen_after_sentence_end, &QAction::triggered, [this](bool checked) {
+		CSettings().setValue(UI_CLEAR_SCREEN_AFTER_SENTENCE_END, checked);
+		_reader.setClearScreenAfterSentenceEnd(checked);
+
+		QMessageBox::information(this, QString(), tr("The file must be reloaded for the change to take effect."));
+	});
+	ui->actionClear_screen_after_sentence_end->setChecked(CSettings().value(UI_CLEAR_SCREEN_AFTER_SENTENCE_END, UI_CLEAR_SCREEN_AFTER_SENTENCE_END_DEFAULT).toBool());
+
 	connect(ui->action_Themes, &QAction::triggered, [this]() {
 		_colorsSetupDialog.show();
 	});
@@ -252,8 +262,6 @@ void CMainWindow::initActions()
 			.addSettingsPage(new CSettingsPagePivot)
 			.exec();
 	});
-
-	connect(ui->action_Exit, &QAction::triggered, qApp, &QApplication::exit);
 }
 
 void CMainWindow::initStatusBar()
@@ -376,7 +384,7 @@ void CMainWindow::toggleFullScreen()
 void CMainWindow::updateDisplay(const size_t currentTextFragmentIndex)
 {
 	const auto& currentFragment = _reader.textFragment(currentTextFragmentIndex);
-	ui->_text->setText(currentFragment._textFragment, ui->actionShow_pivot->isChecked(), (TextFragment::PivotCalculationMethod)CSettings().value(PIVOT_CALCULATION_METHOD, DEFAULT_PIVOT_CALCULATION_METHOD).toInt());
+	ui->_text->setText(currentFragment._textFragment, ui->actionShow_pivot->isChecked(), (TextFragment::PivotCalculationMethod)CSettings().value(UI_PIVOT_CALCULATION_METHOD, UI_PIVOT_CALCULATION_METHOD_DEFAULT).toInt());
 
 	updateProgressLabel();
 }
