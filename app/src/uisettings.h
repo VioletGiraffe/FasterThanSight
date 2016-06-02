@@ -15,6 +15,6 @@ RESTORE_COMPILER_WARNINGS
 #define UI_OPEN_FILE_LAST_USED_DIR_SETTING QStringLiteral("UI/File/OpenFileDir")
 
 #define UI_SHOW_PIVOT_SETTING QStringLiteral("UI/Reading/ShowPivot")
-#define UI_SHOW_PIVOT_DEFAULT false
+#define UI_SHOW_PIVOT_DEFAULT true
 
 #define UI_BOOKMARKS_STORAGE QStringLiteral("UI/Bookmarks/Bookrmarks")
