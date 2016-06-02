@@ -2,6 +2,8 @@
 
 Extensively configurable speed reading software based on the [rapid serial visual representation (RSVP)](https://en.wikipedia.org/wiki/Rapid_serial_visual_presentation) method (and possibly other methods in the future).
 
+![Screenshot of FTS](https://i.snag.gy/p1JXx3.jpg)
+
 ###Currently supported platforms:
 * Windows
 * Mac OS X
