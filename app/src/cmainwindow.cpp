@@ -173,6 +173,7 @@ void CMainWindow::initActions()
 
 	connect(ui->actionShow_pivot, &QAction::triggered, [this](bool checked) {
 		CSettings().setValue(UI_SHOW_PIVOT_SETTING, checked);
+		_reader.updateInterface();
 	});
 	ui->actionShow_pivot->setChecked(CSettings().value(UI_SHOW_PIVOT_SETTING, UI_SHOW_PIVOT_DEFAULT).toBool());
 

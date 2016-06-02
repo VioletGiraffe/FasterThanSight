@@ -83,6 +83,12 @@ size_t CReader::timeRemainingSeconds() const
 	return (size_t)ceilf(actualSeconds);
 }
 
+void CReader::updateInterface() const
+{
+	_interface->stateChanged(_state);
+	_interface->updateDisplay(_position);
+}
+
 size_t CReader::totalNumWords() const
 {
 	return _textFragments.size();

@@ -38,6 +38,9 @@ public:
 	long double progress() const; // [0.0; 1.0]
 	size_t timeRemainingSeconds() const;
 
+	// Notify the client of current reader state via ReaderInterface
+	void updateInterface() const;
+
 // Data
 	inline const TextFragmentWithPause& textFragment(const size_t fragmentIndex) const {
 		if (fragmentIndex >= _textFragments.size())
