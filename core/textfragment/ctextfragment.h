@@ -8,20 +8,21 @@ RESTORE_COMPILER_WARNINGS
 class TextFragment
 {
 public:
+	// Ordered by priority!
 	enum Delimiter {
 		NoDelimiter,
 		Space,
-		Comma,
-		Point,
-		ExclamationMark,
-		QuestionMark,
+		Newline,
 		Dash,
-		Colon,
-		Semicolon,
-		Ellipsis,
 		Bracket,
 		Quote,
-		Newline
+		Comma,
+		Colon,
+		Semicolon,
+		Point,
+		Ellipsis,
+		ExclamationMark,
+		QuestionMark
 	};
 
 	enum PivotCalculationMethod {

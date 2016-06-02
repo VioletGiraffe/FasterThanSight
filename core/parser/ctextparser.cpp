@@ -2,6 +2,11 @@
 
 #include <set>
 
+inline int priority(TextFragment::Delimiter delimiter)
+{
+	return delimiter;
+}
+
 std::vector<TextFragment> CTextParser::parse(const QString& text)
 {
 	struct Delimiter {
@@ -68,8 +73,8 @@ std::vector<TextFragment> CTextParser::parse(const QString& text)
 				}
 				else // Business as usual
 				{
-					// Don't let space and newline in e. g. ", " override other punctuation marks
-					if ((it->delimiterType != TextFragment::Space && it->delimiterType != TextFragment::Newline) || _lastDelimiter == TextFragment::NoDelimiter)
+					// Don't let space, newline and quote in e. g. ", " override other punctuation marks
+					if (priority(it->delimiterType) >= priority(_lastDelimiter))
 						_lastDelimiter = it->delimiterType;
 
 					_wordEnded = true;
@@ -78,8 +83,8 @@ std::vector<TextFragment> CTextParser::parse(const QString& text)
 			}
 			else
 			{
-				// Don't let space and newline in e. g. ", " override other punctuation marks
-				if ((it->delimiterType != TextFragment::Space && it->delimiterType != TextFragment::Newline) || _lastDelimiter == TextFragment::NoDelimiter)
+				// Don't let space, newline and quote in e. g. ", " override other punctuation marks
+				if (priority(it->delimiterType) >= priority(_lastDelimiter))
 					_lastDelimiter = it->delimiterType;
 
 				_wordEnded = true;
