@@ -55,6 +55,17 @@ void CReader::setClearScreenAfterSentenceEnd(bool clear)
 	_clearScreenAfterSentenceEnd = clear;
 }
 
+void CReader::setLongWordPauseScaling(unsigned lengthThreshold, float scaleFactor)
+{
+	if (lengthThreshold != _longWordThreshold || scaleFactor != _longWordDelayScaleFactor)
+	{
+		_longWordThreshold = lengthThreshold;
+		_longWordDelayScaleFactor = scaleFactor;
+
+		updatePauseValues();
+	}
+}
+
 CReader::State CReader::state() const
 {
 	return _state;

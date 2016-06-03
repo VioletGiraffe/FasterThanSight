@@ -51,6 +51,8 @@ private:
 
 	void toggleFullScreen();
 
+	void settingsChanged();
+
 private:
 // Reader callbacks
 	void updateDisplay(const size_t currentTextFragmentIndex) override;

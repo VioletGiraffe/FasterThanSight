@@ -8,6 +8,7 @@
 #include "settings/csettings.h"
 #include "settingsui/csettingsdialog.h"
 #include "settings/csettingspagepivot.h"
+#include "settings/csettingspagepauses.h"
 #include "uisettings.h"
 
 DISABLE_COMPILER_WARNINGS
@@ -64,6 +65,8 @@ CMainWindow::CMainWindow(QWidget *parent) :
 		const CBookmark& lastBookmark = _recentFiles.items().front();
 		openBookmark(lastBookmark);
 	}
+
+	settingsChanged();
 }
 
 CMainWindow::~CMainWindow()
@@ -258,9 +261,11 @@ void CMainWindow::initActions()
 	});
 
 	connect(ui->actionSettings, &QAction::triggered, [this](){
-		CSettingsDialog(this)
-			.addSettingsPage(new CSettingsPagePivot)
-			.exec();
+		CSettingsDialog settingsDialog(this);
+		settingsDialog.addSettingsPage(new CSettingsPagePivot).addSettingsPage(new CSettingsPagePauses);
+		connect(&settingsDialog, &CSettingsDialog::settingsChanged, this, &CMainWindow::settingsChanged);
+
+		settingsDialog.exec();
 	});
 }
 
@@ -379,6 +384,13 @@ void CMainWindow::toggleFullScreen()
 		menuBar()->show();
 		statusBar()->show();
 	}
+}
+
+void CMainWindow::settingsChanged()
+{
+	CSettings s;
+	_reader.setLongWordPauseScaling(s.value(UI_LONG_WORD_THRESHOLD_SETTING, UI_LONG_WORD_THRESHOLD_DEFAULT).toUInt(),
+									s.value(UI_LONG_WORD_DELAY_FACTOR_SETTING, UI_LONG_WORD_DELAY_FACTOR_DEFAULT).toFloat());
 }
 
 void CMainWindow::updateDisplay(const size_t currentTextFragmentIndex)

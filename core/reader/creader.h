@@ -30,6 +30,7 @@ public:
 	bool loadFromFile(const QString& filePath);
 
 	void setClearScreenAfterSentenceEnd(bool clear);
+	void setLongWordPauseScaling(unsigned lengthThreshold, float scaleFactor);
 
 // State
 	State state() const;
@@ -88,5 +89,8 @@ private:
 
 	QTimer _readingTimer;
 
+// Pause-related stuff
 	bool _clearScreenAfterSentenceEnd = false;
+	unsigned _longWordThreshold = 7;
+	float _longWordDelayScaleFactor = 1.1f;
 };
