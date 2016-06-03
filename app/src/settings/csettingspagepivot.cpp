@@ -10,6 +10,8 @@ DISABLE_COMPILER_WARNINGS
 #include <QDebug>
 RESTORE_COMPILER_WARNINGS
 
+#include <algorithm>
+
 CSettingsPagePivot::CSettingsPagePivot(QWidget *parent) :
 	CSettingsPage(parent),
 	ui(new Ui::CSettingsPagePivot)
@@ -20,7 +22,6 @@ CSettingsPagePivot::CSettingsPagePivot(QWidget *parent) :
 	textFont.setFamily(CSettings().value(UI_FONT_FAMILY, textFont.family()).toString());
 	textFont.setStyle((QFont::Style)CSettings().value(UI_FONT_STYLE, textFont.style()).toInt());
 	textFont.setWeight((QFont::Weight)CSettings().value(UI_FONT_WEIGHT, textFont.weight()).toInt());
-	textFont.setPointSize(CSettings().value(UI_FONT_SIZE_SETTING, textFont.pointSize()).toInt());
 	ui->_demo->setFont(textFont);
 
 	ui->_cbPivotCalculationMethod->addItem("Magic");
@@ -49,4 +50,16 @@ void CSettingsPagePivot::acceptSettings()
 {
 	CSettings s;
 	s.setValue(UI_PIVOT_CALCULATION_METHOD, ui->_cbPivotCalculationMethod->currentIndex());
+}
+
+void CSettingsPagePivot::resizeEvent(QResizeEvent* e)
+{
+	CSettingsPage::resizeEvent(e);
+
+	QFont textFont = ui->_demo->font();
+	const float textScaleFactor = width()/2.0f / std::max(QFontMetrics(textFont).width(ui->_demo->text()), 1);
+
+	const int oldTextSize = textFont.pointSize();
+	textFont.setPointSize((int)(textScaleFactor * oldTextSize));
+	ui->_demo->setFont(textFont);
 }

@@ -14,6 +14,9 @@ public:
 
 	void acceptSettings() override;
 
+protected:
+	void resizeEvent(QResizeEvent* e) override;
+
 private:
 	Ui::CSettingsPagePivot *ui;
 };
