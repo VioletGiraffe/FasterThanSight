@@ -79,6 +79,15 @@ CMainWindow::~CMainWindow()
 	ui = nullptr;
 }
 
+void CMainWindow::closeEvent(QCloseEvent * e)
+{
+	CSettings s;
+	s.setValue(UI_MAIN_TOOLBAR_VISIBLE_SETTING, _defaultToolbar->isVisible());
+	s.setValue(UI_SETTINGS_TOOLBAR_VISIBLE_SETTING, _readingSettingsToolbar->isVisible());
+
+	QMainWindow::closeEvent(e);
+}
+
 void CMainWindow::dragEnterEvent(QDragEnterEvent *event)
 {
 	if (event->mimeData()->hasUrls())
@@ -104,17 +113,26 @@ bool CMainWindow::eventFilter(QObject* /*o*/, QEvent* e)
 
 void CMainWindow::initToolBars()
 {
+	CSettings s;
+// Main (default) toolbar
+
+	QList<QToolBar*> toolbars = findChildren<QToolBar*>();
+	assert_r(toolbars.size() == 1);
+	_defaultToolbar = toolbars.front();
+	_defaultToolbar->setVisible(s.value(UI_MAIN_TOOLBAR_VISIBLE_SETTING, true).toBool());
+
 // Reading settings toolbar
+
 	// Font size
 	_textSizeSlider = new QSlider(Qt::Horizontal);
 	_textSizeSlider->setMinimum(20);
 	_textSizeSlider->setMaximum(300);
-	_textSizeSlider->setValue(CSettings().value(UI_FONT_SIZE_SETTING, UI_FONT_SIZE_DEFAULT).toInt());
+	_textSizeSlider->setValue(s.value(UI_FONT_SIZE_SETTING, UI_FONT_SIZE_DEFAULT).toInt());
 
 	QFont textFont = ui->_text->font();
-	textFont.setFamily(CSettings().value(UI_FONT_FAMILY, textFont.family()).toString());
-	textFont.setStyle((QFont::Style)CSettings().value(UI_FONT_STYLE, textFont.style()).toInt());
-	textFont.setWeight((QFont::Weight)CSettings().value(UI_FONT_WEIGHT, textFont.weight()).toInt());
+	textFont.setFamily(s.value(UI_FONT_FAMILY, textFont.family()).toString());
+	textFont.setStyle((QFont::Style)s.value(UI_FONT_STYLE, textFont.style()).toInt());
+	textFont.setWeight((QFont::Weight)s.value(UI_FONT_WEIGHT, textFont.weight()).toInt());
 	ui->_text->setFont(textFont);
 
 	connect(_textSizeSlider, &QSlider::valueChanged, [this](int size){
@@ -160,6 +178,8 @@ void CMainWindow::initToolBars()
 
 	_readingSettingsToolbar->addWidget(_readingSpeedSlider);
 	_readingSettingsToolbar->addWidget(_readingSpeedSpinBox);
+
+	_readingSettingsToolbar->setVisible(s.value(UI_SETTINGS_TOOLBAR_VISIBLE_SETTING, true).toBool());
 }
 
 void CMainWindow::initActions()

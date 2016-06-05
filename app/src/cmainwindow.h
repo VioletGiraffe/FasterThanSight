@@ -28,6 +28,7 @@ public:
 	~CMainWindow();
 
 protected:
+	void closeEvent(QCloseEvent * e) override;
 	void dragEnterEvent(QDragEnterEvent * event) override;
 	void dropEvent(QDropEvent * event) override;
 
@@ -61,6 +62,7 @@ private:
 private:
 	Ui::CMainWindow *ui;
 
+	QToolBar* _defaultToolbar = nullptr;
 // Reading settings controls
 	QToolBar* _readingSettingsToolbar = nullptr;
 	QSlider*  _textSizeSlider = nullptr;
