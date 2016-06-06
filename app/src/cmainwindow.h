@@ -57,6 +57,7 @@ private:
 private:
 // Reader callbacks
 	void updateDisplay(const size_t currentTextFragmentIndex) override;
+	void updateInfo() override;
 	void stateChanged(const CReader::State newState) override;
 
 private:

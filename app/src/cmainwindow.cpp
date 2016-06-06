@@ -182,7 +182,6 @@ void CMainWindow::initToolBars()
 
 	connect(_readingSpeedSlider, &QSlider::valueChanged, [this](int WPM){
 		_reader.setReadingSpeed(WPM);
-		updateProgressLabel(); // To re-calculate remaining reading time based on the new speed
 	});
 
 	_readingSpeedSlider->setValue(_reader.readingSpeed());
@@ -248,7 +247,6 @@ void CMainWindow::initActions()
 	connect(ui->actionStop, &QAction::triggered, [this](){
 		_reader.resetAndStop();
 		ui->_text->clear();
-		updateProgressLabel();
 	});
 
 	connect(ui->actionGo_to_word, &QAction::triggered, [this](){
@@ -339,7 +337,6 @@ void CMainWindow::openFile(const QString &filePath, size_t position)
 
 		CSettings().setValue(UI_OPEN_FILE_LAST_USED_DIR_SETTING, filePath);
 		setWindowTitle(qApp->applicationName() % " - " % QFileInfo(filePath).baseName());
-		updateProgressLabel();
 	}
 }
 
@@ -428,7 +425,10 @@ void CMainWindow::updateDisplay(const size_t currentTextFragmentIndex)
 {
 	const auto& currentFragment = _reader.textFragment(currentTextFragmentIndex);
 	ui->_text->setText(currentFragment._textFragment, ui->actionShow_pivot->isChecked(), (TextFragment::PivotCalculationMethod)CSettings().value(UI_PIVOT_CALCULATION_METHOD, UI_PIVOT_CALCULATION_METHOD_DEFAULT).toInt());
+}
 
+void CMainWindow::updateInfo()
+{
 	updateProgressLabel();
 }
 

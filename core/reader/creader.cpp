@@ -138,12 +138,14 @@ void CReader::resetAndStop()
 {
 	pauseReading();
 	_position = 0;
+	_interface->updateInfo();
 }
 
 void CReader::goToWord(size_t wordIndex)
 {
 	_position = wordIndex;
 	_interface->updateDisplay(_position);
+	_interface->updateInfo();
 }
 
 size_t CReader::readingSpeed() const
@@ -167,6 +169,7 @@ void CReader::readNextFragment()
 	else if (_state == Reading)
 	{
 		_interface->updateDisplay(_position);
+		_interface->updateInfo();
 		// Queue up the next word
 		_readingTimer.start(_textFragments[_position]._pauseAfter);
 		++_position;
@@ -195,9 +198,9 @@ size_t CReader::pauseForFragment(const TextFragment& fragment) const
 	const auto it = pauseForDelimiter.find(fragment.delimiter());
 	assert(it != pauseForDelimiter.end());
 
-	const size_t basePause = 60 * 1000 / _speedWpm;
-	const int wordLength = fragment.word().length();
-	return static_cast<size_t>(it->second * basePause * (wordLength > 6 ? (wordLength - 6) * 1.1f : 1.0f));
+	const float basePause = 60e3f / _speedWpm;
+	const unsigned wordLength = (unsigned)fragment.word().length();
+	return (size_t)round(it->second * basePause * (wordLength > _longWordThreshold ? (wordLength - _longWordThreshold) * _longWordDelayScaleFactor : 1.0f));
 }
 
 // Recalculate all the pauses for the entire text
@@ -205,4 +208,6 @@ void CReader::updatePauseValues()
 {
 	for (auto& fragment: _textFragments)
 		fragment._pauseAfter = pauseForFragment(fragment._textFragment);
+
+	_interface->updateInfo();
 }

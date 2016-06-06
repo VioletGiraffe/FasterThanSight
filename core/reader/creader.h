@@ -20,6 +20,7 @@ public:
 
 	struct ReaderInterface {
 		virtual void updateDisplay(const size_t currentTextFragmentIndex) = 0;
+		virtual void updateInfo() = 0; // Time remaining etc.
 		virtual void stateChanged(const State newState) = 0;
 	};
 
