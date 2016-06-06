@@ -122,11 +122,32 @@ void CMainWindow::initToolBars()
 	_defaultToolbar->setVisible(s.value(UI_MAIN_TOOLBAR_VISIBLE_SETTING, true).toBool());
 
 // Reading settings toolbar
+	_readingSettingsToolbar = addToolBar(tr("Reading settings"));
+
+	// Screen brightness
+	_brightnessSlider = new QSlider(Qt::Horizontal);
+	_brightnessSlider->setMinimum(1);
+	_brightnessSlider->setMaximum(100);
+	connect(_brightnessSlider, &QSlider::valueChanged, [](int value){
+		CSettings().setValue(UI_BRIGHTNESS, value);
+		qApp->setStyleSheet(CThemesDialog::currentAcceptedStyle());
+	});
+	_brightnessSlider->setValue(s.value(UI_BRIGHTNESS, UI_BRIGHTNESS_DEFAULT).toInt());
+	_readingSettingsToolbar->addWidget(new QLabel(tr("Brightness") + "  "));
+	_readingSettingsToolbar->addWidget(_brightnessSlider);
+	_readingSettingsToolbar->addSeparator();
 
 	// Font size
 	_textSizeSlider = new QSlider(Qt::Horizontal);
 	_textSizeSlider->setMinimum(20);
 	_textSizeSlider->setMaximum(300);
+	connect(_textSizeSlider, &QSlider::valueChanged, [this](int size) {
+		QFont font = ui->_text->font();
+		font.setPointSize(size);
+		ui->_text->setFont(font);
+
+		CSettings().setValue(UI_FONT_SIZE_SETTING, size);
+	});
 	_textSizeSlider->setValue(s.value(UI_FONT_SIZE_SETTING, UI_FONT_SIZE_DEFAULT).toInt());
 
 	QFont textFont = ui->_text->font();
@@ -135,16 +156,6 @@ void CMainWindow::initToolBars()
 	textFont.setWeight((QFont::Weight)s.value(UI_FONT_WEIGHT, textFont.weight()).toInt());
 	ui->_text->setFont(textFont);
 
-	connect(_textSizeSlider, &QSlider::valueChanged, [this](int size){
-		QFont font = ui->_text->font();
-		font.setPointSize(size);
-		ui->_text->setFont(font);
-
-		CSettings().setValue(UI_FONT_SIZE_SETTING, size);
-	});
-	_textSizeSlider->valueChanged(_textSizeSlider->value());
-
-	_readingSettingsToolbar = addToolBar(tr("Reading settings"));
 	_readingSettingsToolbar->addWidget(new QLabel(tr("Text size") + "  "));
 	_readingSettingsToolbar->addWidget(_textSizeSlider);
 

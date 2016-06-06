@@ -65,6 +65,7 @@ private:
 	QToolBar* _defaultToolbar = nullptr;
 // Reading settings controls
 	QToolBar* _readingSettingsToolbar = nullptr;
+	QSlider*  _brightnessSlider = nullptr;
 	QSlider*  _textSizeSlider = nullptr;
 
 	QSlider*  _readingSpeedSlider = nullptr;

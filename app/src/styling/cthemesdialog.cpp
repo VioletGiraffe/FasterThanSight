@@ -2,6 +2,7 @@
 
 #include "settings/csettings.h"
 #include "assert/advanced_assert.h"
+#include "../uisettings.h"
 
 DISABLE_COMPILER_WARNINGS
 #include "ui_cthemesdialog.h"
@@ -225,6 +226,11 @@ QString CThemesDialog::Theme::toString() const
 		;
 }
 
+inline QColor adjustBrightness(const QColor& c, const int brightnessPercentage)
+{
+	return QColor(c.red() * brightnessPercentage / 100, c.green() * brightnessPercentage / 100, c.blue() * brightnessPercentage / 100);
+}
+
 QString CThemesDialog::Theme::style() const
 {
 	static const QString styleTemplate =
@@ -235,9 +241,11 @@ QString CThemesDialog::Theme::style() const
 		"qproperty-pivotCharacterColor: %4; "
 		"}";
 
+	const int brightnessPercentage = CSettings().value(UI_BRIGHTNESS, UI_BRIGHTNESS_DEFAULT).toInt();
+
 	return styleTemplate
-		.arg(_windowBgColor.name())
-		.arg(_textBgColor.name())
-		.arg(_textColor.name())
-		.arg(_pivotColor.name());
+		.arg(adjustBrightness(_windowBgColor, brightnessPercentage).name())
+		.arg(adjustBrightness(_textBgColor, brightnessPercentage).name())
+		.arg(adjustBrightness(_textColor, brightnessPercentage).name())
+		.arg(adjustBrightness(_pivotColor, brightnessPercentage).name());
 }

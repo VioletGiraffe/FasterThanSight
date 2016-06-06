@@ -5,6 +5,9 @@ DISABLE_COMPILER_WARNINGS
 #include <QString>
 RESTORE_COMPILER_WARNINGS
 
+#define UI_BRIGHTNESS QStringLiteral("UI/Screen/Brightness")
+#define UI_BRIGHTNESS_DEFAULT 100
+
 #define UI_FONT_SIZE_SETTING QStringLiteral("UI/Font/Size")
 #define UI_FONT_SIZE_DEFAULT 24
 
