@@ -37,7 +37,7 @@ inline int pivot(TextFragment::PivotCalculationMethod method, int wordLength)
 			return 4; // Fifth letter
 		}
 	case TextFragment::pcmMiddle:
-		return std::max(wordLength / 2 - 1, 0);
+		return std::max((int)round(wordLength / 2.0f) - 1, 0);
 	case TextFragment::pcmQuarter:
 		return std::max((int)std::round(wordLength / 4.0f) - 1, 0);
 	case TextFragment::pcmSquareRoot:
@@ -94,4 +94,9 @@ TextFragment::Delimiter TextFragment::delimiter() const
 bool TextFragment::isEndOfSentence() const
 {
 	return _delimitier == Point || _delimitier == QuestionMark || _delimitier == ExclamationMark || _delimitier == Ellipsis;
+}
+
+bool TextFragment::isEmpty() const
+{
+	return _word.isEmpty() && _punctuationText.isEmpty();
 }

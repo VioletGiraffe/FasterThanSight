@@ -32,7 +32,7 @@ protected:
 
 private:
 // Data
-	QString _text;
+	TextFragment _text;
 	int _pivotCharacterIndex = -1;
 
 // Style

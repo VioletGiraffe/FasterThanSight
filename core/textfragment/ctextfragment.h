@@ -48,6 +48,7 @@ public:
 
 	int pivotLetterIndex(PivotCalculationMethod method) const;
 	bool isEndOfSentence() const;
+	bool isEmpty() const;
 
 private:
 	QString _word;
