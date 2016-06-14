@@ -11,6 +11,11 @@
 #include <map>
 #include <iterator>
 
+DISABLE_COMPILER_WARNINGS
+#include <QDebug>
+#include <QTime>
+RESTORE_COMPILER_WARNINGS
+
 CReader::CReader(ReaderInterface* interface) : _interface(interface)
 {
 	assert_r(_interface);
@@ -39,7 +44,11 @@ bool CReader::loadFromFile(const QString& filePath)
 {
 	CTextParser parser;
 	parser.setAddEmptyFragmentAfterSentence(_clearScreenAfterSentenceEnd);
+
+	QTime timer;
+	timer.start();
 	load(parser.parse(CFileDecoder::readDataAndDecodeText(filePath)));
+	qDebug() << "Parsing" << filePath << "took" << QString::number(timer.elapsed() / 1000.0f, 'f', 1) << "seconds";
 
 	if (!_textFragments.empty())
 	{
@@ -143,6 +152,9 @@ void CReader::resetAndStop()
 
 void CReader::goToWord(size_t wordIndex)
 {
+	if (_position >= _textFragments.size())
+		return;
+
 	_position = wordIndex;
 	_interface->updateDisplay(_position);
 	_interface->updateInfo();
