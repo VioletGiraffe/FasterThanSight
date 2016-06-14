@@ -18,6 +18,12 @@ std::vector<TextFragment> CTextParser::parse(const QString& text)
 		}
 	};
 
+	QString fixedText = text;
+	fixedText
+		.replace(QChar(0x00A0), ' ') // Non-breaking space -> regular space
+		.replace(". . .", QChar(0x2026)) // 3 space-separated dots -> ellipsis // TODO: regexp
+		.replace("...", QChar(0x2026)); // 3 dots -> ellipsis // TODO: regexp
+
 	static const std::set<Delimiter> delimiters {
 		{' ', TextFragment::Space},
 		{'.', TextFragment::Point},
@@ -45,7 +51,7 @@ std::vector<TextFragment> CTextParser::parse(const QString& text)
 
 	_fragments.clear();
 
-	for (QChar ch: text)
+	for (QChar ch: fixedText)
 	{
 		if (ch == '\r')
 			continue;
