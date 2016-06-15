@@ -4,6 +4,7 @@
 #include "settings/csettings.h"
 #include "settings.h"
 #include "assert/advanced_assert.h"
+#include "cpausehandler.h"
 
 #include <math.h>
 
@@ -191,28 +192,12 @@ void CReader::readNextFragment()
 // Calculates the pause after the specific fragment in ms
 size_t CReader::pauseForFragment(const TextFragment& fragment) const
 {
-	static const std::map<TextFragment::Delimiter, float /*pauseCoefficient*/> pauseForDelimiter {
-		{TextFragment::NoDelimiter, 0.0f},
-		{TextFragment::Space, 0.88f},
-		{TextFragment::Comma, 1.5f},
-		{TextFragment::Point, 2.1f},
-		{TextFragment::ExclamationMark, 2.1f},
-		{TextFragment::QuestionMark, 2.1f},
-		{TextFragment::Dash, 1.5f},
-		{TextFragment::Colon, 1.8f},
-		{TextFragment::Semicolon, 2.1f},
-		{TextFragment::Ellipsis, 2.8f},
-		{TextFragment::Bracket, 1.5f},
-		{TextFragment::Quote, 1.5f},
-		{TextFragment::Newline, 0.88f} // All too often TXT files have new lines for line with formatting rather than for actual semantical formatting, so it's best to read them same as space
-	};
-
-	const auto it = pauseForDelimiter.find(fragment.delimiter());
-	assert(it != pauseForDelimiter.end());
-
 	const float basePause = 60e3f / _speedWpm;
 	const unsigned wordLength = (unsigned)fragment.word().length();
-	return (size_t)round(it->second * basePause * (wordLength > _longWordThreshold ? (wordLength - _longWordThreshold) * _longWordDelayScaleFactor : 1.0f));
+
+	const float pauseFactor = CPauseHandler::instance().pauseFactorForDelimiter(fragment.delimiter());
+	const float longWordFactor = wordLength > _longWordThreshold ? (wordLength - _longWordThreshold) * _longWordDelayScaleFactor : 1.0f;
+	return (size_t)round(basePause * pauseFactor * longWordFactor);
 }
 
 // Recalculate all the pauses for the entire text

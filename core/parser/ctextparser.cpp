@@ -33,8 +33,6 @@ std::vector<TextFragment> CTextParser::parse(const QString& text)
 		// TODO: dash should be ignored unless it has an adjacent space!
 		{'-', TextFragment::Dash},
 		{0x2014, TextFragment::Dash},
-		// TODO:
-		// {"...", TextFragment::Ellipsis},
 		{0x2026, TextFragment::Ellipsis},
 		{'!', TextFragment::ExclamationMark},
 		{'\n', TextFragment::Newline},
