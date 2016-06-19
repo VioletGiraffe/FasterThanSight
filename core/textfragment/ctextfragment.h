@@ -1,5 +1,6 @@
 #pragma once
 #include "compiler/compiler_warnings_control.h"
+#include "lang/enum.h"
 
 DISABLE_COMPILER_WARNINGS
 #include <QString>
@@ -9,7 +10,7 @@ class TextFragment
 {
 public:
 	// Ordered by priority!
-	enum Delimiter {
+	enum DelimiterEnum {
 		NoDelimiter,
 		Space,
 		Newline,
@@ -24,6 +25,8 @@ public:
 		ExclamationMark,
 		QuestionMark
 	};
+
+	typedef Enum<DelimiterEnum> Delimiter;
 
 	enum PivotCalculationMethod {
 		pcmMagic,
@@ -54,4 +57,19 @@ private:
 	QString _word;
 	QString _punctuationText;
 	Delimiter _delimitier = NoDelimiter;
+};
+
+const TextFragment::Delimiter::EnumItem TextFragment::Delimiter::_items[] = {
+	{TextFragment::NoDelimiter, "No delimiter"},
+	{TextFragment::Newline, "Newline"},
+	{TextFragment::Dash, "Dash"},
+	{TextFragment::Bracket, "Bracket"},
+	{TextFragment::Quote, "Quote"},
+	{TextFragment::Comma, "Comma"},
+	{TextFragment::Colon, "Colon"},
+	{TextFragment::Semicolon, "Semicolon"},
+	{TextFragment::Point, "Point"},
+	{TextFragment::Ellipsis, "Ellipsis"},
+	{TextFragment::ExclamationMark, "Exclamation mark"},
+	{TextFragment::QuestionMark, "Question mark"}
 };
