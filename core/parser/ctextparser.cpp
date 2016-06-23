@@ -109,25 +109,28 @@ void CTextParser::setAddEmptyFragmentAfterSentence(bool add)
 
 void CTextParser::finalizeFragment()
 {
+	Paragraph paragraph;
 	_delimitersBuffer = _delimitersBuffer.trimmed();
 	if (!_delimitersBuffer.isEmpty() || !_wordBuffer.isEmpty())
 	{
 		TextFragment fragment(_wordBuffer, _delimitersBuffer, _lastDelimiter);
 		if (_addEmptyFragmentAfterSentenceEnd && fragment.isEndOfSentence())
 		{
-			Paragraph p{{{TextFragment(_wordBuffer, _delimitersBuffer, TextFragment::Comma), _fragmentCounter}}};
+			paragraph._fragments.push_back({{_wordBuffer, _delimitersBuffer, TextFragment::Comma}, _fragmentCounter});
+			
 			++_fragmentCounter;
 			// Moving the end-of-sentence delimiter off to a dummy fragment with no text - just so that we can fade the text out and hold the screen empty for a bit
-			p._fragments.push_back({{QString::null, QString::null, _lastDelimiter}, _fragmentCounter});
-			_parsedText.addChapter(QString::number(_fragmentCounter), {p});
+
+			paragraph._fragments.push_back({{QString::null, QString::null, _lastDelimiter}, _fragmentCounter});
 			++_fragmentCounter;
 		}
 		else
 		{
-			Paragraph p{{{fragment, _fragmentCounter}}};
-			_parsedText.addChapter(QString::number(_fragmentCounter), {p});//_fragments.push_back(fragment);
+			paragraph._fragments.push_back({fragment, _fragmentCounter});
 			++_fragmentCounter;
 		}
+
+		_parsedText.addChapter(QString::number(_fragmentCounter), {paragraph});
 	}
 
 	_wordEnded = false;
