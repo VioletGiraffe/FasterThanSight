@@ -1,6 +1,7 @@
 #pragma once
 
-#include "../text/ctextfragment.h"
+#include "../text/cstructuredtext.h"
+#include "assert/advanced_assert.h"
 
 DISABLE_COMPILER_WARNINGS
 #include <QTimer>
@@ -27,7 +28,7 @@ public:
 	explicit CReader(ReaderInterface* interface);
 
 // Preparation
-	void load(const CStructuredText& textFragments);
+	void load(const CStructuredText& text);
 	bool loadFromFile(const QString& filePath);
 
 	void setClearScreenAfterSentenceEnd(bool clear);
@@ -46,14 +47,10 @@ public:
 	void updateInterface() const;
 
 // Data
-	inline const TextFragmentWithPause& textFragment(const size_t fragmentIndex) const {
-		if (fragmentIndex >= _textFragments.size())
-		{
-			static const TextFragmentWithPause emptyFragment {TextFragment(), 0};
-			return emptyFragment;
-		}
-		else
-			return _textFragments[fragmentIndex];
+	inline TextFragmentWithPause textFragment(const size_t fragmentIndex) const {
+		assert_and_return_r(_text.totalFragmentsCount() == _pauseForFragment.size(), (TextFragmentWithPause{TextFragment(), 0}));
+		const TextFragment& fragment = _text.fragment(fragmentIndex);
+		return {fragment, _pauseForFragment[fragmentIndex]};
 	}
 
 // Control
@@ -82,9 +79,11 @@ private:
 
 	QString _filePath;
 
-	std::vector<TextFragmentWithPause> _textFragments;
-	size_t                    _position = 0;
-	size_t                    _speedWpm = 250;
+	CStructuredText     _text;
+	std::vector<size_t> _pauseForFragment;
+
+	size_t              _position = 0;
+	size_t              _speedWpm = 250;
 
 	State _state = Paused;
 

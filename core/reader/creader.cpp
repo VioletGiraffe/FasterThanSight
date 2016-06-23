@@ -29,15 +29,11 @@ CReader::CReader(ReaderInterface* interface) : _interface(interface)
 	_speedWpm = CSettings().value(READER_READING_SPEED_SETTING, READER_READING_SPEED_DEFAULT).toUInt();
 }
 
-void CReader::load(const CStructuredText& textFragments)
+void CReader::load(const CStructuredText& text)
 {
 	resetAndStop();
 
-	_textFragments.clear();
-	std::transform(textFragments.cbegin(), textFragments.cend(), std::back_inserter(_textFragments), [this](const TextFragment& fragment) -> TextFragmentWithPause {
-		return TextFragmentWithPause{fragment, 0};
-	});
-
+	_text = text;
 	updatePauseValues();
 }
 
@@ -51,7 +47,7 @@ bool CReader::loadFromFile(const QString& filePath)
 	load(parser.parse(CFileDecoder::readDataAndDecodeText(filePath)));
 	qDebug() << "Parsing" << filePath << "took" << QString::number(timer.elapsed() / 1000.0f, 'f', 1) << "seconds";
 
-	if (!_textFragments.empty())
+	if (!_text.empty())
 	{
 		_filePath = filePath;
 		return true;
@@ -93,7 +89,7 @@ size_t CReader::position() const
 
 long double CReader::progress() const
 {
-	const size_t numWords = _textFragments.size();
+	const size_t numWords = _text.totalFragmentsCount();
 	return numWords ? _position / (long double)numWords : 0.0;
 }
 
@@ -101,9 +97,7 @@ size_t CReader::timeRemainingSeconds() const
 {
 	//const float basePausePerWordSeconds = 60.0f / _speedWpm;
 	//const float theoreticalSeconds = (_textFragments.size() - _position) * basePausePerWordSeconds;
-	const float actualSeconds = std::accumulate(_textFragments.cbegin() + _position, _textFragments.cend(), 0.0f, [](float acc, const TextFragmentWithPause& fragment) {
-		return acc + fragment._pauseAfter / 1000.0f;
-	});
+	const float actualSeconds = std::accumulate(_pauseForFragment.cbegin() + _position, _pauseForFragment.cend(), 0) / 1000.0f;
 
 	//const size_t actualWPM = (size_t)(60 * _textFragments.size() / actualSeconds);
 
@@ -118,7 +112,7 @@ void CReader::updateInterface() const
 
 size_t CReader::totalNumWords() const
 {
-	return _textFragments.size();
+	return _text.totalFragmentsCount();
 }
 
 void CReader::resumeReading()
@@ -153,7 +147,7 @@ void CReader::resetAndStop()
 
 void CReader::goToWord(size_t wordIndex)
 {
-	if (_position >= _textFragments.size())
+	if (_position >= _text.totalFragmentsCount())
 		return;
 
 	_position = wordIndex;
@@ -175,7 +169,7 @@ void CReader::setReadingSpeed(size_t wpm)
 
 void CReader::readNextFragment()
 {
-	if (_position >= _textFragments.size())
+	if (_position >= _text.totalFragmentsCount())
 	{
 		resetAndStop();
 	}
@@ -184,7 +178,7 @@ void CReader::readNextFragment()
 		_interface->updateDisplay(_position);
 		_interface->updateInfo();
 		// Queue up the next word
-		_readingTimer.start(_textFragments[_position]._pauseAfter);
+		_readingTimer.start(_pauseForFragment[_position]);
 		++_position;
 	}
 }
@@ -203,8 +197,9 @@ size_t CReader::pauseForFragment(const TextFragment& fragment) const
 // Recalculate all the pauses for the entire text
 void CReader::updatePauseValues()
 {
-	for (auto& fragment: _textFragments)
-		fragment._pauseAfter = pauseForFragment(fragment._textFragment);
+	_pauseForFragment.resize(_text.totalFragmentsCount());
+	for (size_t i = 0, count = _pauseForFragment.size(); i < count; ++i)
+		_pauseForFragment[i] = pauseForFragment(_text.fragment(i));
 
 	_interface->updateInfo();
 }

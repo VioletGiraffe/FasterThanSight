@@ -39,7 +39,6 @@ private:
 	void initActions();
 	void initStatusBar();
 
-	void updateProgressLabel();
 	void openBookmark(const CBookmark& bookmark);
 	void openFile(const QString& filePath, size_t position);
 

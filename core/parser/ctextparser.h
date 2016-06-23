@@ -16,6 +16,7 @@ private:
 
 private:
 	 CStructuredText _parsedText;
+	 size_t _fragmentCounter = 0;
 
 	QString _wordBuffer;
 	QString _delimitersBuffer;

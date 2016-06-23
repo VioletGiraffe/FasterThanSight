@@ -305,17 +305,6 @@ void CMainWindow::initStatusBar()
 	statusBar()->addWidget(_progressLabel, 1);
 }
 
-void CMainWindow::updateProgressLabel()
-{
-	_progressLabel->setText(
-		tr("Reading word %1 out of %2 total (%3%); estimated time remaining: %4")
-		.arg(_reader.totalNumWords() > 0 ? _reader.position() + 1 : 0)
-		.arg(_reader.totalNumWords())
-		.arg(QString::number(100 * (double)_reader.progress(), 'f', 2))
-		.arg(QDateTime::fromTime_t(_reader.timeRemainingSeconds()).toUTC().toString("HH:mm:ss"))
-	);
-}
-
 void CMainWindow::openBookmark(const CBookmark& bookmark)
 {
 	openFile(bookmark.filePath, bookmark.wordIndex);
@@ -429,7 +418,13 @@ void CMainWindow::updateDisplay(const size_t currentTextFragmentIndex)
 
 void CMainWindow::updateInfo()
 {
-	updateProgressLabel();
+	_progressLabel->setText(
+		tr("Reading word %1 out of %2 total (%3%); estimated time remaining: %4")
+		.arg(_reader.totalNumWords() > 0 ? _reader.position() + 1 : 0)
+		.arg(_reader.totalNumWords())
+		.arg(QString::number(100 * (double)_reader.progress(), 'f', 2))
+		.arg(QDateTime::fromTime_t(_reader.timeRemainingSeconds()).toUTC().toString("HH:mm:ss"))
+	);
 }
 
 void CMainWindow::stateChanged(const CReader::State newState)
