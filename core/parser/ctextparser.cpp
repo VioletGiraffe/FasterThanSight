@@ -47,7 +47,10 @@ CStructuredText CTextParser::parse(const QString& text)
 		{'}', TextFragment::Bracket}
 	};
 
+	_fragmentCounter = 0;
 	_parsedText.clear();
+
+	std::vector<const IndexedFragment> fragments;
 
 	for (QChar ch: fixedText)
 	{
@@ -59,7 +62,7 @@ CStructuredText CTextParser::parse(const QString& text)
 		if (it == delimiters.end()) // Not a delimiter
 		{
 			if (_wordEnded) // This is the first letter of a new word
-				finalizeFragment();
+				finalizeFragment(fragments);
 
 			_lastDelimiter = TextFragment::NoDelimiter;
 			_wordBuffer += ch;
@@ -72,7 +75,7 @@ CStructuredText CTextParser::parse(const QString& text)
 				_quoteOpened = !_quoteOpened;
 				if (_quoteOpened) // This is an opening quote! Dump the previously accumulated fragment and assign this quote to the new one.
 				{
-					finalizeFragment();
+					finalizeFragment(fragments);
 					_wordBuffer += ch;
 				}
 				else // Business as usual
@@ -97,7 +100,8 @@ CStructuredText CTextParser::parse(const QString& text)
 		}
 	}
 
-	finalizeFragment();
+	finalizeFragment(fragments);
+	_parsedText.addChapter("", {Paragraph{fragments}});
 
 	return _parsedText;
 }
@@ -107,7 +111,7 @@ void CTextParser::setAddEmptyFragmentAfterSentence(bool add)
 	_addEmptyFragmentAfterSentenceEnd = add;
 }
 
-void CTextParser::finalizeFragment()
+void CTextParser::finalizeFragment(std::vector<const IndexedFragment>& fragmentsContainer)
 {
 	Paragraph paragraph;
 	_delimitersBuffer = _delimitersBuffer.trimmed();
@@ -116,21 +120,19 @@ void CTextParser::finalizeFragment()
 		TextFragment fragment(_wordBuffer, _delimitersBuffer, _lastDelimiter);
 		if (_addEmptyFragmentAfterSentenceEnd && fragment.isEndOfSentence())
 		{
-			paragraph._fragments.push_back({{_wordBuffer, _delimitersBuffer, TextFragment::Comma}, _fragmentCounter});
+			fragmentsContainer.push_back({{_wordBuffer, _delimitersBuffer, TextFragment::Comma}, _fragmentCounter});
 			
 			++_fragmentCounter;
 			// Moving the end-of-sentence delimiter off to a dummy fragment with no text - just so that we can fade the text out and hold the screen empty for a bit
 
-			paragraph._fragments.push_back({{QString::null, QString::null, _lastDelimiter}, _fragmentCounter});
+			fragmentsContainer.push_back({{QString::null, QString::null, _lastDelimiter}, _fragmentCounter});
 			++_fragmentCounter;
 		}
 		else
 		{
-			paragraph._fragments.push_back({fragment, _fragmentCounter});
+			fragmentsContainer.push_back({fragment, _fragmentCounter});
 			++_fragmentCounter;
 		}
-
-		_parsedText.addChapter(QString::number(_fragmentCounter), {paragraph});
 	}
 
 	_wordEnded = false;
