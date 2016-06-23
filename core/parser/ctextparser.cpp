@@ -50,16 +50,20 @@ CStructuredText CTextParser::parse(const QString& text)
 	_fragmentCounter = 0;
 	_parsedText.clear();
 
-	std::vector<const IndexedFragment> fragments;
+	Paragraph paragraph;
+	auto& fragments = paragraph._fragments;
+
+	Chapter chapter;
+	chapter._paragraphs.reserve(fixedText.length() / 200); // Empiric value for Symbols/Paragraph ratio
 
 	for (QChar ch: fixedText)
 	{
 		if (ch == '\r')
 			continue;
 
-		const auto it = delimiters.find({ch, TextFragment::NoDelimiter});
+		const auto delimiterItem = delimiters.find({ch, TextFragment::NoDelimiter});
 
-		if (it == delimiters.end()) // Not a delimiter
+		if (delimiterItem == delimiters.end()) // Not a delimiter
 		{
 			if (_wordEnded) // This is the first letter of a new word
 				finalizeFragment(fragments);
@@ -70,7 +74,14 @@ CStructuredText CTextParser::parse(const QString& text)
 		else // This is a delimiter. Append it to the current word.
 		{
 			// The opening quote is not a delimiter; the closing one is.
-			if (it->delimiterType == TextFragment::Quote)
+			if (delimiterItem->delimiterType == TextFragment::Newline)
+			{
+				chapter._paragraphs.push_back(paragraph);
+				fragments.clear();
+				fragments.reserve(fixedText.length() / 8); // Average English word is 5; 8 is tested to be just as fast and probably won't cause any overhead
+			}
+
+			if (delimiterItem->delimiterType == TextFragment::Quote)
 			{
 				_quoteOpened = !_quoteOpened;
 				if (_quoteOpened) // This is an opening quote! Dump the previously accumulated fragment and assign this quote to the new one.
@@ -81,8 +92,8 @@ CStructuredText CTextParser::parse(const QString& text)
 				else // Business as usual
 				{
 					// Don't let space, newline and quote in e. g. ", " override other punctuation marks
-					if (priority(it->delimiterType) >= priority(_lastDelimiter))
-						_lastDelimiter = it->delimiterType;
+					if (priority(delimiterItem->delimiterType) >= priority(_lastDelimiter))
+						_lastDelimiter = delimiterItem->delimiterType;
 
 					_wordEnded = true;
 					_delimitersBuffer += ch;
@@ -91,8 +102,8 @@ CStructuredText CTextParser::parse(const QString& text)
 			else
 			{
 				// Don't let space, newline and quote in e. g. ", " override other punctuation marks
-				if (priority(it->delimiterType) >= priority(_lastDelimiter))
-					_lastDelimiter = it->delimiterType;
+				if (priority(delimiterItem->delimiterType) >= priority(_lastDelimiter))
+					_lastDelimiter = delimiterItem->delimiterType;
 
 				_wordEnded = true;
 				_delimitersBuffer += ch;
@@ -101,7 +112,8 @@ CStructuredText CTextParser::parse(const QString& text)
 	}
 
 	finalizeFragment(fragments);
-	_parsedText.addChapter("", {Paragraph{fragments}});
+	chapter._paragraphs.push_back(paragraph);
+	_parsedText.addChapter(chapter);
 
 	return _parsedText;
 }

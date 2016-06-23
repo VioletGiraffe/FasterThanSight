@@ -13,6 +13,11 @@ void CStructuredText::addChapter(const QString& name, const std::vector<const Pa
 	_chapters.push_back({name, paragraphs});
 }
 
+void CStructuredText::addChapter(const Chapter& chapter)
+{
+	_chapters.push_back(chapter);
+}
+
 void CStructuredText::clear()
 {
 	_chapters.clear();
