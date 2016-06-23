@@ -29,7 +29,7 @@ CReader::CReader(ReaderInterface* interface) : _interface(interface)
 	_speedWpm = CSettings().value(READER_READING_SPEED_SETTING, READER_READING_SPEED_DEFAULT).toUInt();
 }
 
-void CReader::load(const std::vector<TextFragment>& textFragments)
+void CReader::load(const CStructuredText& textFragments)
 {
 	resetAndStop();
 

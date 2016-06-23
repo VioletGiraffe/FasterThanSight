@@ -40,6 +40,7 @@ public:
 	CStructuredText();
 
 	void addChapter(const QString& name, const std::vector<const Paragraph>& paragraphs);
+	void clear();
 
 	inline const std::vector<const Chapter>& chapters() const
 	{

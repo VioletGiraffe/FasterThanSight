@@ -27,7 +27,7 @@ public:
 	explicit CReader(ReaderInterface* interface);
 
 // Preparation
-	void load(const std::vector<TextFragment>& textFragments);
+	void load(const CStructuredText& textFragments);
 	bool loadFromFile(const QString& filePath);
 
 	void setClearScreenAfterSentenceEnd(bool clear);

@@ -1,13 +1,13 @@
 #pragma once
 
-#include "../text/ctextfragment.h"
+#include "../text/cstructuredtext.h"
 
 #include <vector>
 
 class CTextParser
 {
 public:
-	std::vector<TextFragment> parse(const QString& text);
+	CStructuredText parse(const QString& text);
 
 	void setAddEmptyFragmentAfterSentence(bool add);
 
@@ -15,7 +15,8 @@ private:
 	void finalizeFragment();
 
 private:
-	std::vector<TextFragment> _fragments;
+	 CStructuredText _parsedText;
+
 	QString _wordBuffer;
 	QString _delimitersBuffer;
 	bool _wordEnded = false;

@@ -7,7 +7,7 @@ inline int priority(TextFragment::Delimiter delimiter)
 	return delimiter;
 }
 
-std::vector<TextFragment> CTextParser::parse(const QString& text)
+CStructuredText CTextParser::parse(const QString& text)
 {
 	struct Delimiter {
 		QChar delimiterCharacter;
@@ -47,7 +47,7 @@ std::vector<TextFragment> CTextParser::parse(const QString& text)
 		{'}', TextFragment::Bracket}
 	};
 
-	_fragments.clear();
+	_parsedText.clear();
 
 	for (QChar ch: fixedText)
 	{
@@ -99,7 +99,7 @@ std::vector<TextFragment> CTextParser::parse(const QString& text)
 
 	finalizeFragment();
 
-	return _fragments;
+	return _parsedText;
 }
 
 void CTextParser::setAddEmptyFragmentAfterSentence(bool add)
@@ -109,18 +109,26 @@ void CTextParser::setAddEmptyFragmentAfterSentence(bool add)
 
 void CTextParser::finalizeFragment()
 {
+	static size_t index = 0;
+
 	_delimitersBuffer = _delimitersBuffer.trimmed();
 	if (!_delimitersBuffer.isEmpty() || !_wordBuffer.isEmpty())
 	{
 		TextFragment fragment(_wordBuffer, _delimitersBuffer, _lastDelimiter);
 		if (_addEmptyFragmentAfterSentenceEnd && fragment.isEndOfSentence())
 		{
-			_fragments.emplace_back(_wordBuffer, _delimitersBuffer, TextFragment::Comma);
+			Paragraph p{{{TextFragment(_wordBuffer, _delimitersBuffer, TextFragment::Comma), index}}};
+			++index;
 			// Moving the end-of-sentence delimiter off to a dummy fragment with no text - just so that we can fade the text out and hold the screen empty for a bit
-			_fragments.emplace_back(QString::null, QString::null, _lastDelimiter);
+			p._fragments.push_back({{QString::null, QString::null, _lastDelimiter}, index});
+			_parsedText.addChapter(QString::number(index), {p});
+			++index;
 		}
 		else
-			_fragments.push_back(fragment);
+		{
+			Paragraph p{{{fragment, index}}};
+			_parsedText.addChapter(QString::number(index), {p});//_fragments.push_back(fragment);
+		}
 	}
 
 	_wordEnded = false;
