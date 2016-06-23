@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../textfragment/ctextfragment.h"
+#include "../text/ctextfragment.h"
 
 #include <map>
 

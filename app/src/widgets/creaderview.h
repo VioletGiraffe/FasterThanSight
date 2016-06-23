@@ -1,7 +1,7 @@
 #pragma once
 
 #include "compiler/compiler_warnings_control.h"
-#include "textfragment/ctextfragment.h"
+#include "text/ctextfragment.h"
 
 DISABLE_COMPILER_WARNINGS
 #include <QWidget>

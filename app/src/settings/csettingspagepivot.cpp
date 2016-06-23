@@ -1,6 +1,6 @@
 #include "csettingspagepivot.h"
 
-#include "textfragment/ctextfragment.h"
+#include "text/ctextfragment.h"
 #include "settings/csettings.h"
 #include "../uisettings.h"
 
