@@ -109,6 +109,22 @@ void CTextParser::setAddEmptyFragmentAfterSentence(bool add)
 	_addEmptyFragmentAfterSentenceEnd = add;
 }
 
+inline bool isUpperCaseText(const QString& str)
+{
+	bool letterDetected = false;
+	for (QChar ch : str)
+	{
+		if (ch.isLetterOrNumber())
+		{
+			letterDetected = true;
+			if (!ch.isNumber() && !ch.isUpper())
+				return false;
+		}
+	}
+
+	return letterDetected;
+}
+
 void CTextParser::finalizeFragment()
 {
 	_delimitersBuffer = _delimitersBuffer.trimmed();
@@ -133,7 +149,7 @@ void CTextParser::finalizeFragment()
 
 			// A whole line in uppercase is likely the chapter name
 			// The _delimitersBuffer is already trimmed
-			if (_delimitersBuffer.isEmpty() && _wordBuffer == _wordBuffer.toUpper())
+			if (_delimitersBuffer.isEmpty() && isUpperCaseText(_wordBuffer))
 			{
 				// Start the new chapter
 				_parsedText.addEmptyChapter(_wordBuffer).addEmptyParagraph(prevParagraphLength * 2);
