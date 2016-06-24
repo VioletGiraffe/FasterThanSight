@@ -54,7 +54,7 @@ CStructuredText CTextParser::parse(const QString& text)
 	auto& fragments = paragraph._fragments;
 
 	Chapter chapter;
-	chapter._paragraphs.reserve(fixedText.length() / 200); // Empiric value for Symbols/Paragraph ratio
+	chapter._paragraphs.reserve(fixedText.length() / 200); // Empirical value for Symbols/Paragraph ratio
 
 	for (QChar ch: fixedText)
 	{
@@ -79,6 +79,15 @@ CStructuredText CTextParser::parse(const QString& text)
 				chapter._paragraphs.push_back(paragraph);
 				fragments.clear();
 				fragments.reserve(fixedText.length() / 8); // Average English word is 5; 8 is tested to be just as fast and probably won't cause any overhead
+				if (_lastDelimiter == TextFragment::NoDelimiter && _wordBuffer == _wordBuffer.toUpper()) // A whole line in uppercase is likely the chapter name
+				{
+					// Finalize the previous chapter
+					_parsedText.addChapter(chapter);
+
+					// Start the new one
+					chapter = Chapter();
+					chapter.name = _wordBuffer;
+				}
 			}
 
 			if (delimiterItem->delimiterType == TextFragment::Quote)
