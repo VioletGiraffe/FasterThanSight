@@ -8,7 +8,7 @@ CStructuredText::CStructuredText()
 
 }
 
-void CStructuredText::addChapter(const QString& name, const std::vector<const Paragraph>& paragraphs)
+void CStructuredText::addChapter(const QString& name, const std::vector<Paragraph>& paragraphs)
 {
 	_chapters.push_back({name, paragraphs});
 }

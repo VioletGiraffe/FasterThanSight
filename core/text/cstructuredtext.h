@@ -25,7 +25,7 @@ struct Paragraph {
 		return _fragments.size();
 	}
 
-	std::vector<const IndexedFragment> _fragments;
+	std::vector<IndexedFragment> _fragments;
 };
 
 struct Chapter {
@@ -45,7 +45,7 @@ struct Chapter {
 	}
 
 	QString name;
-	std::vector<const Paragraph> _paragraphs;
+	std::vector<Paragraph> _paragraphs;
 };
 
 class CStructuredText
@@ -53,11 +53,11 @@ class CStructuredText
 public:
 	CStructuredText();
 
-	void addChapter(const QString& name, const std::vector<const Paragraph>& paragraphs);
+	void addChapter(const QString& name, const std::vector<Paragraph>& paragraphs);
 	void addChapter(const Chapter& chapter);
 	void clear();
 
-	inline const std::vector<const Chapter>& chapters() const
+	inline const std::vector<Chapter>& chapters() const
 	{
 		return _chapters;
 	}
@@ -80,5 +80,5 @@ public:
 	const TextFragment& fragment(size_t fragmentIndex) const;
 
 private:
-	std::vector<const Chapter> _chapters;
+	std::vector<Chapter> _chapters;
 };

@@ -12,7 +12,7 @@ public:
 	void setAddEmptyFragmentAfterSentence(bool add);
 
 private:
-	void finalizeFragment(std::vector<const IndexedFragment>& fragmentsContainer);
+	void finalizeFragment(std::vector<IndexedFragment>& fragmentsContainer);
 
 private:
 	 CStructuredText _parsedText;

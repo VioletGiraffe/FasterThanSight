@@ -132,7 +132,7 @@ void CTextParser::setAddEmptyFragmentAfterSentence(bool add)
 	_addEmptyFragmentAfterSentenceEnd = add;
 }
 
-void CTextParser::finalizeFragment(std::vector<const IndexedFragment>& fragmentsContainer)
+void CTextParser::finalizeFragment(std::vector<IndexedFragment>& fragmentsContainer)
 {
 	Paragraph paragraph;
 	_delimitersBuffer = _delimitersBuffer.trimmed();
