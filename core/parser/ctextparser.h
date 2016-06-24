@@ -12,11 +12,11 @@ public:
 	void setAddEmptyFragmentAfterSentence(bool add);
 
 private:
-	void finalizeFragment(std::vector<IndexedFragment>& fragmentsContainer);
+	void finalizeFragment();
 
 private:
-	 CStructuredText _parsedText;
-	 size_t _fragmentCounter = 0;
+	CStructuredText _parsedText;
+	size_t _fragmentCounter = 0;
 
 	QString _wordBuffer;
 	QString _delimitersBuffer;

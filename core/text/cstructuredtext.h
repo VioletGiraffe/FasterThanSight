@@ -10,6 +10,11 @@ struct IndexedFragment {
 };
 
 struct Paragraph {
+	inline void addFragment(const TextFragment& fragment, size_t index)
+	{
+		_fragments.push_back({fragment, index});
+	}
+
 	inline size_t firstFragmentNumber() const
 	{
 		return _fragments.front().fragmentIndex;
@@ -29,6 +34,13 @@ struct Paragraph {
 };
 
 struct Chapter {
+	inline Paragraph& addEmptyParagraph(size_t numWordsExpected = 0)
+	{
+		_paragraphs.emplace_back();
+		_paragraphs.back()._fragments.reserve(numWordsExpected);
+		return _paragraphs.back();
+	}
+
 	inline size_t firstFragmentNumber() const
 	{
 		return _paragraphs.front().firstFragmentNumber();
@@ -55,7 +67,25 @@ public:
 
 	void addChapter(const QString& name, const std::vector<Paragraph>& paragraphs);
 	void addChapter(const Chapter& chapter);
+	inline Chapter& addEmptyChapter(const QString& name, size_t expectedNumParagraphs = 100)
+	{
+		_chapters.emplace_back();
+		_chapters.back().name = name;
+		_chapters.back()._paragraphs.reserve(expectedNumParagraphs);
+		return _chapters.back();
+	}
+
 	void clear();
+
+	inline Chapter& lastChapter()
+	{
+		return _chapters.back();
+	}
+
+	inline Paragraph& lastParagraph()
+	{
+		return lastChapter()._paragraphs.back();
+	}
 
 	inline const std::vector<Chapter>& chapters() const
 	{
