@@ -243,10 +243,30 @@ void CMainWindow::initActions()
 		_reader.pauseReading();
 	});
 
-	ui->actionStop->setIcon(QApplication::style()->standardIcon(QStyle::SP_MediaSkipBackward));
+	ui->actionStop->setIcon(QApplication::style()->standardIcon(QStyle::SP_MediaStop));
 	connect(ui->actionStop, &QAction::triggered, [this](){
 		_reader.resetAndStop();
 		ui->_text->clear();
+	});
+
+	ui->actionPrevious_chapter->setIcon(QApplication::style()->standardIcon(QStyle::SP_MediaSkipBackward));
+	connect(ui->actionPrevious_chapter, &QAction::triggered, [this](){
+		_reader.toPreviousChapter();
+	});
+
+	ui->actionPrevious_paragraph->setIcon(QApplication::style()->standardIcon(QStyle::SP_MediaSeekBackward));
+	connect(ui->actionPrevious_paragraph, &QAction::triggered, [this](){
+		_reader.toPreviousParagraph();
+	});
+
+	ui->actionNext_paragraph->setIcon(QApplication::style()->standardIcon(QStyle::SP_MediaSeekForward));
+	connect(ui->actionNext_paragraph, &QAction::triggered, [this](){
+		_reader.toNextParagraph();
+	});
+
+	ui->actionNext_chapter->setIcon(QApplication::style()->standardIcon(QStyle::SP_MediaSkipForward));
+	connect(ui->actionNext_chapter, &QAction::triggered, [this](){
+		_reader.toNextChapter();
 	});
 
 	connect(ui->actionGo_to_word, &QAction::triggered, [this](){

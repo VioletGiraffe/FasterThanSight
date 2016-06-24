@@ -66,6 +66,11 @@
     <addaction name="action_Pause"/>
     <addaction name="actionStop"/>
     <addaction name="separator"/>
+    <addaction name="actionPrevious_chapter"/>
+    <addaction name="actionPrevious_paragraph"/>
+    <addaction name="actionNext_paragraph"/>
+    <addaction name="actionNext_chapter"/>
+    <addaction name="separator"/>
     <addaction name="actionGo_to_word"/>
    </widget>
    <widget class="QMenu" name="menu_Bookmarks">
@@ -107,6 +112,10 @@
    </attribute>
    <addaction name="action_Read"/>
    <addaction name="action_Pause"/>
+   <addaction name="actionPrevious_chapter"/>
+   <addaction name="actionPrevious_paragraph"/>
+   <addaction name="actionNext_paragraph"/>
+   <addaction name="actionNext_chapter"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
   <action name="actionOpen">
@@ -204,6 +213,26 @@
    </property>
    <property name="text">
     <string>&amp;Clear screen after sentence end</string>
+   </property>
+  </action>
+  <action name="actionPrevious_chapter">
+   <property name="text">
+    <string>Previous chapter</string>
+   </property>
+  </action>
+  <action name="actionPrevious_paragraph">
+   <property name="text">
+    <string>Previous paragraph</string>
+   </property>
+  </action>
+  <action name="actionNext_paragraph">
+   <property name="text">
+    <string>Next paragraph</string>
+   </property>
+  </action>
+  <action name="actionNext_chapter">
+   <property name="text">
+    <string>Next chapter</string>
    </property>
   </action>
  </widget>

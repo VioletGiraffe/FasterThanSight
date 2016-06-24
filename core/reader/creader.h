@@ -57,10 +57,14 @@ public:
 	void resumeReading();
 	void pauseReading();
 	void togglePause();
-
 	void resetAndStop();
 	// Specify 0-based word index to go to
 	void goToWord(size_t wordIndex);
+
+	void toPreviousChapter();
+	void toPreviousParagraph();
+	void toNextParagraph();
+	void toNextChapter();
 
 // Settings
 	size_t readingSpeed() const;

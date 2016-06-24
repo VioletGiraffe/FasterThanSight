@@ -67,45 +67,22 @@ public:
 
 	void addChapter(const QString& name, const std::vector<Paragraph>& paragraphs);
 	void addChapter(const Chapter& chapter);
-	inline Chapter& addEmptyChapter(const QString& name, size_t expectedNumParagraphs = 100)
-	{
-		_chapters.emplace_back();
-		_chapters.back().name = name;
-		_chapters.back()._paragraphs.reserve(expectedNumParagraphs);
-		return _chapters.back();
-	}
+	Chapter& addEmptyChapter(const QString& name, size_t expectedNumParagraphs = 100);
 
 	void clear();
+	bool empty() const;
 
-	inline Chapter& lastChapter()
-	{
-		return _chapters.back();
-	}
+	Chapter& lastChapter();
+	Paragraph& lastParagraph();
 
-	inline Paragraph& lastParagraph()
-	{
-		return lastChapter()._paragraphs.back();
-	}
+	size_t previousChapterStartIndex(size_t currentIndex) const;
+	size_t previousParagraphStartIndex(size_t currentIndex) const;
+	size_t nextParagraphStartIndex(size_t currentIndex) const;
+	size_t nextChapterStartIndex(size_t currentIndex) const;
 
-	inline const std::vector<Chapter>& chapters() const
-	{
-		return _chapters;
-	}
-
-	inline size_t chaptersCount() const
-	{
-		return _chapters.size();
-	}
-
-	inline bool empty() const
-	{
-		return _chapters.empty() || _chapters.front()._paragraphs.empty() || _chapters.front()._paragraphs.front()._fragments.empty();
-	}
-
-	inline size_t totalFragmentsCount() const
-	{
-		return empty() ? 0 : _chapters.back().lastFragmentNumber() + 1;
-	}
+	const std::vector<Chapter>& chapters() const;
+	size_t chaptersCount() const;
+	size_t totalFragmentsCount() const;
 
 	const TextFragment& fragment(size_t fragmentIndex) const;
 

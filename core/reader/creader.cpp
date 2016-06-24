@@ -155,6 +155,26 @@ void CReader::goToWord(size_t wordIndex)
 	_interface->updateInfo();
 }
 
+void CReader::toPreviousChapter()
+{
+	goToWord(_text.previousChapterStartIndex(_position));
+}
+
+void CReader::toPreviousParagraph()
+{
+	goToWord(_text.previousParagraphStartIndex(_position));
+}
+
+void CReader::toNextParagraph()
+{
+	goToWord(_text.nextParagraphStartIndex(_position));
+}
+
+void CReader::toNextChapter()
+{
+	goToWord(_text.nextChapterStartIndex(_position));
+}
+
 size_t CReader::readingSpeed() const
 {
 	return _speedWpm;
