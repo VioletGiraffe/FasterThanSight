@@ -49,6 +49,7 @@ mac*|linux*{
 
 INCLUDEPATH += \
 	../cpputils/ \
+	../cpp-template-utils/ \
 	../qtutils/
 
 include (bookmarks/bookmarks.pri)

@@ -101,6 +101,7 @@ CStructuredText CTextParser::parse(const QString& text)
 
 	finalizeFragment();
 
+	_parsedText.removeEmptyItems();
 	return _parsedText;
 }
 
@@ -130,6 +131,22 @@ void CTextParser::finalizeFragment()
 	_delimitersBuffer = _delimitersBuffer.trimmed();
 	if (!_delimitersBuffer.isEmpty() || !_wordBuffer.isEmpty())
 	{
+		if (_lastDelimiter == TextFragment::Newline)
+		{
+			// A whole line in uppercase is likely the chapter name
+			// The _delimitersBuffer is already trimmed
+			if (_delimitersBuffer.isEmpty() && isUpperCaseText(_wordBuffer))
+			{
+				// Start the new chapter
+				_parsedText.addEmptyChapter(_wordBuffer).addEmptyParagraph();
+			}
+			else
+			{
+				// Start a new paragraph
+				_parsedText.lastChapter().addEmptyParagraph();
+			}
+		}
+
 		TextFragment fragment(_wordBuffer, _delimitersBuffer, _lastDelimiter);
 		if (_addEmptyFragmentAfterSentenceEnd && fragment.isEndOfSentence())
 		{
@@ -141,24 +158,6 @@ void CTextParser::finalizeFragment()
 		else
 		{
 			_parsedText.lastParagraph().addFragment(fragment, _fragmentCounter++);
-		}
-
-		if (_lastDelimiter == TextFragment::Newline)
-		{
-			const size_t prevParagraphLength = _parsedText.lastParagraph()._fragments.size();
-
-			// A whole line in uppercase is likely the chapter name
-			// The _delimitersBuffer is already trimmed
-			if (_delimitersBuffer.isEmpty() && isUpperCaseText(_wordBuffer))
-			{
-				// Start the new chapter
-				_parsedText.addEmptyChapter(_wordBuffer).addEmptyParagraph(prevParagraphLength * 2);
-			}
-			else
-			{
-				// Start a new paragraph
-				_parsedText.lastChapter().addEmptyParagraph(prevParagraphLength * 2);
-			}
 		}
 	}
 

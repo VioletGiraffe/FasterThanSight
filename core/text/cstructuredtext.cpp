@@ -1,5 +1,6 @@
 #include "cstructuredtext.h"
 #include "assert/advanced_assert.h"
+#include "container/algorithms.h"
 
 #include <algorithm>
 
@@ -18,11 +19,10 @@ void CStructuredText::addChapter(const Chapter& chapter)
 	_chapters.push_back(chapter);
 }
 
-Chapter& CStructuredText::addEmptyChapter(const QString& name, size_t expectedNumParagraphs /*= 100*/)
+Chapter& CStructuredText::addEmptyChapter(const QString& name)
 {
 	_chapters.emplace_back();
 	_chapters.back().name = name;
-	_chapters.back()._paragraphs.reserve(expectedNumParagraphs);
 	return _chapters.back();
 }
 
@@ -33,7 +33,7 @@ void CStructuredText::clear()
 
 bool CStructuredText::empty() const
 {
-	return _chapters.empty() || _chapters.front()._paragraphs.empty() || _chapters.front()._paragraphs.front()._fragments.empty();
+	return totalFragmentsCount() == 0;
 }
 
 Chapter& CStructuredText::lastChapter()
@@ -89,10 +89,9 @@ size_t CStructuredText::nextParagraphStartIndex(size_t currentIndex) const
 	});
 	assert_and_return_r(paragraphIterator != chapterIterator->_paragraphs.cend(), currentIndex);
 
-	if (paragraphIterator + 1 != chapterIterator->_paragraphs.cend())
-		++paragraphIterator;
+	++paragraphIterator;
 
-	return paragraphIterator->firstFragmentNumber();
+	return paragraphIterator != chapterIterator->_paragraphs.cend() ? paragraphIterator->firstFragmentNumber() : currentIndex;
 }
 
 size_t CStructuredText::nextChapterStartIndex(size_t currentIndex) const
@@ -102,10 +101,9 @@ size_t CStructuredText::nextChapterStartIndex(size_t currentIndex) const
 	});
 	assert_and_return_r(chapterIterator != _chapters.cend(), currentIndex);
 
-	if (chapterIterator + 1 != _chapters.cend())
-		++chapterIterator;
+	++chapterIterator;
 
-	return chapterIterator->firstFragmentNumber();
+	return chapterIterator != _chapters.cend() ? chapterIterator->firstFragmentNumber() : currentIndex;
 }
 
 const std::vector<Chapter>& CStructuredText::chapters() const
@@ -120,7 +118,12 @@ size_t CStructuredText::chaptersCount() const
 
 size_t CStructuredText::totalFragmentsCount() const
 {
-	return empty() ? 0 : _chapters.back().lastFragmentNumber() + 1;
+	for (auto chapter = _chapters.rbegin(), endChapter = _chapters.rend(); chapter != endChapter; ++chapter)
+		for (auto paragraph = chapter->_paragraphs.rbegin(), endParagraph = chapter->_paragraphs.rend(); paragraph != endParagraph; ++paragraph)
+			if (!paragraph->_fragments.empty())
+				return paragraph->lastFragmentNumber();
+
+	return 0;
 }
 
 const TextFragment& CStructuredText::fragment(size_t fragmentIndex) const
@@ -143,4 +146,18 @@ const TextFragment& CStructuredText::fragment(size_t fragmentIndex) const
 	assert_and_return_r(fragmentIterator != paragraphIterator->_fragments.cend(), dummy);
 
 	return fragmentIterator->fragment;
+}
+
+void CStructuredText::removeEmptyItems()
+{
+	for (auto& chapter: _chapters)
+	{
+		ContainerAlgorithms::erase_if(chapter._paragraphs, [](const Paragraph& p){
+			return p._fragments.empty();
+		});
+	}
+
+	ContainerAlgorithms::erase_if(_chapters, [](const Chapter& chapter){
+		return chapter._paragraphs.empty();
+	});
 }

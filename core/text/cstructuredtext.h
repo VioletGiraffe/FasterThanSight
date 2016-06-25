@@ -34,10 +34,9 @@ struct Paragraph {
 };
 
 struct Chapter {
-	inline Paragraph& addEmptyParagraph(size_t numWordsExpected = 0)
+	inline Paragraph& addEmptyParagraph()
 	{
 		_paragraphs.emplace_back();
-		_paragraphs.back()._fragments.reserve(numWordsExpected);
 		return _paragraphs.back();
 	}
 
@@ -67,10 +66,12 @@ public:
 
 	void addChapter(const QString& name, const std::vector<Paragraph>& paragraphs);
 	void addChapter(const Chapter& chapter);
-	Chapter& addEmptyChapter(const QString& name, size_t expectedNumParagraphs = 100);
+	Chapter& addEmptyChapter(const QString& name);
 
 	void clear();
 	bool empty() const;
+
+	void removeEmptyItems();
 
 	Chapter& lastChapter();
 	Paragraph& lastParagraph();

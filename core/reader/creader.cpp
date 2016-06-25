@@ -33,8 +33,13 @@ void CReader::load(const CStructuredText& text)
 {
 	resetAndStop();
 
+	QTime timer;
+	timer.start();
 	_text = text;
+	qDebug() << "Assigning the text took" << timer.elapsed() << "ms";
+	timer.restart();
 	updatePauseValues();
+	qDebug() << "updatePauseValues took" << timer.elapsed() << "ms";
 }
 
 bool CReader::loadFromFile(const QString& filePath)
@@ -45,7 +50,7 @@ bool CReader::loadFromFile(const QString& filePath)
 	QTime timer;
 	timer.start();
 	load(parser.parse(CFileDecoder::readDataAndDecodeText(filePath)));
-	qDebug() << "Parsing" << filePath << "took" << QString::number(timer.elapsed() / 1000.0f, 'f', 1) << "seconds";
+	qDebug() << "Loading the file" << filePath << "took" << QString::number(timer.elapsed() / 1000.0f, 'f', 1) << "seconds";
 
 	if (!_text.empty())
 	{
