@@ -49,7 +49,6 @@ CStructuredText CTextParser::parse(const QString& text)
 
 	_fragmentCounter = 0;
 	_parsedText.clear();
-	_parsedText.addEmptyChapter(QString::null).addEmptyParagraph();
 
 	for (QChar ch: fixedText)
 	{
@@ -133,19 +132,19 @@ void CTextParser::finalizeFragment()
 	{
 		if (_lastDelimiter == TextFragment::Newline)
 		{
-			// A whole line in uppercase is likely the chapter name
-			// The _delimitersBuffer is already trimmed
+			// A whole line in uppercase is likely the chapter name.
+			// The _delimitersBuffer is already trimmed so no need to worry about it consisting of whitespace without any meaningful characters.
+			// This condition has to be checked first so that the chapter name properly starts the new chapter.
 			if (_delimitersBuffer.isEmpty() && isUpperCaseText(_wordBuffer))
 			{
 				// Start the new chapter
 				_parsedText.addEmptyChapter(_wordBuffer).addEmptyParagraph();
 			}
-			else
-			{
-				// Start a new paragraph
-				_parsedText.lastChapter().addEmptyParagraph();
-			}
 		}
+
+		// Creating empty containers if necessary
+		if (_parsedText.empty()) // This should only happen once, when parsing the first line
+			_parsedText.addEmptyChapter(_wordBuffer).addEmptyParagraph();
 
 		TextFragment fragment(_wordBuffer, _delimitersBuffer, _lastDelimiter);
 		if (_addEmptyFragmentAfterSentenceEnd && fragment.isEndOfSentence())
@@ -159,6 +158,10 @@ void CTextParser::finalizeFragment()
 		{
 			_parsedText.lastParagraph().addFragment(fragment, _fragmentCounter++);
 		}
+
+		if (_lastDelimiter == TextFragment::Newline)
+			// Start a new paragraph
+			_parsedText.lastChapter().addEmptyParagraph();
 	}
 
 	_wordEnded = false;

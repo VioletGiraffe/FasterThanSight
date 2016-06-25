@@ -121,7 +121,7 @@ size_t CStructuredText::totalFragmentsCount() const
 	for (auto chapter = _chapters.rbegin(), endChapter = _chapters.rend(); chapter != endChapter; ++chapter)
 		for (auto paragraph = chapter->_paragraphs.rbegin(), endParagraph = chapter->_paragraphs.rend(); paragraph != endParagraph; ++paragraph)
 			if (!paragraph->_fragments.empty())
-				return paragraph->lastFragmentNumber();
+				return paragraph->lastFragmentNumber() + 1;
 
 	return 0;
 }
