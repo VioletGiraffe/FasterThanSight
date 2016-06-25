@@ -32,7 +32,7 @@ void CPauseHandler::loadFromSettings()
 		{TextFragment::Ellipsis, 2.8f},
 		{TextFragment::Bracket, 1.5f},
 		{TextFragment::Quote, 1.5f},
-		{TextFragment::Newline, 0.88f} // All too often TXT files have new lines for formatting rather than for semantics, so it's best to process them same as space
+		{TextFragment::Newline, 2.1f}
 	};
 }
 

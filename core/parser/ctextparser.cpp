@@ -79,7 +79,7 @@ CStructuredText CTextParser::parse(const QString& text)
 				}
 				else // Business as usual
 				{
-					// Don't let space, newline and quote in e. g. ", " override other punctuation marks
+					// Don't let space, comma and quote in e. g. ", " override other punctuation marks
 					if (priority(delimiterItem->delimiterType) >= priority(_lastDelimiter))
 						_lastDelimiter = delimiterItem->delimiterType;
 
@@ -89,7 +89,7 @@ CStructuredText CTextParser::parse(const QString& text)
 			}
 			else
 			{
-				// Don't let space, newline and quote in e. g. ", " override other punctuation marks
+				// Don't let space, comma and quote in e. g. ", " override other punctuation marks
 				if (priority(delimiterItem->delimiterType) >= priority(_lastDelimiter))
 					_lastDelimiter = delimiterItem->delimiterType;
 

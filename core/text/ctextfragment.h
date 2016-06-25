@@ -13,7 +13,6 @@ public:
 	enum DelimiterEnum {
 		NoDelimiter,
 		Space,
-		Newline,
 		Dash,
 		Bracket,
 		Quote,
@@ -23,7 +22,8 @@ public:
 		Point,
 		Ellipsis,
 		ExclamationMark,
-		QuestionMark
+		QuestionMark,
+		Newline
 	};
 
 	typedef Enum<DelimiterEnum> Delimiter;
