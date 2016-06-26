@@ -9,6 +9,7 @@
 #include "settingsui/csettingsdialog.h"
 #include "settings/csettingspagepivot.h"
 #include "settings/csettingspagepauses.h"
+#include "settings/csettingspageinterface.h"
 #include "uisettings.h"
 
 DISABLE_COMPILER_WARNINGS
@@ -312,7 +313,11 @@ void CMainWindow::initActions()
 
 	connect(ui->actionSettings, &QAction::triggered, [this](){
 		CSettingsDialog settingsDialog(this);
-		settingsDialog.addSettingsPage(new CSettingsPagePivot).addSettingsPage(new CSettingsPagePauses);
+		settingsDialog
+				.addSettingsPage(new CSettingsPageInterface)
+				.addSettingsPage(new CSettingsPagePivot)
+				.addSettingsPage(new CSettingsPagePauses);
+
 		connect(&settingsDialog, &CSettingsDialog::settingsChanged, this, &CMainWindow::settingsChanged);
 
 		settingsDialog.exec();
@@ -324,6 +329,7 @@ void CMainWindow::initStatusBar()
 	QStatusBar * bar = statusBar();
 	_chapterProgressBar = new QProgressBar(this);
 	_chapterProgressBar->setVisible(false);
+	_chapterProgressBar->setTextVisible(false);
 	bar->addWidget(_chapterProgressBar, 100);
 
 	_progressLabel = new QLabel(this);
@@ -422,7 +428,8 @@ void CMainWindow::toggleFullScreen()
 	{
 		showFullScreen();
 		menuBar()->hide();
-		statusBar()->hide();
+		if (CSettings().value(UI_STATUSBAR_HIDE_IN_FULLSCREEN_SETTING, UI_STATUSBAR_HIDE_IN_FULLSCREEN_DEFAULT).toBool())
+			statusBar()->hide();
 	}
 	else
 	{
@@ -443,7 +450,10 @@ void CMainWindow::updateDisplay(const size_t currentTextFragmentIndex)
 {
 	const auto& currentFragment = _reader.textFragment(currentTextFragmentIndex);
 	ui->_text->setText(currentFragment._textFragment, ui->actionShow_pivot->isChecked(), (TextFragment::PivotCalculationMethod)CSettings().value(UI_PIVOT_CALCULATION_METHOD, UI_PIVOT_CALCULATION_METHOD_DEFAULT).toInt());
-	_chapterProgressBar->setValue((int)round(_reader.currentChapterProgress() * 100.0f));
+
+	const auto chapterProgress = _reader.currentChapterProgress();
+	_chapterProgressBar->setValue(chapterProgress.progressPercentage());
+	_chapterProgressBar->setToolTip(tr("%1 out of %2 words read in this chapter").arg(chapterProgress.wordsRead).arg(chapterProgress.totalNumWords));
 }
 
 void CMainWindow::updateInfo()

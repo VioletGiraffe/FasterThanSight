@@ -36,3 +36,6 @@ RESTORE_COMPILER_WARNINGS
 
 #define UI_MAIN_TOOLBAR_VISIBLE_SETTING QStringLiteral("UI/Toolbars/MainToolbarVisible")
 #define UI_SETTINGS_TOOLBAR_VISIBLE_SETTING QStringLiteral("UI/Toolbars/SettingsToolbarVisible")
+
+#define UI_STATUSBAR_HIDE_IN_FULLSCREEN_SETTING QStringLiteral("UI/StatusBar/VisibleInFullscreen")
+#define UI_STATUSBAR_HIDE_IN_FULLSCREEN_DEFAULT false

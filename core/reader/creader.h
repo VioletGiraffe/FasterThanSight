@@ -40,7 +40,19 @@ public:
 	size_t position() const; // Current word index
 	size_t totalNumWords() const;
 	long double progress() const; // [0.0; 1.0]
-	float currentChapterProgress() const; // [0.0f; 1.0f]
+
+	struct ChapterProgress {
+
+		inline int progressPercentage() const // [0, 100]
+		{
+			return totalNumWords > 0 ? wordsRead * 100 / totalNumWords : 0;
+		}
+
+		size_t wordsRead;
+		size_t totalNumWords;
+	};
+
+	const ChapterProgress currentChapterProgress() const;
 	size_t timeRemainingSeconds() const;
 
 	// Notify the client of current reader state via ReaderInterface
