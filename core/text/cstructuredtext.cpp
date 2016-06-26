@@ -161,3 +161,71 @@ void CStructuredText::removeEmptyItems()
 		return chapter._paragraphs.empty();
 	});
 }
+
+CStructuredText::const_iterator CStructuredText::begin() const
+{
+	const_iterator it;
+	it._chapterIterator = forward_iterator_wrapper::cbegin(_chapters);
+
+	if (it._chapterIterator != _chapters.cend())
+	{
+		it._paragraphIterator = forward_iterator_wrapper::cbegin(it._chapterIterator->_paragraphs);
+
+		if (it._paragraphIterator != it._chapterIterator->_paragraphs.cend())
+			it._fragmentIterator = forward_iterator_wrapper::cbegin(it._paragraphIterator->_fragments);
+	}
+
+	return it;
+}
+
+CStructuredText::const_iterator CStructuredText::end() const
+{
+	const_iterator it;
+	it._chapterIterator = forward_iterator_wrapper::cend(_chapters);
+
+	return it;
+}
+
+CStructuredText::const_iterator& CStructuredText::const_iterator::operator++()
+{
+	++_fragmentIterator;
+	if (_fragmentIterator.endReached())
+	{
+		++_paragraphIterator;
+		if (_paragraphIterator.endReached())
+		{
+			++_chapterIterator; // If _chapterIterator.endReached() is true, that will ensure it compares true to CStructuredText::end() (see const_iterator::operator==)
+			if (!_chapterIterator.endReached())
+			{
+				_paragraphIterator = forward_iterator_wrapper::cbegin(_chapterIterator->_paragraphs);
+				_fragmentIterator = forward_iterator_wrapper::cbegin(_paragraphIterator->_fragments);
+			}
+		}
+		else
+			_fragmentIterator = forward_iterator_wrapper::cbegin(_paragraphIterator->_fragments);
+	}
+
+	return *this;
+}
+
+const IndexedFragment& CStructuredText::const_iterator::operator*() const
+{
+	return *_fragmentIterator;
+}
+
+IndexedFragment const* CStructuredText::const_iterator::operator->() const
+{
+	return &(*_fragmentIterator);
+}
+
+bool CStructuredText::const_iterator::operator==(const const_iterator& other) const
+{
+	return
+		(_chapterIterator.endReached() && _chapterIterator == other._chapterIterator) || // If _chapterIterator.endReached() is true, that will ensure it compares true to CStructuredText::end()
+		(_chapterIterator == other._chapterIterator && _paragraphIterator == other._paragraphIterator && _fragmentIterator == other._fragmentIterator);
+}
+
+bool CStructuredText::const_iterator::operator!=(const const_iterator& other) const
+{
+	return !(*this == other);
+}

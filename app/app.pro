@@ -58,6 +58,7 @@ INCLUDEPATH += \
 	src/ \
 	../core/ \
 	../cpputils/ \
+	../cpp-template-utils/ \
 	../qtutils/
 
 include (src/widgets/widgets.pri)

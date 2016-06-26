@@ -223,8 +223,8 @@ size_t CReader::pauseForFragment(const TextFragment& fragment) const
 void CReader::updatePauseValues()
 {
 	_pauseForFragment.resize(_text.totalFragmentsCount());
-	for (size_t i = 0, count = _pauseForFragment.size(); i < count; ++i)
-		_pauseForFragment[i] = pauseForFragment(_text.fragment(i));
+	for (const IndexedFragment& fragment: _text)
+		_pauseForFragment[fragment.fragmentIndex] = pauseForFragment(fragment.fragment);
 
 	_interface->updateInfo();
 }

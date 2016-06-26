@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ctextfragment.h"
+#include "container/iterator_helpers.h"
 
 #include <vector>
 
@@ -86,6 +87,25 @@ public:
 	size_t totalFragmentsCount() const;
 
 	const TextFragment& fragment(size_t fragmentIndex) const;
+
+	struct const_iterator {
+		friend class CStructuredText;
+
+		const_iterator& operator++();
+		const IndexedFragment& operator*() const;
+		IndexedFragment const* operator->() const;
+
+		bool operator==(const const_iterator& other) const;
+		bool operator!=(const const_iterator& other) const;
+
+	private:
+		const_forward_iterator_wrapper<std::vector<Chapter>> _chapterIterator;
+		const_forward_iterator_wrapper<std::vector<Paragraph>> _paragraphIterator;
+		const_forward_iterator_wrapper<std::vector<IndexedFragment>> _fragmentIterator;
+	};
+
+	const_iterator begin() const;
+	const_iterator end() const;
 
 private:
 	std::vector<Chapter> _chapters;
