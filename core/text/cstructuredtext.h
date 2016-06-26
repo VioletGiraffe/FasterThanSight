@@ -5,12 +5,16 @@
 
 #include <vector>
 
+static const size_t paragraphsPerChapter = 120;
+static const size_t fragmentsPerParagraph = 100;
+
 struct IndexedFragment {
 	TextFragment fragment;
 	size_t fragmentIndex;
 };
 
 struct Paragraph {
+
 	inline void addFragment(const TextFragment& fragment, size_t index)
 	{
 		_fragments.push_back({fragment, index});
@@ -38,6 +42,7 @@ struct Chapter {
 	inline Paragraph& addEmptyParagraph()
 	{
 		_paragraphs.emplace_back();
+		_paragraphs.back()._fragments.reserve(fragmentsPerParagraph);
 		return _paragraphs.back();
 	}
 
@@ -64,6 +69,7 @@ class CStructuredText
 {
 public:
 	CStructuredText();
+	void setExpectedChaptersCount(size_t count);
 
 	void addChapter(const QString& name, const std::vector<Paragraph>& paragraphs);
 	void addChapter(const Chapter& chapter);
@@ -106,6 +112,20 @@ public:
 
 	const_iterator begin() const;
 	const_iterator end() const;
+
+	struct Stats {
+		size_t chapterCount;
+		size_t paragraphCount;
+		size_t wordCount;
+
+		float avgParagrapsPerChapter;
+		size_t maxParagrapsPerChapter;
+
+		float avgWordsPerParagraph;
+		size_t maxWordsPerParagraph;
+	};
+
+	const Stats stats() const;
 
 private:
 	std::vector<Chapter> _chapters;

@@ -3,10 +3,15 @@
 #include "container/algorithms.h"
 
 #include <algorithm>
+#include <numeric>
 
 CStructuredText::CStructuredText()
 {
+}
 
+void CStructuredText::setExpectedChaptersCount(size_t count)
+{
+	_chapters.reserve(count);
 }
 
 void CStructuredText::addChapter(const QString& name, const std::vector<Paragraph>& paragraphs)
@@ -23,6 +28,7 @@ Chapter& CStructuredText::addEmptyChapter(const QString& name)
 {
 	_chapters.emplace_back();
 	_chapters.back().name = name;
+	_chapters.back()._paragraphs.reserve(paragraphsPerChapter);
 	return _chapters.back();
 }
 
@@ -184,6 +190,30 @@ CStructuredText::const_iterator CStructuredText::end() const
 	it._chapterIterator = forward_iterator_wrapper::cend(_chapters);
 
 	return it;
+}
+
+const CStructuredText::Stats CStructuredText::stats() const
+{
+	Stats s;
+	s.chapterCount = chaptersCount();
+	s.paragraphCount = std::accumulate(_chapters.begin(), _chapters.end(), (size_t)0, [](size_t acc, const Chapter& c){
+		return c._paragraphs.size() + acc;
+	});
+	s.wordCount = totalFragmentsCount();
+
+	s.avgParagrapsPerChapter = s.paragraphCount / (float)s.chapterCount;
+	s.maxParagrapsPerChapter = std::accumulate(_chapters.begin(), _chapters.end(), (size_t) 0, [](size_t max, const Chapter& c){
+		return std::max(c._paragraphs.size(), max);
+	});
+
+	s.avgWordsPerParagraph = s.wordCount / (float)s.paragraphCount;
+	s.maxWordsPerParagraph = std::accumulate(_chapters.begin(), _chapters.end(), (size_t) 0, [](size_t max, const Chapter& c){
+		return std::max(max, std::accumulate(c._paragraphs.begin(), c._paragraphs.end(), (size_t)0, [](size_t max, const Paragraph& p){
+			return std::max(max, p._fragments.size());
+		}));
+	});
+
+	return s;
 }
 
 CStructuredText::const_iterator& CStructuredText::const_iterator::operator++()

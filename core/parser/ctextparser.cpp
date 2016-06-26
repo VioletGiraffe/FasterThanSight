@@ -1,5 +1,9 @@
 #include "ctextparser.h"
 
+DISABLE_COMPILER_WARNINGS
+#include <QDebug>
+RESTORE_COMPILER_WARNINGS
+
 #include <set>
 
 inline int priority(TextFragment::Delimiter delimiter)
@@ -49,6 +53,8 @@ CStructuredText CTextParser::parse(const QString& text)
 
 	_fragmentCounter = 0;
 	_parsedText.clear();
+	qDebug() << "Parsing text of" << fixedText.length() << "characters";
+	_parsedText.setExpectedChaptersCount(fixedText.length() / 20000);
 
 	for (QChar ch: fixedText)
 	{

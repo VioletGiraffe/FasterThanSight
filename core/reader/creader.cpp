@@ -40,6 +40,19 @@ void CReader::load(const CStructuredText& text)
 	timer.restart();
 	updatePauseValues();
 	qDebug() << "updatePauseValues took" << timer.elapsed() << "ms";
+
+	auto stats = _text.stats();
+	qDebug()
+		<< "Stats:"
+		<< "\n\tChapters:" << stats.chapterCount
+		<< "\n\tParagraphs:" << stats.paragraphCount
+		<< "\n\tWords:" << stats.wordCount
+
+		<< "\n\tAvg. paragraphs per chapter:" << stats.avgParagrapsPerChapter
+		<< "\n\tMax. paragraphs per chapter:" << stats.maxParagrapsPerChapter
+
+		<< "\n\tAvg. words per paragraph:" << stats.avgWordsPerParagraph
+		<< "\n\tMax. words per paragraph:" << stats.maxWordsPerParagraph;
 }
 
 bool CReader::loadFromFile(const QString& filePath)
