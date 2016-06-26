@@ -170,6 +170,7 @@ void CReader::resetAndStop()
 {
 	pauseReading();
 	_position = 0;
+	_currentWordRead = false;
 	_interface->updateInfo();
 }
 
@@ -181,6 +182,7 @@ void CReader::goToWord(size_t wordIndex)
 	_position = wordIndex;
 	_interface->updateDisplay(_position);
 	_interface->updateInfo();
+	_currentWordRead = true;
 }
 
 void CReader::toPreviousChapter()
@@ -223,11 +225,15 @@ void CReader::readNextFragment()
 	}
 	else if (_state == Reading)
 	{
+		if (_currentWordRead)
+			++_position;
+		else
+			_currentWordRead = true;
+
 		_interface->updateDisplay(_position);
 		_interface->updateInfo();
 		// Queue up the next word
 		_readingTimer.start(_pauseForFragment[_position]);
-		++_position;
 	}
 }
 

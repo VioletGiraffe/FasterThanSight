@@ -99,6 +99,8 @@ private:
 	std::vector<size_t> _pauseForFragment;
 
 	size_t              _position = 0;
+	bool                _currentWordRead = false;
+
 	size_t              _speedWpm = 250;
 
 	State _state = Paused;
