@@ -3,6 +3,7 @@
 #include "ctextfragment.h"
 #include "container/iterator_helpers.h"
 
+#include <numeric>
 #include <vector>
 
 static const size_t paragraphsPerChapter = 120;
@@ -59,6 +60,16 @@ struct Chapter {
 	inline size_t paragraphsCount() const
 	{
 		return _paragraphs.size();
+	}
+
+	inline size_t wordCount() const
+	{
+		const size_t count = lastFragmentNumber() - firstFragmentNumber() + 1;
+		assert(count == std::accumulate(_paragraphs.cbegin(), _paragraphs.cend(), (size_t)0, [](size_t acc, const Paragraph& p){
+			return acc + p._fragments.size();
+		}));
+
+		return count;
 	}
 
 	QString name;
@@ -126,6 +137,12 @@ public:
 	};
 
 	const Stats stats() const;
+
+	std::vector<Chapter>::const_iterator chapterByWordIndex(size_t index) const;
+	std::vector<Paragraph>::const_iterator paragraphByWordIndex(size_t index) const;
+
+private:
+	std::vector<IndexedFragment>::const_iterator fragmentByWordIndex(size_t index) const;
 
 private:
 	std::vector<Chapter> _chapters;

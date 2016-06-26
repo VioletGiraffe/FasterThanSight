@@ -13,6 +13,7 @@ RESTORE_COMPILER_WARNINGS
 #include <deque>
 
 class QLabel;
+class QProgressBar;
 class QSlider;
 class QSpinBox;
 class QToolBar;
@@ -72,6 +73,7 @@ private:
 	QSpinBox* _readingSpeedSpinBox = nullptr;
 
 // Status bar widgets
+	QProgressBar * _chapterProgressBar = nullptr;
 	QLabel* _progressLabel = nullptr;
 
 // Reader

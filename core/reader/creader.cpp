@@ -111,6 +111,17 @@ long double CReader::progress() const
 	return numWords ? _position / (long double)numWords : 0.0;
 }
 
+float CReader::currentChapterProgress() const
+{
+	const auto chapter = _text.chapterByWordIndex(_position);
+	if (chapter == _text.chapters().cend())
+		return 0.0f;
+
+	const size_t chapterWordsRead = _position - chapter->firstFragmentNumber();
+	const float wordCount = (float)chapter->wordCount();
+	return wordCount > 0.0f ? chapterWordsRead / wordCount : 0.0f;
+}
+
 size_t CReader::timeRemainingSeconds() const
 {
 	//const float basePausePerWordSeconds = 60.0f / _speedWpm;

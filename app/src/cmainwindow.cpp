@@ -24,6 +24,7 @@ DISABLE_COMPILER_WARNINGS
 #include <QLabel>
 #include <QMessageBox>
 #include <QMimeData>
+#include <QProgressBar>
 #include <QShortcut>
 #include <QSlider>
 #include <QSpinBox>
@@ -320,9 +321,14 @@ void CMainWindow::initActions()
 
 void CMainWindow::initStatusBar()
 {
+	QStatusBar * bar = statusBar();
+	_chapterProgressBar = new QProgressBar(this);
+	_chapterProgressBar->setVisible(false);
+	bar->addWidget(_chapterProgressBar, 100);
+
 	_progressLabel = new QLabel(this);
 	_progressLabel->setAlignment(Qt::AlignRight);
-	statusBar()->addWidget(_progressLabel, 1);
+	bar->addWidget(_progressLabel, 1);
 }
 
 void CMainWindow::openBookmark(const CBookmark& bookmark)
@@ -346,7 +352,10 @@ void CMainWindow::openFile(const QString &filePath, size_t position)
 
 		CSettings().setValue(UI_OPEN_FILE_LAST_USED_DIR_SETTING, filePath);
 		setWindowTitle(qApp->applicationName() % " - " % QFileInfo(filePath).baseName());
+		_chapterProgressBar->setVisible(true);
 	}
+	else
+		_chapterProgressBar->setVisible(false);
 }
 
 void CMainWindow::keepScreenFromTurningOff(bool keepFromTurningOff)
@@ -434,6 +443,7 @@ void CMainWindow::updateDisplay(const size_t currentTextFragmentIndex)
 {
 	const auto& currentFragment = _reader.textFragment(currentTextFragmentIndex);
 	ui->_text->setText(currentFragment._textFragment, ui->actionShow_pivot->isChecked(), (TextFragment::PivotCalculationMethod)CSettings().value(UI_PIVOT_CALCULATION_METHOD, UI_PIVOT_CALCULATION_METHOD_DEFAULT).toInt());
+	_chapterProgressBar->setValue((int)round(_reader.currentChapterProgress() * 100.0f));
 }
 
 void CMainWindow::updateInfo()

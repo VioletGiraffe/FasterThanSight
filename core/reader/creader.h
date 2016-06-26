@@ -37,10 +37,10 @@ public:
 // State
 	State state() const;
 	QString filePath() const;
-	// Current word index
-	size_t position() const;
+	size_t position() const; // Current word index
 	size_t totalNumWords() const;
 	long double progress() const; // [0.0; 1.0]
+	float currentChapterProgress() const; // [0.0f; 1.0f]
 	size_t timeRemainingSeconds() const;
 
 	// Notify the client of current reader state via ReaderInterface

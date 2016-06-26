@@ -54,9 +54,7 @@ Paragraph& CStructuredText::lastParagraph()
 
 size_t CStructuredText::previousChapterStartIndex(size_t currentIndex) const
 {
-	auto chapterIterator = std::lower_bound(_chapters.cbegin(), _chapters.cend(), currentIndex, [](const Chapter& chapter, size_t index){
-		return chapter.lastFragmentNumber() < index;
-	});
+	auto chapterIterator = chapterByWordIndex(currentIndex);
 	assert_and_return_r(chapterIterator != _chapters.cend(), currentIndex);
 
 	if (chapterIterator != _chapters.cbegin())
@@ -67,14 +65,10 @@ size_t CStructuredText::previousChapterStartIndex(size_t currentIndex) const
 
 size_t CStructuredText::previousParagraphStartIndex(size_t currentIndex) const
 {
-	const auto chapterIterator = std::lower_bound(_chapters.cbegin(), _chapters.cend(), currentIndex, [](const Chapter& chapter, size_t index){
-		return chapter.lastFragmentNumber() < index;
-	});
+	const auto chapterIterator = chapterByWordIndex(currentIndex);
 	assert_and_return_r(chapterIterator != _chapters.cend(), currentIndex);
 
-	auto paragraphIterator = std::lower_bound(chapterIterator->_paragraphs.cbegin(), chapterIterator->_paragraphs.cend(), currentIndex, [](const Paragraph& paragraph, size_t index){
-		return paragraph.lastFragmentNumber() < index;
-	});
+	auto paragraphIterator = paragraphByWordIndex(currentIndex);
 	assert_and_return_r(paragraphIterator != chapterIterator->_paragraphs.cend(), currentIndex);
 
 	if (paragraphIterator != chapterIterator->_paragraphs.cbegin())
@@ -85,14 +79,10 @@ size_t CStructuredText::previousParagraphStartIndex(size_t currentIndex) const
 
 size_t CStructuredText::nextParagraphStartIndex(size_t currentIndex) const
 {
-	const auto chapterIterator = std::lower_bound(_chapters.cbegin(), _chapters.cend(), currentIndex, [](const Chapter& chapter, size_t index){
-		return chapter.lastFragmentNumber() < index;
-	});
+	const auto chapterIterator = chapterByWordIndex(currentIndex);
 	assert_and_return_r(chapterIterator != _chapters.cend(), currentIndex);
 
-	auto paragraphIterator = std::lower_bound(chapterIterator->_paragraphs.cbegin(), chapterIterator->_paragraphs.cend(), currentIndex, [](const Paragraph& paragraph, size_t index){
-		return paragraph.lastFragmentNumber() < index;
-	});
+	auto paragraphIterator = paragraphByWordIndex(currentIndex);
 	assert_and_return_r(paragraphIterator != chapterIterator->_paragraphs.cend(), currentIndex);
 
 	++paragraphIterator;
@@ -102,13 +92,10 @@ size_t CStructuredText::nextParagraphStartIndex(size_t currentIndex) const
 
 size_t CStructuredText::nextChapterStartIndex(size_t currentIndex) const
 {
-	auto chapterIterator = std::lower_bound(_chapters.cbegin(), _chapters.cend(), currentIndex, [](const Chapter& chapter, size_t index){
-		return chapter.lastFragmentNumber() < index;
-	});
+	auto chapterIterator = chapterByWordIndex(currentIndex);
 	assert_and_return_r(chapterIterator != _chapters.cend(), currentIndex);
 
 	++chapterIterator;
-
 	return chapterIterator != _chapters.cend() ? chapterIterator->firstFragmentNumber() : currentIndex;
 }
 
@@ -134,24 +121,7 @@ size_t CStructuredText::totalFragmentsCount() const
 
 const TextFragment& CStructuredText::fragment(size_t fragmentIndex) const
 {
-	static const TextFragment dummy;
-
-	const auto chapterIterator = std::lower_bound(_chapters.cbegin(), _chapters.cend(), fragmentIndex, [](const Chapter& chapter, size_t index){
-		return chapter.lastFragmentNumber() < index;
-	});
-	assert_and_return_r(chapterIterator != _chapters.cend(), dummy);
-
-	const auto paragraphIterator = std::lower_bound(chapterIterator->_paragraphs.cbegin(), chapterIterator->_paragraphs.cend(), fragmentIndex, [](const Paragraph& paragraph, size_t index){
-		return paragraph.lastFragmentNumber() < index;
-	});
-	assert_and_return_r(paragraphIterator != chapterIterator->_paragraphs.cend(), dummy);
-
-	const auto fragmentIterator = std::lower_bound(paragraphIterator->_fragments.cbegin(), paragraphIterator->_fragments.cend(), fragmentIndex, [](const IndexedFragment& fragment, size_t index) {
-		return fragment.fragmentIndex < index;
-	});
-	assert_and_return_r(fragmentIterator != paragraphIterator->_fragments.cend(), dummy);
-
-	return fragmentIterator->fragment;
+	return fragmentByWordIndex(fragmentIndex)->fragment;
 }
 
 void CStructuredText::removeEmptyItems()
@@ -214,6 +184,47 @@ const CStructuredText::Stats CStructuredText::stats() const
 	});
 
 	return s;
+}
+
+std::vector<Chapter>::const_iterator CStructuredText::chapterByWordIndex(size_t index) const
+{
+	const auto chapterIterator = std::lower_bound(_chapters.cbegin(), _chapters.cend(), index, [](const Chapter& chapter, size_t index){
+		return chapter.lastFragmentNumber() < index;
+	});
+	assert(chapterIterator != _chapters.cend());
+
+	return chapterIterator;
+}
+
+std::vector<Paragraph>::const_iterator CStructuredText::paragraphByWordIndex(size_t index) const
+{
+	const auto chapterIterator = chapterByWordIndex(index);
+	assert_and_return_r(chapterIterator != _chapters.cend(), std::vector<Paragraph>::const_iterator())
+
+	const auto paragraphIterator = std::lower_bound(chapterIterator->_paragraphs.cbegin(), chapterIterator->_paragraphs.cend(), index, [](const Paragraph& paragraph, size_t index){
+		return paragraph.lastFragmentNumber() < index;
+	});
+	assert(paragraphIterator != chapterIterator->_paragraphs.cend());
+
+	return paragraphIterator;
+}
+
+std::vector<IndexedFragment>::const_iterator CStructuredText::fragmentByWordIndex(size_t index) const
+{
+	const auto chapterIterator = chapterByWordIndex(index);
+	assert_and_return_r(chapterIterator != _chapters.cend(), std::vector<IndexedFragment>::const_iterator())
+
+		const auto paragraphIterator = std::lower_bound(chapterIterator->_paragraphs.cbegin(), chapterIterator->_paragraphs.cend(), index, [](const Paragraph& paragraph, size_t index){
+		return paragraph.lastFragmentNumber() < index;
+	});
+	assert_and_return_r(paragraphIterator != chapterIterator->_paragraphs.cend(), std::vector<IndexedFragment>::const_iterator());
+
+	const auto fragmentIterator = std::lower_bound(paragraphIterator->_fragments.cbegin(), paragraphIterator->_fragments.cend(), index, [](const IndexedFragment& fragment, size_t index) {
+		return fragment.fragmentIndex < index;
+	});
+	assert(fragmentIterator != paragraphIterator->_fragments.cend());
+
+	return fragmentIterator;
 }
 
 CStructuredText::const_iterator& CStructuredText::const_iterator::operator++()
