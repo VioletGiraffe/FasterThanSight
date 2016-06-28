@@ -22,10 +22,10 @@ CSettingsPagePauses::CSettingsPagePauses(QWidget *parent) :
 
 	QGridLayout * pauseControlLayout = new QGridLayout(ui->_pauseScalingGroupbox);
 	pauseControlLayout->setColumnStretch(2, 2);
-	QHBoxLayout * pauseControlGroupLayout = new QHBoxLayout(ui->_pauseScalingGroupbox);
+	QHBoxLayout * pauseControlGroupLayout = new QHBoxLayout();
+	ui->_pauseScalingGroupbox->setLayout(pauseControlGroupLayout);
 	pauseControlGroupLayout->addLayout(pauseControlGroupLayout);
 	pauseControlGroupLayout->addStretch(0);
-	ui->_pauseScalingGroupbox->setLayout(pauseControlGroupLayout);
 
 	int row = 0;
 	// One could iterate over CPauseHandler::pauseScalingValues() instead.

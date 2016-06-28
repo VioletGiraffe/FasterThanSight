@@ -61,6 +61,7 @@ private:
 
 const TextFragment::Delimiter::EnumItem TextFragment::Delimiter::_items[] = {
 	{TextFragment::NoDelimiter, "No delimiter"},
+	{TextFragment::Space, "Space"},
 	{TextFragment::Newline, "Newline"},
 	{TextFragment::Dash, "Dash"},
 	{TextFragment::Bracket, "Bracket"},
