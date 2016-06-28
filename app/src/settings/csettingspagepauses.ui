@@ -98,6 +98,13 @@ TOTAL DELAY = BASE DELAY + FACTOR * (WORD LENGTH - LONG WORD THRESHOLD)</string>
     </widget>
    </item>
    <item>
+    <widget class="QGroupBox" name="_pauseScalingGroupbox">
+     <property name="title">
+      <string>Pause scaling</string>
+     </property>
+    </widget>
+   </item>
+   <item>
     <spacer name="verticalSpacer">
      <property name="orientation">
       <enum>Qt::Vertical</enum>

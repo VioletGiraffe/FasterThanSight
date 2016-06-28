@@ -7,12 +7,14 @@
 class CPauseHandler
 {
 public:
-	static const CPauseHandler& instance();
+	static CPauseHandler& instance();
 
 	float pauseFactorForDelimiter(const TextFragment::Delimiter delimiter) const;
+	void updatePauseFactor(const TextFragment::Delimiter delimiter, const float factor);
+	const std::map<TextFragment::Delimiter, float /*pauseFactor*/> pauseScalingValues() const;
 
 	void loadFromSettings();
-	void storeToSettings();
+	void storeToSettings() const;
 
 private:
 	CPauseHandler();

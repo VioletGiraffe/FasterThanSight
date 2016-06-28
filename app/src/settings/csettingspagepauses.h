@@ -1,6 +1,11 @@
 #pragma once
 
 #include "settingsui/csettingspage.h"
+#include "text/ctextfragment.h"
+
+#include <map>
+
+class QDoubleSpinBox;
 
 namespace Ui {
 class CSettingsPagePauses;
@@ -16,4 +21,6 @@ public:
 
 private:
 	Ui::CSettingsPagePauses *ui;
+
+	std::map<TextFragment::Delimiter::Enum_Type, QDoubleSpinBox*> _controlForPauseValue;
 };
