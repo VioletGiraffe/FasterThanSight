@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../text/cstructuredtext.h"
+#include "cpausehandler.h"
 #include "assert/advanced_assert.h"
 
 DISABLE_COMPILER_WARNINGS
@@ -9,7 +10,7 @@ RESTORE_COMPILER_WARNINGS
 
 #include <vector>
 
-class CReader
+class CReader : private CPauseHandler::OnPauseValuesChangedListener
 {
 public:
 	struct TextFragmentWithPause {
@@ -89,6 +90,8 @@ private:
 	size_t pauseForFragment(const TextFragment& fragment) const;
 	// Recalculate all the pauses for the entire text
 	void updatePauseValues();
+
+	void onPauseScalingValuesChanged() override;
 
 private:
 	ReaderInterface * const _interface;

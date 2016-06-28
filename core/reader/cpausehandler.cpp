@@ -10,6 +10,12 @@ DISABLE_COMPILER_WARNINGS
 #include <QStringBuilder>
 RESTORE_COMPILER_WARNINGS
 
+
+void CPauseHandler::addOnPauseValuesChangedListener(OnPauseValuesChangedListener* listener)
+{
+	_pauseChangedNotificationListeners.push_back(listener);
+}
+
 CPauseHandler &CPauseHandler::instance()
 {
 	static CPauseHandler handler;
@@ -88,10 +94,21 @@ void CPauseHandler::storeToSettings() const
 	for (const auto& item : _pauseForDelimiter)
 		data.push_back(QString::number(item.first.value()) % '=' % QString::number(item.second));
 
-	CSettings().setValue(PAUSE_SCALING_SETTING, data);
+	const auto oldData = CSettings().value(PAUSE_SCALING_SETTING).toStringList();
+	if (data != oldData)
+	{
+		CSettings().setValue(PAUSE_SCALING_SETTING, data);
+		sendPauseScalingValuesChangedNotification();
+	}
 }
 
 CPauseHandler::CPauseHandler()
 {
 	loadFromSettings();
+}
+
+void CPauseHandler::sendPauseScalingValuesChangedNotification() const
+{
+	for (auto subscriber: _pauseChangedNotificationListeners)
+		subscriber->onPauseScalingValuesChanged();
 }

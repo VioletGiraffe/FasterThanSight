@@ -3,10 +3,17 @@
 #include "../text/ctextfragment.h"
 
 #include <map>
+#include <vector>
 
 class CPauseHandler
 {
 public:
+	struct OnPauseValuesChangedListener {
+		virtual void onPauseScalingValuesChanged() = 0;
+	};
+
+	void addOnPauseValuesChangedListener(OnPauseValuesChangedListener* listener);
+
 	static CPauseHandler& instance();
 
 	float pauseFactorForDelimiter(const TextFragment::Delimiter delimiter) const;
@@ -19,6 +26,9 @@ public:
 private:
 	CPauseHandler();
 
+	void sendPauseScalingValuesChangedNotification() const;
+
 private:
 	std::map<TextFragment::Delimiter, float /*pauseFactor*/> _pauseForDelimiter;
+	std::vector<OnPauseValuesChangedListener*> _pauseChangedNotificationListeners;
 };

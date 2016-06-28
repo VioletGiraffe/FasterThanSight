@@ -21,6 +21,8 @@ CReader::CReader(ReaderInterface* interface) : _interface(interface)
 {
 	assert_r(_interface);
 
+	CPauseHandler::instance().addOnPauseValuesChangedListener(this);
+
 	_readingTimer.setSingleShot(true);
 	QObject::connect(&_readingTimer, &QTimer::timeout, [this](){
 		readNextFragment();
@@ -256,4 +258,9 @@ void CReader::updatePauseValues()
 		_pauseForFragment[fragment.fragmentIndex] = pauseForFragment(fragment.fragment);
 
 	_interface->updateInfo();
+}
+
+void CReader::onPauseScalingValuesChanged()
+{
+	updatePauseValues();
 }
