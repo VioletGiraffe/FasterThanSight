@@ -51,6 +51,14 @@ CStructuredText CTextParser::parse(const QString& text)
 		{'}', TextFragment::Bracket}
 	};
 
+	// Sanity check
+#ifdef _DEBUG
+	for (const auto delimiter: TextFragment::Delimiter())
+		assert(std::find_if(delimiters.begin(), delimiters.end(), [delimiter](const Delimiter& item){
+			return delimiter.id == TextFragment::NoDelimiter || item.delimiterType == delimiter.id;
+	}) != delimiters.end());
+#endif
+
 	_fragmentCounter = 0;
 	_parsedText.clear();
 	qDebug() << "Parsing text of" << fixedText.length() << "characters";
