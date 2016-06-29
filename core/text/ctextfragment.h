@@ -38,7 +38,7 @@ public:
 		pcmLogarithm
 	};
 
-	inline TextFragment() {};
+	inline TextFragment() {}
 	TextFragment(const QString& word, const QString& punctuation, Delimiter delimiter = NoDelimiter);
 
 	// Word + possible punctuation following it
@@ -57,20 +57,4 @@ private:
 	QString _word;
 	QString _punctuationText;
 	Delimiter _delimitier = NoDelimiter;
-};
-
-const TextFragment::Delimiter::EnumItem TextFragment::Delimiter::_items[] = {
-	{TextFragment::NoDelimiter, "No delimiter"},
-	{TextFragment::Space, "Space"},
-	{TextFragment::Newline, "Newline"},
-	{TextFragment::Dash, "Dash"},
-	{TextFragment::Bracket, "Bracket"},
-	{TextFragment::Quote, "Quote"},
-	{TextFragment::Comma, "Comma"},
-	{TextFragment::Colon, "Colon"},
-	{TextFragment::Semicolon, "Semicolon"},
-	{TextFragment::Point, "Point"},
-	{TextFragment::Ellipsis, "Ellipsis"},
-	{TextFragment::ExclamationMark, "Exclamation mark"},
-	{TextFragment::QuestionMark, "Question mark"}
 };

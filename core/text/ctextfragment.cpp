@@ -3,6 +3,25 @@
 #include <cmath>
 #include <algorithm>
 
+// The declaration is fully specialized (does not depend on template parameter), so it may not go into a header file
+// http://stackoverflow.com/a/4445772/634821
+template<>
+const std::vector<TextFragment::Delimiter::EnumItem> TextFragment::Delimiter::_items = {
+	{TextFragment::NoDelimiter, "No delimiter"},
+	{TextFragment::Space, "Space"},
+	{TextFragment::Newline, "Newline"},
+	{TextFragment::Dash, "Dash"},
+	{TextFragment::Bracket, "Bracket"},
+	{TextFragment::Quote, "Quote"},
+	{TextFragment::Comma, "Comma"},
+	{TextFragment::Colon, "Colon"},
+	{TextFragment::Semicolon, "Semicolon"},
+	{TextFragment::Point, "Point"},
+	{TextFragment::Ellipsis, "Ellipsis"},
+	{TextFragment::ExclamationMark, "Exclamation mark"},
+	{TextFragment::QuestionMark, "Question mark"}
+};
+
 TextFragment::TextFragment(const QString& word, const QString& punctuation, Delimiter delimiter /*= NoDelimiter*/) : _word(word), _punctuationText(punctuation), _delimitier(delimiter)
 {
 }
