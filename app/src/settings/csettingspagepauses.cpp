@@ -20,12 +20,13 @@ CSettingsPagePauses::CSettingsPagePauses(QWidget *parent) :
 	ui->_sbLongWordThreshold->setValue(s.value(UI_LONG_WORD_THRESHOLD_SETTING, UI_LONG_WORD_THRESHOLD_DEFAULT).toInt());
 	ui->_sbLongWordDelayFactor->setValue(s.value(UI_LONG_WORD_DELAY_FACTOR_SETTING, UI_LONG_WORD_DELAY_FACTOR_DEFAULT).toDouble());
 
-	QGridLayout * pauseControlLayout = new QGridLayout(ui->_pauseScalingGroupbox);
+	QGridLayout * pauseControlLayout = new QGridLayout();
 	pauseControlLayout->setColumnStretch(2, 2);
-	QHBoxLayout * pauseControlGroupLayout = new QHBoxLayout();
-	ui->_pauseScalingGroupbox->setLayout(pauseControlGroupLayout);
-	pauseControlGroupLayout->addLayout(pauseControlGroupLayout);
-	pauseControlGroupLayout->addStretch(0);
+
+	QHBoxLayout * groupBoxLayout = new QHBoxLayout();
+	groupBoxLayout->addLayout(pauseControlLayout);
+	groupBoxLayout->addStretch(0);
+	ui->_pauseScalingGroupbox->setLayout(groupBoxLayout);
 
 	int row = 0;
 	// One could iterate over CPauseHandler::pauseScalingValues() instead.
