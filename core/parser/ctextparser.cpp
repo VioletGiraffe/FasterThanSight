@@ -4,7 +4,7 @@ DISABLE_COMPILER_WARNINGS
 #include <QDebug>
 RESTORE_COMPILER_WARNINGS
 
-#include <set>
+#include <map>
 
 inline int priority(TextFragment::Delimiter delimiter)
 {
@@ -13,22 +13,13 @@ inline int priority(TextFragment::Delimiter delimiter)
 
 CStructuredText CTextParser::parse(const QString& text)
 {
-	struct Delimiter {
-		QChar delimiterCharacter;
-		TextFragment::Delimiter delimiterType;
-
-		inline bool operator< (const Delimiter& other) const {
-			return delimiterCharacter < other.delimiterCharacter;
-		}
-	};
-
 	QString fixedText = text;
 	fixedText
 		.replace(QChar(0x00A0), ' ') // Non-breaking space -> regular space
 		.replace(". . .", QChar(0x2026)) // 3 space-separated dots -> ellipsis // TODO: regexp
 		.replace("...", QChar(0x2026)); // 3 dots -> ellipsis // TODO: regexp
 
-	static const std::set<Delimiter> delimiters {
+	static const std::map<QChar, TextFragment::Delimiter> delimiters {
 		{' ', TextFragment::Space},
 		{'.', TextFragment::Point},
 		{':', TextFragment::Colon},
@@ -42,6 +33,10 @@ CStructuredText CTextParser::parse(const QString& text)
 		{'\n', TextFragment::Newline},
 		{'?', TextFragment::QuestionMark},
 		{'\"', TextFragment::Quote},
+		{0x201C, TextFragment::Quote}, // “
+		{0x201D, TextFragment::Quote}, // ”
+		{0x00AB, TextFragment::Quote}, // «
+		{0x00BB, TextFragment::Quote}, // »
 
 		{')', TextFragment::Bracket},
 		{'(', TextFragment::Bracket},
@@ -52,12 +47,12 @@ CStructuredText CTextParser::parse(const QString& text)
 	};
 
 	// Sanity check
-#ifdef _DEBUG
-	for (const auto delimiter: TextFragment::Delimiter())
-		assert(std::find_if(delimiters.begin(), delimiters.end(), [delimiter](const Delimiter& item){
-			return delimiter.id == TextFragment::NoDelimiter || item.delimiterType == delimiter.id;
-	}) != delimiters.end());
-#endif
+// #ifdef _DEBUG
+// 	for (const auto delimiter: TextFragment::Delimiter())
+// 		assert(std::find_if(delimiters.begin(), delimiters.end(), [delimiter](const Delimiter& item){
+// 			return delimiter.id == TextFragment::NoDelimiter || item.delimiterType == delimiter.id;
+// 	}) != delimiters.end());
+// #endif
 
 	_fragmentCounter = 0;
 	_parsedText.clear();
@@ -69,7 +64,7 @@ CStructuredText CTextParser::parse(const QString& text)
 		if (ch == '\r')
 			continue;
 
-		const auto delimiterItem = delimiters.find({ch, TextFragment::NoDelimiter});
+		const auto delimiterItem = delimiters.find(ch);
 
 		if (delimiterItem == delimiters.end()) // Not a delimiter
 		{
@@ -81,8 +76,9 @@ CStructuredText CTextParser::parse(const QString& text)
 		}
 		else // This is a delimiter. Append it to the current word.
 		{
+			const TextFragment::Delimiter delimiter = delimiterItem->second;
 			// The opening quote is not a delimiter; the closing one is.
-			if (delimiterItem->delimiterType == TextFragment::Quote)
+			if (delimiter == TextFragment::Quote)
 			{
 				_quoteOpened = !_quoteOpened;
 				if (_quoteOpened) // This is an opening quote! Dump the previously accumulated fragment and assign this quote to the new one.
@@ -93,8 +89,8 @@ CStructuredText CTextParser::parse(const QString& text)
 				else // Business as usual
 				{
 					// Don't let space, comma and quote in e. g. ", " override other punctuation marks
-					if (priority(delimiterItem->delimiterType) >= priority(_lastDelimiter))
-						_lastDelimiter = delimiterItem->delimiterType;
+					if (priority(delimiter) >= priority(_lastDelimiter))
+						_lastDelimiter = delimiter;
 
 					_wordEnded = true;
 					_delimitersBuffer += ch;
@@ -103,8 +99,8 @@ CStructuredText CTextParser::parse(const QString& text)
 			else
 			{
 				// Don't let space, comma and quote in e. g. ", " override other punctuation marks
-				if (priority(delimiterItem->delimiterType) >= priority(_lastDelimiter))
-					_lastDelimiter = delimiterItem->delimiterType;
+				if (priority(delimiter) >= priority(_lastDelimiter))
+					_lastDelimiter = delimiter;
 
 				_wordEnded = true;
 				_delimitersBuffer += ch;
