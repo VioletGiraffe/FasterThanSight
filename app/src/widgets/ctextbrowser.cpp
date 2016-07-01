@@ -20,4 +20,7 @@ CTextBrowser::~CTextBrowser()
 void CTextBrowser::loadText(const CStructuredText& text)
 {
 	ui->_textView-> setPlainText(text.reconstructText(true));
+
+	for (const Chapter& chapter: text.chapters())
+		ui->_chaptersList->addItem(chapter.name);
 }
