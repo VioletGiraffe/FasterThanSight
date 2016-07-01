@@ -16,7 +16,7 @@ struct Paragraph {
 	size_t lastFragmentNumber() const;
 	size_t fragmentsCount() const;
 
-	QString reconstructText(bool richText) const;
+	void reconstructText(QString& text, std::vector<int>& firstCharacterIndexForFragment) const;
 
 	std::vector<IndexedFragment> _fragments;
 };

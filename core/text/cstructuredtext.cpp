@@ -229,13 +229,14 @@ std::vector<IndexedFragment>::const_iterator CStructuredText::fragmentByWordInde
 	return fragmentIterator;
 }
 
-QString CStructuredText::reconstructText(bool richText /*= false*/) const
+const CStructuredText::ReconstructedText CStructuredText::reconstructText() const
 {
 	QString text;
+	std::vector<int> firstCharacterIndexForFragment(totalFragmentsCount());
 	for (const auto& chapter: _chapters)
-		text.append(chapter.reconstructText(richText));
+		chapter.reconstructText(text, firstCharacterIndexForFragment);
 
-	return text;
+	return {firstCharacterIndexForFragment, text};
 }
 
 CStructuredText::const_iterator& CStructuredText::const_iterator::operator++()

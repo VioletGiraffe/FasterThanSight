@@ -9,7 +9,7 @@ struct Chapter {
 	size_t paragraphsCount() const;
 	size_t wordCount() const;
 
-	QString reconstructText(bool richText) const;
+	void reconstructText(QString& text, std::vector<int>& firstCharacterIndexForFragment) const;
 
 	QString name;
 	std::vector<Paragraph> _paragraphs;

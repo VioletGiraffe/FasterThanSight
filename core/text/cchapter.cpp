@@ -36,14 +36,14 @@ size_t Chapter::wordCount() const
 	return count;
 }
 
-QString Chapter::reconstructText(bool richText) const
+void Chapter::reconstructText(QString& text, std::vector<int>& firstCharacterIndexForFragment) const
 {
-	QString text;
 	for (const auto& paragraph: _paragraphs)
-		text.append(paragraph.reconstructText(richText)).append('\n');
+	{
+		paragraph.reconstructText(text, firstCharacterIndexForFragment);
+		text += '\n';
+	}
 
 	if (!text.isEmpty())
-		text.append('\n');
-
-	return text;
+		text += '\n';
 }

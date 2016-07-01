@@ -20,17 +20,15 @@ size_t Paragraph::fragmentsCount() const
 	return _fragments.size();
 }
 
-QString Paragraph::reconstructText(bool richText) const
+void Paragraph::reconstructText(QString& text, std::vector<int>& firstCharacterIndexForFragment) const
 {
-	QString text;
 	for (const auto& fragment : _fragments)
 	{
 		QString fragmentText = fragment.fragment.text();
 		if (!fragmentText.endsWith(' '))
 			fragmentText += ' ';
 
+		firstCharacterIndexForFragment[fragment.fragmentIndex] = text.length();
 		text.append(fragmentText);
 	}
-
-	return text;
 }

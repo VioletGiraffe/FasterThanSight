@@ -33,7 +33,11 @@ public:
 	size_t chaptersCount() const;
 	size_t totalFragmentsCount() const;
 
-	QString reconstructText(bool richText = false) const;
+	struct ReconstructedText {
+		std::vector<int> firstCharacterIndexForFragment;
+		QString text;
+	};
+	const ReconstructedText reconstructText() const;
 
 	const TextFragment& fragment(size_t fragmentIndex) const;
 
