@@ -1,5 +1,10 @@
 HEADERS += \
-    $$PWD/creaderview.h
+    $$PWD/creaderview.h \
+    $$PWD/ctextbrowser.h
 
 SOURCES += \
-    $$PWD/creaderview.cpp
+    $$PWD/creaderview.cpp \
+    $$PWD/ctextbrowser.cpp
+
+FORMS += \
+    $$PWD/ctextbrowser.ui

@@ -2,79 +2,9 @@
 
 #include "ctextfragment.h"
 #include "container/iterator_helpers.h"
+#include "cchapter.h"
 
-#include <numeric>
 #include <vector>
-
-static const size_t paragraphsPerChapter = 120;
-static const size_t fragmentsPerParagraph = 100;
-
-struct IndexedFragment {
-	TextFragment fragment;
-	size_t fragmentIndex;
-};
-
-struct Paragraph {
-
-	inline void addFragment(const TextFragment& fragment, size_t index)
-	{
-		_fragments.push_back({fragment, index});
-	}
-
-	inline size_t firstFragmentNumber() const
-	{
-		return _fragments.front().fragmentIndex;
-	}
-
-	inline size_t lastFragmentNumber() const
-	{
-		return _fragments.back().fragmentIndex;
-	}
-
-	inline size_t fragmentsCount() const
-	{
-		return _fragments.size();
-	}
-
-	std::vector<IndexedFragment> _fragments;
-};
-
-struct Chapter {
-	inline Paragraph& addEmptyParagraph()
-	{
-		_paragraphs.emplace_back();
-		_paragraphs.back()._fragments.reserve(fragmentsPerParagraph);
-		return _paragraphs.back();
-	}
-
-	inline size_t firstFragmentNumber() const
-	{
-		return _paragraphs.front().firstFragmentNumber();
-	}
-
-	inline size_t lastFragmentNumber() const
-	{
-		return _paragraphs.back().lastFragmentNumber();
-	}
-
-	inline size_t paragraphsCount() const
-	{
-		return _paragraphs.size();
-	}
-
-	inline size_t wordCount() const
-	{
-		const size_t count = lastFragmentNumber() - firstFragmentNumber() + 1;
-		assert(count == std::accumulate(_paragraphs.cbegin(), _paragraphs.cend(), (size_t)0, [](size_t acc, const Paragraph& p){
-			return acc + p._fragments.size();
-		}));
-
-		return count;
-	}
-
-	QString name;
-	std::vector<Paragraph> _paragraphs;
-};
 
 class CStructuredText
 {
@@ -102,6 +32,8 @@ public:
 	const std::vector<Chapter>& chapters() const;
 	size_t chaptersCount() const;
 	size_t totalFragmentsCount() const;
+
+	QString reconstructText(bool richText = false) const;
 
 	const TextFragment& fragment(size_t fragmentIndex) const;
 

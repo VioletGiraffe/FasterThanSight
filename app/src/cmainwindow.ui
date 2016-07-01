@@ -93,12 +93,20 @@
     <addaction name="separator"/>
     <addaction name="action_Themes"/>
     <addaction name="action_Font"/>
+   </widget>
+   <widget class="QMenu" name="menu_Tools">
+    <property name="title">
+     <string>&amp;Tools</string>
+    </property>
+    <addaction name="actionView_navigate_text"/>
+    <addaction name="separator"/>
     <addaction name="actionSettings"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menu_Bookmarks"/>
    <addaction name="menu_Reading"/>
    <addaction name="menu_View"/>
+   <addaction name="menu_Tools"/>
   </widget>
   <widget class="QToolBar" name="toolBar">
    <property name="windowTitle">
@@ -233,6 +241,11 @@
   <action name="actionNext_chapter">
    <property name="text">
     <string>Next chapter</string>
+   </property>
+  </action>
+  <action name="actionView_navigate_text">
+   <property name="text">
+    <string>View / navigate text...</string>
    </property>
   </action>
  </widget>

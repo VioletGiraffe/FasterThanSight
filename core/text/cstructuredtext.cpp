@@ -5,6 +5,8 @@
 #include <algorithm>
 #include <numeric>
 
+static const size_t paragraphsPerChapter = 120;
+
 CStructuredText::CStructuredText()
 {
 }
@@ -225,6 +227,15 @@ std::vector<IndexedFragment>::const_iterator CStructuredText::fragmentByWordInde
 	assert(fragmentIterator != paragraphIterator->_fragments.cend());
 
 	return fragmentIterator;
+}
+
+QString CStructuredText::reconstructText(bool richText /*= false*/) const
+{
+	QString text;
+	for (const auto& chapter: _chapters)
+		text.append(chapter.reconstructText(richText));
+
+	return text;
 }
 
 CStructuredText::const_iterator& CStructuredText::const_iterator::operator++()

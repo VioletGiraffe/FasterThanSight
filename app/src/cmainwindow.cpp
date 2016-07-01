@@ -3,6 +3,7 @@
 #include "assert/advanced_assert.h"
 
 #include "widgets/creaderview.h"
+#include "widgets/ctextbrowser.h"
 #include "bookmarks/cbookmarkseditor.h"
 
 #include "settings/csettings.h"
@@ -309,6 +310,12 @@ void CMainWindow::initActions()
 		_bookmarks = editor.bookmarks();
 		saveBookmarksToSettings();
 		loadBookmarksFromSettings(); // to update the menu items list
+	});
+
+	connect(ui->actionView_navigate_text, &QAction::triggered, [this](){
+		CTextBrowser browser(this);
+		browser.loadText(_reader.text());
+		browser.exec();
 	});
 
 	connect(ui->actionSettings, &QAction::triggered, [this](){

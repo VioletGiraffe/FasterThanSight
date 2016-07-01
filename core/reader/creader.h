@@ -66,6 +66,8 @@ public:
 		return {fragment, _pauseForFragment[fragmentIndex]};
 	}
 
+	const CStructuredText& text() const;
+
 // Control
 	void resumeReading();
 	void pauseReading();

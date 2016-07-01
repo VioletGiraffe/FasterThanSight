@@ -145,6 +145,11 @@ size_t CReader::totalNumWords() const
 	return _text.totalFragmentsCount();
 }
 
+const CStructuredText& CReader::text() const
+{
+	return _text;
+}
+
 void CReader::resumeReading()
 {
 	_state = Reading;
