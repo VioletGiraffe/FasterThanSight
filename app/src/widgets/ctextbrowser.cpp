@@ -28,7 +28,7 @@ CTextBrowser::CTextBrowser(QWidget *parent, CReader& reader) :
 		QAction * result = menu.exec(ui->_textView->mapToGlobal(pos));
 		if (result == readFromHereAction)
 		{
-			const int c = ui->_textView->textCursor().position();
+			const int c = ui->_textView->cursorForPosition(pos).position();
 			auto indexItem = std::lower_bound(_firstCharacterIndexForFragment.begin(), _firstCharacterIndexForFragment.end(), c);
 			if (indexItem != _firstCharacterIndexForFragment.begin())
 				--indexItem;
