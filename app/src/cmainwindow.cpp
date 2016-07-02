@@ -313,7 +313,7 @@ void CMainWindow::initActions()
 	});
 
 	connect(ui->actionView_navigate_text, &QAction::triggered, [this](){
-		CTextBrowser browser(this);
+		CTextBrowser browser(this, _reader);
 		browser.loadText(_reader.text());
 		browser.exec();
 	});
