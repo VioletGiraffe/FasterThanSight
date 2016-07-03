@@ -147,7 +147,7 @@
     <string>&amp;Read</string>
    </property>
    <property name="shortcut">
-    <string>Ctrl+R</string>
+    <string>Space</string>
    </property>
   </action>
   <action name="action_Pause">
