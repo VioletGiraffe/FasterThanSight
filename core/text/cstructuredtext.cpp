@@ -59,6 +59,9 @@ size_t CStructuredText::previousChapterStartIndex(size_t currentIndex) const
 	auto chapterIterator = chapterByWordIndex(currentIndex);
 	assert_and_return_r(chapterIterator != _chapters.cend(), currentIndex);
 
+	if (chapterIterator != _chapters.cend() && chapterIterator->firstFragmentNumber() != currentIndex)
+		return chapterIterator->firstFragmentNumber();
+
 	if (chapterIterator != _chapters.cbegin())
 		--chapterIterator;
 
@@ -72,6 +75,9 @@ size_t CStructuredText::previousParagraphStartIndex(size_t currentIndex) const
 
 	auto paragraphIterator = paragraphByWordIndex(currentIndex);
 	assert_and_return_r(paragraphIterator != chapterIterator->_paragraphs.cend(), currentIndex);
+
+	if (paragraphIterator != chapterIterator->_paragraphs.cend() && paragraphIterator->firstFragmentNumber() != currentIndex)
+		return paragraphIterator->firstFragmentNumber();
 
 	if (paragraphIterator != chapterIterator->_paragraphs.cbegin())
 		--paragraphIterator;
