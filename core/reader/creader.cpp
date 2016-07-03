@@ -251,7 +251,7 @@ size_t CReader::pauseForFragment(const TextFragment& fragment) const
 	const unsigned wordLength = (unsigned)fragment.word().length();
 
 	const float pauseFactor = CPauseHandler::instance().pauseFactorForDelimiter(fragment.delimiter());
-	const float longWordFactor = wordLength > _longWordThreshold ? (wordLength - _longWordThreshold) * _longWordDelayScaleFactor : 1.0f;
+	const float longWordFactor = wordLength > _longWordThreshold ? pow(_longWordDelayScaleFactor, float(wordLength - _longWordThreshold)) : 1.0f;
 	return (size_t)round(basePause * pauseFactor * longWordFactor);
 }
 

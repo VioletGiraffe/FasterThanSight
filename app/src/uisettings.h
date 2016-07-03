@@ -32,7 +32,7 @@ RESTORE_COMPILER_WARNINGS
 #define UI_LONG_WORD_THRESHOLD_DEFAULT 7
 
 #define UI_LONG_WORD_DELAY_FACTOR_SETTING QStringLiteral("Settings/Pauses/LongWordDelayFactor")
-#define UI_LONG_WORD_DELAY_FACTOR_DEFAULT 1.05f
+#define UI_LONG_WORD_DELAY_FACTOR_DEFAULT 1.13f
 
 #define UI_MAIN_TOOLBAR_VISIBLE_SETTING QStringLiteral("UI/Toolbars/MainToolbarVisible")
 #define UI_SETTINGS_TOOLBAR_VISIBLE_SETTING QStringLiteral("UI/Toolbars/SettingsToolbarVisible")

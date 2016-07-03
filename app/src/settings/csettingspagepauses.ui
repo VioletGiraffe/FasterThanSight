@@ -63,7 +63,7 @@ TOTAL DELAY = BASE DELAY + FACTOR * (WORD LENGTH - LONG WORD THRESHOLD)</string>
          <widget class="QDoubleSpinBox" name="_sbLongWordDelayFactor">
           <property name="toolTip">
            <string>Every letter over the long word threshold adds up to the delay as follows:
-TOTAL DELAY = BASE DELAY + FACTOR * (WORD LENGTH - LONG WORD THRESHOLD)</string>
+TOTAL DELAY = BASE DELAY * POW (FACTOR, WORD LENGTH - LONG WORD THRESHOLD)</string>
           </property>
           <property name="minimum">
            <double>1.000000000000000</double>
