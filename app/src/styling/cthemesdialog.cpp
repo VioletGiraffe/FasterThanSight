@@ -57,21 +57,14 @@ CThemesDialog::CThemesDialog(QWidget *parent) :
 
 	loadThemes();
 
-	connect(ui->_btnCopy, &QPushButton::clicked, [this](){
-		createNewTheme();
-	});
-
-	connect(ui->_btnDelete, &QPushButton::clicked, [this]() {
-		deleteTheme();
-	});
+	connect(ui->_btnCopy, &QPushButton::clicked, this, &CThemesDialog::createNewTheme);
+	connect(ui->_btnDelete, &QPushButton::clicked, this, &CThemesDialog::deleteTheme);
 
 	connect(this, &QDialog::rejected, [this]() {
 		qApp->setStyleSheet(currentAcceptedStyle());
 	});
 
-	connect(this, &QDialog::accepted, [this]() {
-		saveThemes();
-	});
+	connect(this, &QDialog::accepted, this, &CThemesDialog::saveThemes);
 }
 
 CThemesDialog::~CThemesDialog()

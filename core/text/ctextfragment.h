@@ -9,13 +9,13 @@ RESTORE_COMPILER_WARNINGS
 class TextFragment
 {
 public:
-	// Ordered by priority!
+	// Ordered by ascending priority!
 	enum DelimiterEnum {
 		NoDelimiter,
+		Quote, // Quote must have low priority as to not override punctuation marks that denote the end of a sentence. Else the sentence end cannot be detected (#41)
 		Space,
 		Dash,
 		Bracket,
-		Quote,
 		Comma,
 		Colon,
 		Semicolon,
@@ -23,7 +23,8 @@ public:
 		Ellipsis,
 		ExclamationMark,
 		QuestionMark,
-		Newline
+		Newline // Must have the highest priority for correct paragraph parsing. Requires the source text to be well-formed.
+				// Newline only be used for semantical formatting, not for limiting the visual line length.
 	};
 
 	typedef Enum<DelimiterEnum> Delimiter;

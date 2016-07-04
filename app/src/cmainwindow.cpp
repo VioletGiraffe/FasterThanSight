@@ -107,9 +107,7 @@ void CMainWindow::dropEvent(QDropEvent *event)
 bool CMainWindow::eventFilter(QObject* /*o*/, QEvent* e)
 {
 	if (e->type() == QEvent::MouseButtonRelease)
-	{
 		_reader.togglePause();
-	}
 
 	return false;
 }

@@ -56,7 +56,7 @@ void CPauseHandler::loadFromSettings()
 		{TextFragment::Dash, 1.5f},
 		{TextFragment::Colon, 1.8f},
 		{TextFragment::Semicolon, 2.1f},
-		{TextFragment::Ellipsis, 2.8f},
+		{TextFragment::Ellipsis, 2.2f},
 		{TextFragment::Bracket, 1.5f},
 		{TextFragment::Quote, 1.5f},
 		{TextFragment::Newline, 2.1f}

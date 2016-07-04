@@ -5,6 +5,7 @@
 
 // The declaration is fully specialized (does not depend on template parameter), so it may not go into a header file
 // http://stackoverflow.com/a/4445772/634821
+
 template<>
 const std::vector<TextFragment::Delimiter::EnumItem> TextFragment::Delimiter::_items = {
 	{TextFragment::NoDelimiter, "No delimiter"},
@@ -112,7 +113,7 @@ TextFragment::Delimiter TextFragment::delimiter() const
 
 bool TextFragment::isEndOfSentence() const
 {
-	return _delimitier == Point || _delimitier == QuestionMark || _delimitier == ExclamationMark || _delimitier == Ellipsis;
+	return _delimitier == Point || _delimitier == QuestionMark || _delimitier == ExclamationMark || _delimitier == Newline || _delimitier == Ellipsis;
 }
 
 bool TextFragment::isEmpty() const
