@@ -6,6 +6,43 @@ RESTORE_COMPILER_WARNINGS
 
 #include <map>
 
+static const std::map<QChar, TextFragment::Delimiter> delimiters{
+	{ ' ', TextFragment::Space },
+	{ '.', TextFragment::Point },
+	{ ':', TextFragment::Colon },
+	{ ';', TextFragment::Semicolon },
+	{ ',', TextFragment::Comma },
+	// TODO: dash should be ignored unless it has an adjacent space!
+	{ '-', TextFragment::Dash },
+	{ 0x2014, TextFragment::Dash },
+	{ 0x2026, TextFragment::Ellipsis },
+	{ '!', TextFragment::ExclamationMark },
+	{ '\n', TextFragment::Newline },
+	{ '?', TextFragment::QuestionMark },
+	{ '\"', TextFragment::Quote },
+	{ 0x201C, TextFragment::Quote }, // “
+	{ 0x201D, TextFragment::Quote }, // ”
+	{ 0x00AB, TextFragment::Quote }, // «
+	{ 0x00BB, TextFragment::Quote }, // »
+
+	{ ')', TextFragment::Bracket },
+	{ '(', TextFragment::Bracket },
+	{ '[', TextFragment::Bracket },
+	{ ']', TextFragment::Bracket },
+	{ '{', TextFragment::Bracket },
+	{ '}', TextFragment::Bracket }
+};
+
+inline QChar delimiterCharacter(TextFragment::Delimiter delimiter)
+{
+	static const auto end = delimiters.cend();
+	const auto item = std::find_if(delimiters.cbegin(), end, [delimiter](const decltype(delimiters)::value_type& v){
+		return v.second == delimiter;
+	});
+
+	return item != end ? item->first : QChar();
+}
+
 inline int priority(TextFragment::Delimiter delimiter)
 {
 	return delimiter;
@@ -18,33 +55,6 @@ CStructuredText CTextParser::parse(const QString& text)
 		.replace(QChar(0x00A0), ' ') // Non-breaking space -> regular space
 		.replace(". . .", QChar(0x2026)) // 3 space-separated dots -> ellipsis // TODO: regexp
 		.replace("...", QChar(0x2026)); // 3 dots -> ellipsis // TODO: regexp
-
-	static const std::map<QChar, TextFragment::Delimiter> delimiters {
-		{' ', TextFragment::Space},
-		{'.', TextFragment::Point},
-		{':', TextFragment::Colon},
-		{';', TextFragment::Semicolon},
-		{',', TextFragment::Comma},
-		// TODO: dash should be ignored unless it has an adjacent space!
-		{'-', TextFragment::Dash},
-		{0x2014, TextFragment::Dash},
-		{0x2026, TextFragment::Ellipsis},
-		{'!', TextFragment::ExclamationMark},
-		{'\n', TextFragment::Newline},
-		{'?', TextFragment::QuestionMark},
-		{'\"', TextFragment::Quote},
-		{0x201C, TextFragment::Quote}, // “
-		{0x201D, TextFragment::Quote}, // ”
-		{0x00AB, TextFragment::Quote}, // «
-		{0x00BB, TextFragment::Quote}, // »
-
-		{')', TextFragment::Bracket},
-		{'(', TextFragment::Bracket},
-		{'[', TextFragment::Bracket},
-		{']', TextFragment::Bracket},
-		{'{', TextFragment::Bracket},
-		{'}', TextFragment::Bracket}
-	};
 
 	// Sanity check
 // #ifdef _DEBUG

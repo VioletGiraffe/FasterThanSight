@@ -125,12 +125,7 @@ const CReader::ChapterProgress CReader::currentChapterProgress() const
 
 size_t CReader::timeRemainingSeconds() const
 {
-	//const float basePausePerWordSeconds = 60.0f / _speedWpm;
-	//const float theoreticalSeconds = (_textFragments.size() - _position) * basePausePerWordSeconds;
 	const float actualSeconds = std::accumulate(_pauseForFragment.cbegin() + _position, _pauseForFragment.cend(), 0) / 1000.0f;
-
-	//const size_t actualWPM = (size_t)(60 * _textFragments.size() / actualSeconds);
-
 	return (size_t)ceilf(actualSeconds);
 }
 
@@ -261,6 +256,15 @@ void CReader::updatePauseValues()
 	_pauseForFragment.resize(_text.totalFragmentsCount());
 	for (const IndexedFragment& fragment: _text)
 		_pauseForFragment[fragment.fragmentIndex] = pauseForFragment(fragment.fragment);
+
+#ifdef _DEBUG
+	const size_t totalTime = std::accumulate(_pauseForFragment.begin(), _pauseForFragment.end(), 0) / 1000;
+	if (totalTime > 0)
+	{
+		const size_t actualWPM = 60 * totalNumWords() / totalTime;
+		qDebug() << "Actual WPM:" << actualWPM;
+	}
+#endif
 
 	_interface->updateInfo();
 }

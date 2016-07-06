@@ -24,6 +24,9 @@ public:
 
 	void loadText(const CStructuredText& text);
 
+protected:
+	bool eventFilter(QObject * o, QEvent * e) override;
+
 private:
 	CReader& _reader;
 

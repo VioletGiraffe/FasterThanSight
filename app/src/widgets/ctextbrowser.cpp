@@ -17,6 +17,7 @@ CTextBrowser::CTextBrowser(QWidget *parent, CReader& reader) :
 {
 	ui->setupUi(this);
 
+	ui->_textView->installEventFilter(this);
 	ui->_textView->setContextMenuPolicy(Qt::CustomContextMenu);
 	connect(ui->_textView, &QWidget::customContextMenuRequested, [this](QPoint pos){
 
@@ -25,8 +26,7 @@ CTextBrowser::CTextBrowser(QWidget *parent, CReader& reader) :
 
 		QMenu menu;
 		QAction * readFromHereAction = menu.addAction("Read from here");
-		QAction * result = menu.exec(ui->_textView->mapToGlobal(pos));
-		if (result == readFromHereAction)
+		if (menu.exec(ui->_textView->mapToGlobal(pos)) == readFromHereAction)
 		{
 			const int c = ui->_textView->cursorForPosition(pos).position();
 			auto indexItem = std::lower_bound(_firstCharacterIndexForFragment.begin(), _firstCharacterIndexForFragment.end(), c);
@@ -68,8 +68,32 @@ void CTextBrowser::loadText(const CStructuredText& text)
 	for (const Chapter& chapter: text.chapters())
 	{
 		QListWidgetItem * item = new QListWidgetItem(chapter.name, ui->_chaptersList);
-		item->setData(Qt::UserRole, textStruct.firstCharacterIndexForFragment[chapter.firstFragmentNumber()]);
+		item->setData(Qt::UserRole, _firstCharacterIndexForFragment[chapter.firstFragmentNumber()]);
 	}
 
 	ui->_chaptersList->setFixedWidth(ui->_chaptersList->sizeHintForColumn(0) + qApp->style()->pixelMetric(QStyle::PM_ScrollBarExtent) + 10);
+
+	auto cursor = ui->_textView->textCursor();
+	cursor.setPosition(_firstCharacterIndexForFragment[_reader.position()]);
+	ui->_textView->setTextCursor(cursor);
+	ui->_textView->ensureCursorVisible();
+}
+
+bool CTextBrowser::eventFilter(QObject * o, QEvent * e)
+{
+	if (o == ui->_textView && e->type() == QEvent::MetaCall) // QEvent::MetaCall, whatever it is, seems to be the only event that occurs when scrolling the QPlainTextEdit
+	{
+		const int character = ui->_textView->cursorForPosition({ui->_textView->width() / 2, ui->_textView->height() / 2}).position();
+		for (int i = ui->_chaptersList->count() - 1; i >= 0; --i)
+		{
+			const int chapterStartCharacterIndex = ui->_chaptersList->item(i)->data(Qt::UserRole).toInt();
+			if (chapterStartCharacterIndex < character)
+			{
+				qDebug() << ui->_chaptersList->item(i)->text();
+				return QDialog::eventFilter(o, e);
+			}
+		}
+	}
+
+	return QDialog::eventFilter(o, e);
 }
