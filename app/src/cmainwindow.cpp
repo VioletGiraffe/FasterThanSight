@@ -11,6 +11,7 @@
 #include "settings/csettingspagepivot.h"
 #include "settings/csettingspagepauses.h"
 #include "settings/csettingspageinterface.h"
+#include "settings/csettingspagetools.h"
 #include "uisettings.h"
 
 DISABLE_COMPILER_WARNINGS
@@ -330,7 +331,8 @@ void CMainWindow::initActions()
 		settingsDialog
 				.addSettingsPage(new CSettingsPageInterface)
 				.addSettingsPage(new CSettingsPagePivot)
-				.addSettingsPage(new CSettingsPagePauses);
+				.addSettingsPage(new CSettingsPagePauses)
+				.addSettingsPage(new CSettingsPageTools);
 
 		connect(&settingsDialog, &CSettingsDialog::settingsChanged, this, &CMainWindow::settingsChanged);
 

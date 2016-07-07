@@ -29,7 +29,7 @@ RESTORE_COMPILER_WARNINGS
 #define UI_PIVOT_CALCULATION_METHOD_DEFAULT TextFragment::pcmMagic
 
 #define UI_LONG_WORD_THRESHOLD_SETTING QStringLiteral("Settings/Pauses/LongWordThreshold")
-#define UI_LONG_WORD_THRESHOLD_DEFAULT 7
+#define UI_LONG_WORD_THRESHOLD_DEFAULT 6
 
 #define UI_LONG_WORD_DELAY_FACTOR_SETTING QStringLiteral("Settings/Pauses/LongWordDelayFactor")
 #define UI_LONG_WORD_DELAY_FACTOR_DEFAULT 1.13f

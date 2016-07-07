@@ -49,17 +49,17 @@ void CPauseHandler::loadFromSettings()
 	_pauseForDelimiter = std::map<TextFragment::Delimiter, float> {
 		{TextFragment::NoDelimiter, 0.0f},
 		{TextFragment::Space, 0.88f},
-		{TextFragment::Comma, 1.5f},
-		{TextFragment::Point, 2.1f},
-		{TextFragment::ExclamationMark, 2.1f},
-		{TextFragment::QuestionMark, 2.1f},
-		{TextFragment::Dash, 1.5f},
-		{TextFragment::Colon, 1.8f},
-		{TextFragment::Semicolon, 2.1f},
-		{TextFragment::Ellipsis, 2.2f},
-		{TextFragment::Bracket, 1.5f},
+		{TextFragment::Comma, 1.6f},
+		{TextFragment::Point, 2.f},
+		{TextFragment::ExclamationMark, 2.f},
+		{TextFragment::QuestionMark, 2.f},
+		{TextFragment::Dash, 1.f},
+		{TextFragment::Colon, 1.2f},
+		{TextFragment::Semicolon, 1.8f},
+		{TextFragment::Ellipsis, 2.f},
+		{TextFragment::Bracket, 1.f},
 		{TextFragment::Quote, 1.5f},
-		{TextFragment::Newline, 2.1f}
+		{TextFragment::Newline, 2.0f}
 	};
 
 	const QStringList values = CSettings().value(PAUSE_SCALING_SETTING).toStringList();
