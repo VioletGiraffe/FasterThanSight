@@ -53,8 +53,9 @@ public:
 		size_t totalNumWords;
 	};
 
-	const ChapterProgress currentChapterProgress() const;
 	size_t timeRemainingSeconds() const;
+	const ChapterProgress currentChapterProgress() const;
+	size_t currentChapterTimeRemainingSeconds() const;
 
 	// Notify the client of current reader state via ReaderInterface
 	void updateInterface() const;

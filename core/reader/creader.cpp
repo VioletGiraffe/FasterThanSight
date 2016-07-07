@@ -113,20 +113,33 @@ long double CReader::progress() const
 	return numWords ? _position / (long double)numWords : 0.0;
 }
 
+size_t CReader::timeRemainingSeconds() const
+{
+	const size_t actualTimeMs = std::accumulate(_pauseForFragment.cbegin() + _position, _pauseForFragment.cend(), 0) / 1000;
+	return actualTimeMs / 1000;
+}
+
 const CReader::ChapterProgress CReader::currentChapterProgress() const
 {
 	const auto chapter = _text.chapterByWordIndex(_position);
 	if (chapter == _text.chapters().cend())
-		return {0, 0};
+		return{ 0, 0 };
 
 	const size_t chapterWordsRead = _position - chapter->firstFragmentNumber();
-	return {chapterWordsRead, chapter->wordCount()};
+	return{ chapterWordsRead, chapter->wordCount() };
 }
 
-size_t CReader::timeRemainingSeconds() const
+size_t CReader::currentChapterTimeRemainingSeconds() const
 {
-	const float actualSeconds = std::accumulate(_pauseForFragment.cbegin() + _position, _pauseForFragment.cend(), 0) / 1000.0f;
-	return (size_t)ceilf(actualSeconds);
+	const auto chapter = _text.chapterByWordIndex(_position);
+	if (chapter == _text.chapters().cend())
+		return 0;
+
+	size_t timeMs = 0;
+	for (size_t fragment = _position, lastChapterFragment = chapter->lastFragmentNumber(); fragment <= lastChapterFragment; ++fragment)
+		timeMs += _pauseForFragment[fragment];
+
+	return timeMs / 1000;
 }
 
 void CReader::updateInterface() const

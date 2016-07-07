@@ -467,7 +467,11 @@ void CMainWindow::updateDisplay(const size_t currentTextFragmentIndex)
 
 	const auto chapterProgress = _reader.currentChapterProgress();
 	_chapterProgressBar->setValue(chapterProgress.progressPercentage());
-	_chapterProgressBar->setToolTip(tr("%1 out of %2 words read in this chapter").arg(chapterProgress.wordsRead).arg(chapterProgress.totalNumWords));
+	_chapterProgressBar->setToolTip(tr("%1 out of %2 words read in this chapter\n%3 remaining")
+		.arg(chapterProgress.wordsRead)
+		.arg(chapterProgress.totalNumWords)
+		.arg(QDateTime::fromTime_t(_reader.currentChapterTimeRemainingSeconds()).toUTC().toString("HH:mm:ss"))
+		);
 }
 
 void CMainWindow::updateInfo()
