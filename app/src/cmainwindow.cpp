@@ -106,8 +106,17 @@ void CMainWindow::dropEvent(QDropEvent *event)
 
 bool CMainWindow::eventFilter(QObject* /*o*/, QEvent* e)
 {
-	if (e->type() == QEvent::MouseButtonRelease)
+	switch (e->type())
+	{
+	case QEvent::MouseButtonRelease:
 		_reader.togglePause();
+		break;
+	case QEvent::MouseButtonDblClick:
+		toggleFullScreen();
+		break;
+	default:
+		break;
+	}
 
 	return false;
 }
