@@ -42,8 +42,7 @@ CTextBrowser::CTextBrowser(QWidget *parent, CReader& reader) :
 		ui->_textView->moveCursor(QTextCursor::Start);
 		QTextCursor cursor = ui->_textView->textCursor();
 		CTimeElapsed t(true);
-		cursor.movePosition(QTextCursor::NextCharacter, QTextCursor::MoveAnchor, item->data(Qt::UserRole).toInt());
-		qDebug() << t.elapsed();
+		cursor.setPosition(item->data(Qt::UserRole).toInt());
 		ui->_textView->moveCursor(QTextCursor::End); // This ensures that the requested position is at the top of the text view
 		ui->_textView->setTextCursor(cursor);
 	});
@@ -91,7 +90,6 @@ bool CTextBrowser::eventFilter(QObject * o, QEvent * e)
 			const int chapterStartCharacterIndex = ui->_chaptersList->item(i)->data(Qt::UserRole).toInt();
 			if (chapterStartCharacterIndex < character)
 			{
-				qDebug() << ui->_chaptersList->item(i)->text();
 				currentChapterItemIndex = i;
 				break;
 			}
@@ -104,7 +102,7 @@ bool CTextBrowser::eventFilter(QObject * o, QEvent * e)
 			f.setBold(i == currentChapterItemIndex);
 			item->setFont(f);
 			if (i == currentChapterItemIndex)
-				item->setBackground(QColor(255, 220, 220));
+				item->setBackground(QColor(255, 192, 203));
 			else
 				item->setBackground(Qt::NoBrush);
 		}
