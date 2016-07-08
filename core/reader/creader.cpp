@@ -115,7 +115,7 @@ long double CReader::progress() const
 
 size_t CReader::timeRemainingSeconds() const
 {
-	const size_t actualTimeMs = std::accumulate(_pauseForFragment.cbegin() + _position, _pauseForFragment.cend(), 0) / 1000;
+	const size_t actualTimeMs = std::accumulate(_pauseForFragment.cbegin() + _position, _pauseForFragment.cend(), 0);
 	return actualTimeMs / 1000;
 }
 
