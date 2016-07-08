@@ -62,7 +62,7 @@ CTextBrowser::CTextBrowser(QWidget *parent, CReader& reader) :
 			_backgroundColor = QVariant(item.split(':')[1].trimmed()).value<QColor>();
 	}
 
-	ui->_textView->setStyleSheet(qss);
+	ui->_textView->setStyleSheet(QString("QPlainTextEdit {" + qss + "}"));
 }
 
 CTextBrowser::~CTextBrowser()
