@@ -32,5 +32,8 @@ private:
 
 	Ui::CTextBrowser *ui;
 	std::vector<int> _firstCharacterIndexForFragment;
+
+	QColor _textColor;
+	QColor _backgroundColor;
 };
 

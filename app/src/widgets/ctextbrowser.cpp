@@ -2,6 +2,7 @@
 #include "text/cstructuredtext.h"
 #include "system/ctimeelapsed.h"
 #include "reader/creader.h"
+#include "container/algorithms.h"
 
 DISABLE_COMPILER_WARNINGS
 #include "ui_ctextbrowser.h"
@@ -46,6 +47,22 @@ CTextBrowser::CTextBrowser(QWidget *parent, CReader& reader) :
 		ui->_textView->moveCursor(QTextCursor::End); // This ensures that the requested position is at the top of the text view
 		ui->_textView->setTextCursor(cursor);
 	});
+
+	QStringList styleItems = qApp->styleSheet().remove("CReaderView").remove("{").remove("}").split(';');
+	ContainerAlgorithms::erase_if(styleItems, [](const QString& item){
+		return item.contains("qproperty");
+	});
+
+	const QString qss = styleItems.join(';');
+	for (const QString& item : styleItems)
+	{
+		if (item.trimmed().startsWith("color"))
+			_textColor = QVariant(item.split(':')[1].trimmed()).value<QColor>();
+		else if (item.trimmed().startsWith("background-color"))
+			_backgroundColor = QVariant(item.split(':')[1].trimmed()).value<QColor>();
+	}
+
+	ui->_textView->setStyleSheet(qss);
 }
 
 CTextBrowser::~CTextBrowser()
@@ -95,6 +112,17 @@ bool CTextBrowser::eventFilter(QObject * o, QEvent * e)
 			}
 		}
 
+		QString pivotColorString;
+		QStringList styleItems = qApp->styleSheet().remove("CReaderView").remove("{").remove("}").split(';');
+		for (int i = 0, size = styleItems.size(); i < size; ++i)
+		{
+			if (styleItems[i].contains("pivot"))
+			{
+				pivotColorString = styleItems[i].split(':')[1].trimmed();
+				break;
+			}
+		}
+
 		for (int i = 0, count = ui->_chaptersList->count(); i < count; ++i)
 		{
 			auto item = ui->_chaptersList->item(i);
@@ -102,9 +130,15 @@ bool CTextBrowser::eventFilter(QObject * o, QEvent * e)
 			f.setBold(i == currentChapterItemIndex);
 			item->setFont(f);
 			if (i == currentChapterItemIndex)
-				item->setBackground(QColor(255, 192, 203));
+			{
+				item->setTextColor(_backgroundColor);
+				item->setBackgroundColor(_textColor);
+			}
 			else
-				item->setBackground(Qt::NoBrush);
+			{
+				item->setTextColor(_textColor);
+				item->setBackgroundColor(_backgroundColor);
+			}
 		}
 
 		if (currentChapterItemIndex >= 0)
