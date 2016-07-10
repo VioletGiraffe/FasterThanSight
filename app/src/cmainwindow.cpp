@@ -119,6 +119,19 @@ void CMainWindow::dropEvent(QDropEvent *event)
 		openFile(urls.front().toLocalFile(), 0);
 }
 
+void CMainWindow::wheelEvent(QWheelEvent *event)
+{
+	if ((event->modifiers() & Qt::ControlModifier) && event->angleDelta().y() != 0)
+	{
+		event->accept();
+		qDebug() << event->angleDelta();
+		const int delta = event->angleDelta().y() / 8 / 15;
+		_textSizeSlider->setValue(_textSizeSlider->value() + delta * 10);
+	}
+	else
+		QMainWindow::wheelEvent(event);
+}
+
 bool CMainWindow::eventFilter(QObject* /*o*/, QEvent* e)
 {
 	switch (e->type())
