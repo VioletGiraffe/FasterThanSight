@@ -248,6 +248,9 @@
    <property name="text">
     <string>View / &amp;navigate text...</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+Alt+V</string>
+   </property>
   </action>
   <action name="actionCheck_for_updates">
    <property name="text">

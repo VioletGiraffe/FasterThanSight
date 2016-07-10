@@ -41,8 +41,10 @@ DISABLE_COMPILER_WARNINGS
 #ifdef _WIN32
 #include <Windows.h>
 #endif
-
 RESTORE_COMPILER_WARNINGS
+
+#define WINDOW_GEOMETRY QStringLiteral("UI/Window/Geometry")
+#define WINDOW_STATE QStringLiteral("UI/Window/State")
 
 CMainWindow::CMainWindow(QWidget *parent) :
 	QMainWindow(parent),
@@ -85,13 +87,23 @@ CMainWindow::~CMainWindow()
 	ui = nullptr;
 }
 
-void CMainWindow::closeEvent(QCloseEvent * e)
+void CMainWindow::showEvent(QShowEvent *event)
 {
 	CSettings s;
-	s.setValue(UI_MAIN_TOOLBAR_VISIBLE_SETTING, _defaultToolbar->isVisible());
-	s.setValue(UI_SETTINGS_TOOLBAR_VISIBLE_SETTING, _readingSettingsToolbar->isVisible());
+	restoreGeometry(s.value(WINDOW_GEOMETRY).toByteArray());
+	restoreState(s.value(WINDOW_STATE).toByteArray());
+	setFullScreen(isFullScreen()); // restoreState itself will make the window fullscreen, but we may need additional logic like hiding menu bar and tool bars
 
-	QMainWindow::closeEvent(e);
+	QMainWindow::showEvent(event);
+}
+
+void CMainWindow::closeEvent(QCloseEvent * event)
+{
+	CSettings s;
+	s.setValue(WINDOW_STATE, saveState());
+	s.setValue(WINDOW_GEOMETRY, saveGeometry());
+
+	QMainWindow::closeEvent(event);
 }
 
 void CMainWindow::dragEnterEvent(QDragEnterEvent *event)
@@ -132,10 +144,10 @@ void CMainWindow::initToolBars()
 	QList<QToolBar*> toolbars = findChildren<QToolBar*>();
 	assert_r(toolbars.size() == 1);
 	_defaultToolbar = toolbars.front();
-	_defaultToolbar->setVisible(s.value(UI_MAIN_TOOLBAR_VISIBLE_SETTING, true).toBool());
 
 // Reading settings toolbar
 	_readingSettingsToolbar = addToolBar(tr("Reading settings"));
+	_readingSettingsToolbar->setObjectName("_readingSettingsToolbar");
 
 	// Screen brightness
 	_brightnessSlider = new QSlider(Qt::Horizontal);
@@ -201,8 +213,6 @@ void CMainWindow::initToolBars()
 
 	_readingSettingsToolbar->addWidget(_readingSpeedSlider);
 	_readingSettingsToolbar->addWidget(_readingSpeedSpinBox);
-
-	_readingSettingsToolbar->setVisible(s.value(UI_SETTINGS_TOOLBAR_VISIBLE_SETTING, true).toBool());
 }
 
 void CMainWindow::initActions()
@@ -446,7 +456,12 @@ void CMainWindow::updateRecentFilesMenu()
 
 void CMainWindow::toggleFullScreen()
 {
-	if (!isFullScreen())
+	setFullScreen(!isFullScreen());
+}
+
+void CMainWindow::setFullScreen(bool fullScreen)
+{
+	if (fullScreen)
 	{
 		showFullScreen();
 		menuBar()->hide();

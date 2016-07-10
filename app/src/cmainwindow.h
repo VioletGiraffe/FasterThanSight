@@ -29,7 +29,8 @@ public:
 	~CMainWindow();
 
 protected:
-	void closeEvent(QCloseEvent * e) override;
+	void showEvent(QShowEvent *event) override;
+	void closeEvent(QCloseEvent * event) override;
 	void dragEnterEvent(QDragEnterEvent * event) override;
 	void dropEvent(QDropEvent * event) override;
 
@@ -51,6 +52,7 @@ private:
 	void updateRecentFilesMenu();
 
 	void toggleFullScreen();
+	void setFullScreen(bool fullScreen);
 
 	void settingsChanged();
 
