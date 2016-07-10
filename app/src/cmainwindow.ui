@@ -101,6 +101,7 @@
     <addaction name="actionView_navigate_text"/>
     <addaction name="separator"/>
     <addaction name="actionSettings"/>
+    <addaction name="actionCheck_for_updates"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menu_Bookmarks"/>
@@ -245,7 +246,12 @@
   </action>
   <action name="actionView_navigate_text">
    <property name="text">
-    <string>View / navigate text...</string>
+    <string>View / &amp;navigate text...</string>
+   </property>
+  </action>
+  <action name="actionCheck_for_updates">
+   <property name="text">
+    <string>Check for &amp;updates</string>
    </property>
   </action>
  </widget>

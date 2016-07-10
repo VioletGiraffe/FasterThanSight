@@ -1,6 +1,8 @@
 #include "cmainwindow.h"
 #include "compiler/compiler_warnings_control.h"
 #include "assert/advanced_assert.h"
+#include "updaterUI/cupdaterdialog.h"
+#include "version.h"
 
 #include "widgets/creaderview.h"
 #include "widgets/ctextbrowser.h"
@@ -337,6 +339,10 @@ void CMainWindow::initActions()
 		connect(&settingsDialog, &CSettingsDialog::settingsChanged, this, &CMainWindow::settingsChanged);
 
 		settingsDialog.exec();
+	});
+
+	connect(ui->actionCheck_for_updates, &QAction::triggered, [this](){
+		CUpdaterDialog(this, REPO_ADDRESS, VERSION_STRING).exec();
 	});
 }
 

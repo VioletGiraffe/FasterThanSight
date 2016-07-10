@@ -1,4 +1,4 @@
-QT = core gui widgets
+QT = core gui widgets network
 
 TARGET = FasterThanSight
 TEMPLATE = app
@@ -55,11 +55,12 @@ mac*{
 }
 
 INCLUDEPATH += \
-	src/ \
-	../core/ \
-	../cpputils/ \
-	../cpp-template-utils/ \
-	../qtutils/
+	src \
+	../core \
+	../cpputils \
+	../cpp-template-utils \
+	../qtutils \
+	../github-releases-autoupdater/src
 
 include (src/widgets/widgets.pri)
 include (src/settings/settings.pri)
@@ -74,7 +75,8 @@ HEADERS += \
 	src\cmainwindow.h \
 	src/uisettings.h \
 	src/bookmarks/cbookmarkseditor.h \
-	src/styling/cthemesdialog.h
+	src/styling/cthemesdialog.h \
+	src/version.h
 
 FORMS += \
 	src\cmainwindow.ui \
