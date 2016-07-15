@@ -27,6 +27,18 @@ TextFragment::TextFragment(const QString& word, const QString& punctuation, Deli
 {
 }
 
+#ifdef __ANDROID__
+namespace std {
+	// Fix for MinGW 4.9.2 bug - std::log2 is missing there
+	template <typename T>
+	T log2 (T value)
+	{
+		static const T l2 = std::log(T(2));
+		return std::log(value) / l2;
+	}
+}
+#endif
+
 inline int pivot(TextFragment::PivotCalculationMethod method, int wordLength)
 {
 	switch (method)
