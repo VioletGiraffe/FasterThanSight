@@ -16,6 +16,7 @@ call "%VS_TOOLS_DIR%VsDevCmd.bat" x86
 msbuild ..\FasterThanSight.sln /t:Build /p:Configuration=Release;PlatformToolset=v120
 
 xcopy /R /Y ..\bin\release\FasterThanSight.exe binaries\
+xcopy /R /Y "3rdparty binaries"\Win\32\* binaries\
 
 SETLOCAL
 SET PATH=%QTDIR32%\bin\
