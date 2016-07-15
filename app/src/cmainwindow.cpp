@@ -137,8 +137,7 @@ bool CMainWindow::eventFilter(QObject* /*o*/, QEvent* e)
 	switch (e->type())
 	{
 	case QEvent::MouseButtonRelease:
-		if (hasFocus())
-			_reader.togglePause();
+		_reader.togglePause();
 		break;
 	case QEvent::MouseButtonDblClick:
 		toggleFullScreen();
