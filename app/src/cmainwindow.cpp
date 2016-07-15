@@ -137,7 +137,8 @@ bool CMainWindow::eventFilter(QObject* /*o*/, QEvent* e)
 	switch (e->type())
 	{
 	case QEvent::MouseButtonRelease:
-		_reader.togglePause();
+		if (hasFocus())
+			_reader.togglePause();
 		break;
 	case QEvent::MouseButtonDblClick:
 		toggleFullScreen();
@@ -323,9 +324,13 @@ void CMainWindow::initActions()
 			_reader.goToWord(word - 1);
 	});
 
+#ifndef __APPLE__
 	auto f11 = new QShortcut(QKeySequence("F11"), this);
 	connect(f11, &QShortcut::activated, this, &CMainWindow::toggleFullScreen);
 	connect(ui->action_Fullscreen, &QAction::triggered, this, &CMainWindow::toggleFullScreen);
+#else
+	ui->action_Fullscreen->setVisible(false);
+#endif
 
 	connect(ui->action_Bookmark_current_position, &QAction::triggered, [this](){
 		if (_reader.filePath().isEmpty())

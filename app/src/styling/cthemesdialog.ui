@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>408</width>
-    <height>223</height>
+    <height>261</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -32,7 +32,7 @@
      <item>
       <widget class="QPushButton" name="_btnCopy">
        <property name="text">
-        <string>New copy..</string>
+        <string>New copy...</string>
        </property>
       </widget>
      </item>
