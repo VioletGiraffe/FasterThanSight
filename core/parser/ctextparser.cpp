@@ -6,43 +6,6 @@ RESTORE_COMPILER_WARNINGS
 
 #include <map>
 
-static const std::map<QChar, TextFragment::Delimiter> delimiters{
-	{ ' ', TextFragment::Space },
-	{ '.', TextFragment::Point },
-	{ ':', TextFragment::Colon },
-	{ ';', TextFragment::Semicolon },
-	{ ',', TextFragment::Comma },
-	// TODO: dash should be ignored unless it has an adjacent space!
-	{ '-', TextFragment::Dash },
-	{ 0x2014, TextFragment::Dash },
-	{ 0x2026, TextFragment::Ellipsis },
-	{ '!', TextFragment::ExclamationMark },
-	{ '\n', TextFragment::Newline },
-	{ '?', TextFragment::QuestionMark },
-	{ '\"', TextFragment::Quote },
-	{ 0x201C, TextFragment::Quote }, // “
-	{ 0x201D, TextFragment::Quote }, // ”
-	{ 0x00AB, TextFragment::Quote }, // «
-	{ 0x00BB, TextFragment::Quote }, // »
-
-	{ ')', TextFragment::Bracket },
-	{ '(', TextFragment::Bracket },
-	{ '[', TextFragment::Bracket },
-	{ ']', TextFragment::Bracket },
-	{ '{', TextFragment::Bracket },
-	{ '}', TextFragment::Bracket }
-};
-
-inline QChar delimiterCharacter(TextFragment::Delimiter delimiter)
-{
-	static const auto end = delimiters.cend();
-	const auto item = std::find_if(delimiters.cbegin(), end, [delimiter](const decltype(delimiters)::value_type& v){
-		return v.second == delimiter;
-	});
-
-	return item != end ? item->first : QChar();
-}
-
 inline int priority(TextFragment::Delimiter delimiter)
 {
 	return delimiter;
@@ -50,6 +13,34 @@ inline int priority(TextFragment::Delimiter delimiter)
 
 CStructuredText CTextParser::parse(const QString& text)
 {
+	static const std::map<QChar, TextFragment::Delimiter> delimiters {
+		{ ' ', TextFragment::Space },
+		{ '.', TextFragment::Point },
+		{ ':', TextFragment::Colon },
+		{ ';', TextFragment::Semicolon },
+		{ ',', TextFragment::Comma },
+		// TODO: dash should be ignored unless it has an adjacent space!
+		{ '-', TextFragment::Dash },
+		{ 0x2014, TextFragment::Dash },
+		{ 0x2026, TextFragment::Ellipsis },
+		{ '!', TextFragment::ExclamationMark },
+		{ '\n', TextFragment::Newline },
+		{ '?', TextFragment::QuestionMark },
+		{ '\"', TextFragment::Quote },
+		{ 0x201C, TextFragment::Quote }, // â€œ
+		{ 0x201D, TextFragment::Quote }, // â€
+		{ 0x00AB, TextFragment::Quote }, // Â«
+		{ 0x00BB, TextFragment::Quote }, // Â»
+
+		{ ')', TextFragment::Bracket },
+		{ '(', TextFragment::Bracket },
+		{ '[', TextFragment::Bracket },
+		{ ']', TextFragment::Bracket },
+		{ '{', TextFragment::Bracket },
+		{ '}', TextFragment::Bracket }
+	};
+
+
 	QString fixedText = text;
 	fixedText
 		.replace(QChar(0x00A0), ' ') // Non-breaking space -> regular space
@@ -57,12 +48,12 @@ CStructuredText CTextParser::parse(const QString& text)
 		.replace("...", QChar(0x2026)); // 3 dots -> ellipsis // TODO: regexp
 
 	// Sanity check
-// #ifdef _DEBUG
-// 	for (const auto delimiter: TextFragment::Delimiter())
-// 		assert(std::find_if(delimiters.begin(), delimiters.end(), [delimiter](const Delimiter& item){
-// 			return delimiter.id == TextFragment::NoDelimiter || item.delimiterType == delimiter.id;
-// 	}) != delimiters.end());
-// #endif
+ #ifdef _DEBUG
+	for (const auto delimiter: TextFragment::Delimiter())
+		assert(std::find_if(delimiters.begin(), delimiters.end(), [delimiter](const typename decltype(delimiters)::value_type& item){
+			return delimiter.id == TextFragment::NoDelimiter || item.second == delimiter.id;
+	}) != delimiters.end());
+ #endif
 
 	_fragmentCounter = 0;
 	_parsedText.clear();
