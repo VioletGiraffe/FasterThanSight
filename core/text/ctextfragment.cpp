@@ -59,7 +59,7 @@ inline int pivot(TextFragment::PivotCalculationMethod method, int wordLength)
 	case TextFragment::pcmMiddle:
 		return std::max((int)round(wordLength / 2.0f) - 1, 0);
 	case TextFragment::pcmQuarter:
-		return std::max((int)std::round(wordLength / 4.0f) - 1, 0);
+		return std::max((int)round(wordLength / 4.0f) - 1, 0);
 	case TextFragment::pcmSquareRoot:
 		return std::max((int)round(std::sqrt(wordLength)) - 1, 0);
 	case TextFragment::pcmCubicRoot:
