@@ -137,6 +137,7 @@ bool CMainWindow::eventFilter(QObject* /*o*/, QEvent* e)
 	switch (e->type())
 	{
 	case QEvent::MouseButtonRelease:
+		ui->_text->setFocus();
 		_reader.togglePause();
 		break;
 	case QEvent::MouseButtonDblClick:
