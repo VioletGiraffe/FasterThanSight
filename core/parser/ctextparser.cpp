@@ -50,7 +50,7 @@ CStructuredText CTextParser::parse(const QString& text)
 	// Sanity check
  #ifdef _DEBUG
 	for (const auto delimiter: TextFragment::Delimiter())
-		assert(std::find_if(delimiters.begin(), delimiters.end(), [delimiter](const typename decltype(delimiters)::value_type& item){
+		assert(std::find_if(delimiters.begin(), delimiters.end(), [delimiter](const decltype(delimiters)::value_type& item){
 			return delimiter.id == TextFragment::NoDelimiter || item.second == delimiter.id;
 	}) != delimiters.end());
  #endif
