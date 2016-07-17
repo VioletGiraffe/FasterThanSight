@@ -98,9 +98,16 @@
     <property name="title">
      <string>&amp;Tools</string>
     </property>
+    <widget class="QMenu" name="menuAdvanced">
+     <property name="title">
+      <string>Advanced</string>
+     </property>
+     <addaction name="actionView_application_log"/>
+    </widget>
     <addaction name="actionView_navigate_text"/>
     <addaction name="separator"/>
     <addaction name="actionSettings"/>
+    <addaction name="menuAdvanced"/>
    </widget>
    <widget class="QMenu" name="menu_Help">
     <property name="title">
@@ -268,6 +275,11 @@
   <action name="actionAbout">
    <property name="text">
     <string>&amp;About...</string>
+   </property>
+  </action>
+  <action name="actionView_application_log">
+   <property name="text">
+    <string>View application log...</string>
    </property>
   </action>
  </widget>

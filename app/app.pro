@@ -69,7 +69,8 @@ SOURCES += \
 	src/main.cpp\
 	src/cmainwindow.cpp \
 	src/bookmarks/cbookmarkseditor.cpp \
-	src/styling/cthemesdialog.cpp
+	src/styling/cthemesdialog.cpp \
+    src/logviewer/clogviewer.cpp
 
 HEADERS += \
 	src\cmainwindow.h \
@@ -78,9 +79,11 @@ HEADERS += \
 	src/styling/cthemesdialog.h \
 	src/version.h \
 	src/uihelpers.h \
-    src/logger.h
+    src/logger.h \
+    src/logviewer/clogviewer.h
 
 FORMS += \
 	src\cmainwindow.ui \
 	src/bookmarks/cbookmarkseditor.ui \
-	src/styling/cthemesdialog.ui
+	src/styling/cthemesdialog.ui \
+    src/logviewer/clogviewer.ui

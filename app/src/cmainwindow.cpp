@@ -5,6 +5,7 @@
 #include "version.h"
 #include "uihelpers.h"
 #include "aboutdialog/caboutdialog.h"
+#include "logviewer/clogviewer.h"
 
 #include "widgets/creaderview.h"
 #include "widgets/ctextbrowser.h"
@@ -371,6 +372,10 @@ void CMainWindow::initActions()
 		connect(&settingsDialog, &CSettingsDialog::settingsChanged, this, &CMainWindow::settingsChanged);
 
 		settingsDialog.exec();
+	});
+
+	connect(ui->actionView_application_log, &QAction::triggered, [this](){
+		CLogViewer(this).exec();
 	});
 
 	connect(ui->actionCheck_for_updates, &QAction::triggered, [this](){
