@@ -85,8 +85,21 @@ inline int pivot(TextFragment::PivotCalculationMethod method, int wordLength)
 
 int TextFragment::pivotLetterIndex(PivotCalculationMethod method) const
 {
-	const int wordLength = _word.length();
-	int pivotIndex = pivot(method, wordLength);
+	// Ignoring quotes and other possible non-alphanumeric characters in the beginning
+	int wordStartIndex = 0, wordLength = 0;
+	bool wordStarted = false;
+	for (QChar ch : _word)
+	{
+		if (ch.isLetterOrNumber())
+		{
+			wordStarted = true;
+			++wordLength;
+		}
+		else if (!wordStarted)
+			++wordStartIndex;
+	}
+
+	const int pivotIndex = wordStartIndex + pivot(method, wordLength);
 
 	if (pivotIndex == -1)
 		return -1;
