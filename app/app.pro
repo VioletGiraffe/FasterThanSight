@@ -76,7 +76,8 @@ HEADERS += \
 	src/uisettings.h \
 	src/bookmarks/cbookmarkseditor.h \
 	src/styling/cthemesdialog.h \
-	src/version.h
+	src/version.h \
+	src/uihelpers.h
 
 FORMS += \
 	src\cmainwindow.ui \

@@ -3,6 +3,7 @@
 #include "assert/advanced_assert.h"
 #include "updaterUI/cupdaterdialog.h"
 #include "version.h"
+#include "uihelpers.h"
 
 #include "widgets/creaderview.h"
 #include "widgets/ctextbrowser.h"
@@ -19,7 +20,6 @@
 DISABLE_COMPILER_WARNINGS
 #include "ui_cmainwindow.h"
 
-#include <QDateTime>
 #include <QDebug>
 #include <QDragEnterEvent>
 #include <QFileDialog>
@@ -514,7 +514,7 @@ void CMainWindow::updateDisplay(const size_t currentTextFragmentIndex)
 	_chapterProgressBar->setToolTip(tr("%1 out of %2 words read in this chapter\n%3 remaining")
 		.arg(chapterProgress.wordsRead)
 		.arg(chapterProgress.totalNumWords)
-		.arg(QDateTime::fromTime_t(_reader.currentChapterTimeRemainingSeconds()).toUTC().toString("HH:mm:ss"))
+		.arg(secondsToHhhMmSs(_reader.currentChapterTimeRemainingSeconds()))
 		);
 }
 
@@ -525,7 +525,7 @@ void CMainWindow::updateInfo()
 		.arg(_reader.totalNumWords() > 0 ? _reader.position() + 1 : 0)
 		.arg(_reader.totalNumWords())
 		.arg(QString::number(100 * (double)_reader.progress(), 'f', 2))
-		.arg(QDateTime::fromTime_t(_reader.timeRemainingSeconds()).toUTC().toString("HH:mm:ss"))
+		.arg(secondsToHhhMmSs(_reader.timeRemainingSeconds()))
 	);
 }
 
