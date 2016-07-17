@@ -530,13 +530,22 @@ void CMainWindow::updateDisplay(const size_t currentTextFragmentIndex)
 
 void CMainWindow::updateInfo()
 {
-	_progressLabel->setText(
-		tr("Reading word %1 out of %2 total (%3%); estimated time remaining: %4")
-		.arg(_reader.totalNumWords() > 0 ? _reader.position() + 1 : 0)
-		.arg(_reader.totalNumWords())
-		.arg(QString::number(100 * (double)_reader.progress(), 'f', 2))
-		.arg(secondsToHhhMmSs(_reader.timeRemainingSeconds()))
-	);
+	if (_reader.state() != CReader::Finished)
+	{
+		_progressLabel->setText(
+			tr("Reading word %1 out of %2 total (%3%); estimated time remaining: %4")
+			.arg(_reader.totalNumWords() > 0 ? _reader.position() + 1 : 0)
+			.arg(_reader.totalNumWords())
+			.arg(QString::number(100 * (double)_reader.progress(), 'f', 2))
+			.arg(secondsToHhhMmSs(_reader.timeRemainingSeconds()))
+		);
+	}
+	else
+	{
+		_progressLabel->setText(tr("Reading finished"));
+		_chapterProgressBar->setToolTip(tr("Reading finished"));
+		_chapterProgressBar->setValue(100);
+	}
 }
 
 void CMainWindow::stateChanged(const CReader::State newState)
@@ -550,5 +559,14 @@ void CMainWindow::stateChanged(const CReader::State newState)
 	{
 		ui->action_Pause->setEnabled(false);
 		keepScreenFromTurningOff(false);
+	}
+	else if (newState == CReader::Finished)
+	{
+		updateInfo();
+		keepScreenFromTurningOff(false);
+	}
+	else
+	{
+		assert_unconditional_r("Unknown reader state");
 	}
 }

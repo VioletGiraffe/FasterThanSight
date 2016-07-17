@@ -160,6 +160,9 @@ const CStructuredText& CReader::text() const
 
 void CReader::resumeReading()
 {
+	if (_state == Finished)
+		return;
+
 	_state = Reading;
 	_interface->stateChanged(_state);
 	readNextFragment();
@@ -177,7 +180,7 @@ void CReader::togglePause()
 {
 	if (_state == Reading)
 		pauseReading();
-	else
+	else if (_state == Paused)
 		resumeReading();
 }
 
@@ -191,10 +194,15 @@ void CReader::resetAndStop()
 
 void CReader::goToWord(size_t wordIndex)
 {
-	if (_position >= _text.totalFragmentsCount())
-		return;
-
 	_position = wordIndex;
+
+	if (_position >= _text.totalFragmentsCount())
+	{
+		_state = Finished;
+		_interface->stateChanged(_state);
+		return;
+	}
+
 	_interface->updateDisplay(_position);
 	_interface->updateInfo();
 	_currentWordRead = true;
@@ -234,14 +242,19 @@ void CReader::setReadingSpeed(size_t wpm)
 
 void CReader::readNextFragment()
 {
-	if (_position >= _text.totalFragmentsCount())
-	{
-		resetAndStop();
-	}
-	else if (_state == Reading)
+	if (_state == Reading)
 	{
 		if (_currentWordRead)
+		{
 			++_position;
+			if (_position >= _text.totalFragmentsCount())
+			{
+				_readingTimer.stop();
+				_state = Finished;
+				_interface->stateChanged(_state);
+				return;
+			}
+		}
 		else
 			_currentWordRead = true;
 

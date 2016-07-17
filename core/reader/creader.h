@@ -18,7 +18,7 @@ public:
 		size_t _pauseAfter;
 	};
 
-	enum State {Reading, Paused};
+	enum State {Reading, Paused, Finished};
 
 	struct ReaderInterface {
 		virtual void updateDisplay(const size_t currentTextFragmentIndex) = 0;
