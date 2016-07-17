@@ -217,7 +217,10 @@ void CMainWindow::initToolBars()
 	_readingSpeedSpinBox->setAccelerated(true);
 
 	connect(_readingSpeedSlider, &QSlider::valueChanged, _readingSpeedSpinBox, &QSpinBox::setValue);
-	connect(_readingSpeedSpinBox, (void (QSpinBox::*)(int))&QSpinBox::valueChanged, _readingSpeedSlider, &QSlider::setValue);
+	connect(_readingSpeedSpinBox, &QSpinBox::editingFinished, [this](){
+		_readingSpeedSlider->setValue(_readingSpeedSpinBox->value());
+		ui->_text->setFocus();
+	});
 
 	connect(_readingSpeedSlider, &QSlider::valueChanged, [this](int WPM){
 		_reader.setReadingSpeed(WPM);
