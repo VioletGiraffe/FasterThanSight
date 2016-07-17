@@ -4,6 +4,7 @@
 #include "updaterUI/cupdaterdialog.h"
 #include "version.h"
 #include "uihelpers.h"
+#include "aboutdialog/caboutdialog.h"
 
 #include "widgets/creaderview.h"
 #include "widgets/ctextbrowser.h"
@@ -92,7 +93,7 @@ void CMainWindow::showEvent(QShowEvent *event)
 	CSettings s;
 	restoreGeometry(s.value(WINDOW_GEOMETRY).toByteArray());
 	restoreState(s.value(WINDOW_STATE).toByteArray());
-	setFullScreen(isFullScreen()); // restoreState itself will make the window fullscreen, but we may need additional logic like hiding menu bar and tool bars
+	setFullScreen(isFullScreen()); // restoreState itself will make the window full screen, but we may need additional logic like hiding menu bar and tool bars
 
 	QMainWindow::showEvent(event);
 }
@@ -374,6 +375,10 @@ void CMainWindow::initActions()
 
 	connect(ui->actionCheck_for_updates, &QAction::triggered, [this](){
 		CUpdaterDialog(this, REPO_ADDRESS, VERSION_STRING).exec();
+	});
+
+	connect(ui->actionAbout, &QAction::triggered, [this](){
+		CAboutDialog(VERSION_STRING, this).exec();
 	});
 }
 

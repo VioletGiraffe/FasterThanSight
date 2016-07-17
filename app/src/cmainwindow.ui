@@ -101,13 +101,21 @@
     <addaction name="actionView_navigate_text"/>
     <addaction name="separator"/>
     <addaction name="actionSettings"/>
+   </widget>
+   <widget class="QMenu" name="menu_Help">
+    <property name="title">
+     <string>&amp;Help</string>
+    </property>
     <addaction name="actionCheck_for_updates"/>
+    <addaction name="separator"/>
+    <addaction name="actionAbout"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menu_Bookmarks"/>
    <addaction name="menu_Reading"/>
    <addaction name="menu_View"/>
    <addaction name="menu_Tools"/>
+   <addaction name="menu_Help"/>
   </widget>
   <widget class="QToolBar" name="toolBar">
    <property name="windowTitle">
@@ -255,6 +263,11 @@
   <action name="actionCheck_for_updates">
    <property name="text">
     <string>Check for &amp;updates</string>
+   </property>
+  </action>
+  <action name="actionAbout">
+   <property name="text">
+    <string>&amp;About...</string>
    </property>
   </action>
  </widget>
