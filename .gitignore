@@ -25,6 +25,8 @@ bld/
 [Oo]bj/
 installer/binaries/
 installer/*.exe
+Makefile*
+android-build/
 
 # Visual Studio 2015 cache/options directory
 .vs/

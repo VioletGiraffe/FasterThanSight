@@ -9,6 +9,7 @@ DISABLE_COMPILER_WARNINGS
 
 #include <QDebug>
 #include <QMenu>
+#include <QScrollBar>
 RESTORE_COMPILER_WARNINGS
 
 CTextBrowser::CTextBrowser(QWidget *parent, CReader& reader) :
@@ -18,7 +19,7 @@ CTextBrowser::CTextBrowser(QWidget *parent, CReader& reader) :
 {
 	ui->setupUi(this);
 
-	ui->_textView->installEventFilter(this);
+	ui->_textView->verticalScrollBar()->installEventFilter(this);
 	ui->_textView->setContextMenuPolicy(Qt::CustomContextMenu);
 	connect(ui->_textView, &QWidget::customContextMenuRequested, [this](QPoint pos){
 
@@ -97,7 +98,8 @@ void CTextBrowser::loadText(const CStructuredText& text)
 
 bool CTextBrowser::eventFilter(QObject * o, QEvent * e)
 {
-	if (o == ui->_textView && e->type() == QEvent::MetaCall) // QEvent::MetaCall, whatever it is, seems to be the only event that occurs when scrolling the QPlainTextEdit
+	QWidget * scrollBar = ui->_textView->verticalScrollBar();
+	if (o == scrollBar && e->type() == QEvent::Paint)
 	{
 		const int character = ui->_textView->cursorForPosition({ui->_textView->width() / 2, ui->_textView->height() / 2}).position();
 		int currentChapterItemIndex = -1;
