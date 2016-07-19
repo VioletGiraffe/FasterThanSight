@@ -178,7 +178,9 @@ void CReader::pauseReading()
 
 void CReader::togglePause()
 {
-	if (_state == Reading)
+	if (_text.totalFragmentsCount() == 0)
+		return;
+	else if (_state == Reading)
 		pauseReading();
 	else if (_state == Paused)
 		resumeReading();
@@ -242,9 +244,6 @@ void CReader::setReadingSpeed(size_t wpm)
 
 void CReader::readNextFragment()
 {
-	if (_text.totalFragmentsCount() == 0)
-		return;
-
 	if (_state == Reading)
 	{
 		if (_currentWordRead)
