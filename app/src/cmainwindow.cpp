@@ -97,6 +97,7 @@ void CMainWindow::showEvent(QShowEvent *event)
 	setFullScreen(isFullScreen()); // restoreState itself will make the window full screen, but we may need additional logic like hiding menu bar and tool bars
 
 	QMainWindow::showEvent(event);
+	ui->_text->setFocus(); // Prevent the QSpinBox from grabbing focus. This is required for the "Space" shortcut to work.
 }
 
 void CMainWindow::closeEvent(QCloseEvent * event)
