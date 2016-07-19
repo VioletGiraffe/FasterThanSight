@@ -242,6 +242,9 @@ void CReader::setReadingSpeed(size_t wpm)
 
 void CReader::readNextFragment()
 {
+	if (_text.totalFragmentsCount() == 0)
+		return;
+
 	if (_state == Reading)
 	{
 		if (_currentWordRead)
