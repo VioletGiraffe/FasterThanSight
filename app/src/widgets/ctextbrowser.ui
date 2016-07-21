@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>755</width>
-    <height>498</height>
+    <width>948</width>
+    <height>656</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -15,10 +15,23 @@
   </property>
   <layout class="QHBoxLayout" name="horizontalLayout" stretch="0,1">
    <item>
-    <widget class="QListWidget" name="_chaptersList"/>
+    <widget class="QListWidget" name="_chaptersList">
+     <property name="font">
+      <font>
+       <pointsize>12</pointsize>
+      </font>
+     </property>
+    </widget>
    </item>
    <item>
-    <widget class="QPlainTextEdit" name="_textView"/>
+    <widget class="QPlainTextEdit" name="_textView">
+     <property name="font">
+      <font>
+       <family>Georgia</family>
+       <pointsize>14</pointsize>
+      </font>
+     </property>
+    </widget>
    </item>
   </layout>
  </widget>
