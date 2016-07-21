@@ -28,6 +28,9 @@ protected:
 	bool eventFilter(QObject * o, QEvent * e) override;
 
 private:
+	size_t wordIndexForGlobalCoordinates(QPoint pos) const;
+
+private:
 	CReader& _reader;
 
 	Ui::CTextBrowser *ui;

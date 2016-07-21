@@ -20,6 +20,7 @@ CTextBrowser::CTextBrowser(QWidget *parent, CReader& reader) :
 	ui->setupUi(this);
 
 	ui->_textView->verticalScrollBar()->installEventFilter(this);
+	ui->_textView->viewport()->installEventFilter(this);
 	ui->_textView->setContextMenuPolicy(Qt::CustomContextMenu);
 	connect(ui->_textView, &QWidget::customContextMenuRequested, [this](QPoint pos){
 
@@ -29,15 +30,7 @@ CTextBrowser::CTextBrowser(QWidget *parent, CReader& reader) :
 		QMenu menu;
 		QAction * readFromHereAction = menu.addAction("Read from here");
 		if (menu.exec(ui->_textView->mapToGlobal(pos)) == readFromHereAction)
-		{
-			const int c = ui->_textView->cursorForPosition(pos).position();
-			auto indexItem = std::lower_bound(_firstCharacterIndexForFragment.begin(), _firstCharacterIndexForFragment.end(), c);
-			if (indexItem != _firstCharacterIndexForFragment.begin())
-				--indexItem;
-
-			const auto wordIndex = indexItem - _firstCharacterIndexForFragment.begin();
-			_reader.goToWord(wordIndex);
-		}
+			_reader.goToWord(wordIndexForGlobalCoordinates(ui->_textView->mapToGlobal(pos)));
 	});
 
 	connect(ui->_chaptersList, &QListWidget::itemActivated, [this](const QListWidgetItem* item){
@@ -146,6 +139,26 @@ bool CTextBrowser::eventFilter(QObject * o, QEvent * e)
 		if (currentChapterItemIndex >= 0)
 			ui->_chaptersList->scrollToItem(ui->_chaptersList->item(currentChapterItemIndex));
 	}
+	else if (o == ui->_textView->viewport() && e->type() == QEvent::MouseButtonDblClick)
+	{
+		QMouseEvent* mouseEvent = static_cast<QMouseEvent*>(e);
+		if (!_firstCharacterIndexForFragment.empty())
+		{
+			_reader.goToWord(wordIndexForGlobalCoordinates(static_cast<QWidget*>(o)->mapToGlobal(mouseEvent->pos())));
+			accept();
+		}
+	}
 
 	return QDialog::eventFilter(o, e);
+}
+
+size_t CTextBrowser::wordIndexForGlobalCoordinates(QPoint pos) const
+{
+	const int c = ui->_textView->cursorForPosition(ui->_textView->mapFromGlobal(pos)).position();
+	auto indexItem = std::lower_bound(_firstCharacterIndexForFragment.begin(), _firstCharacterIndexForFragment.end(), c);
+	if (indexItem != _firstCharacterIndexForFragment.begin())
+		--indexItem;
+
+	const auto wordIndex = indexItem - _firstCharacterIndexForFragment.begin();
+	return (size_t)wordIndex;
 }
