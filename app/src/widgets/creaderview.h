@@ -18,7 +18,7 @@ class CReaderView : public QWidget
 	Q_PROPERTY(qreal textOpacity WRITE setTextOpacity MEMBER _textOpacity);
 
 public:
-	CReaderView(QWidget* parent = 0);
+	explicit CReaderView(QWidget* parent = 0);
 	~CReaderView();
 
 	QString text() const;
