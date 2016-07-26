@@ -2,9 +2,11 @@
 
 Extensively configurable speed reading software based on the [rapid serial visual representation (RSVP)](https://en.wikipedia.org/wiki/Rapid_serial_visual_presentation) method (and possibly other methods in the future).
 
-![Built with Qt](http://i.imgur.com/O7SUWxn.png)
+[![Build status](https://ci.appveyor.com/api/projects/status/7vf29egkjcbi7uw1?svg=true)](https://ci.appveyor.com/project/VioletGiraffe/fasterthansight)
 
-![Screenshot of FTS](https://i.snag.gy/p1JXx3.jpg)
+![Screenshot of FTS](http://i.imgur.com/dqiVw5K.png)
+
+![Built with Qt](http://i.imgur.com/O7SUWxn.png)
 
 ###Currently supported platforms:
 * Windows
