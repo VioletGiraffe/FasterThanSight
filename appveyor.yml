@@ -1,7 +1,10 @@
 version: 1.0.{build}
 platform: x86
 install:
-- cmd: git submodule update --init --recursive && set QTDIR=C:\Development\Qt\5.7\msvc2013\; && set PATH=%PATH%;%QTDIR%\bin; && qmake -tp vc -r
+- git submodule update --init --recursive 
+- set QTDIR=C:\Development\Qt\5.7\msvc2013\;
+- set PATH=%PATH%;%QTDIR%\bin; 
+- qmake.exe -tp vc -r
 build:
   parallel: true
   verbosity: minimal
