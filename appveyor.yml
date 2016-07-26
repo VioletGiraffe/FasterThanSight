@@ -1,21 +1,11 @@
 version: 1.0.{build}
-matrix:
-# MSVC 2013 x86
-- name: 2013
-  qt: 5.7\msvc2013
-
-# MSVC 2013 x64
-- name: 2013_64
-  qt: 5.7\msvc2013_64
-
-# MSVC 2015 x86
-- name: 2015
-  qt: 5.7\msvc2015
-
-  # MSVC 2015 x64
-- name: 2015_64
-  qt: 5.7\msvc2015_64
-
+environment:
+  matrix:
+    - qt: 5.7\msvc2013
+    - qt: 5.7\msvc2013_64
+    - qt: 5.7\msvc2015
+    - qt: 5.7\msvc2015_64
+    
 install:
 - git submodule update --init --recursive 
 - set PATH=C:\Qt\%qt%\bin;%PATH%;
