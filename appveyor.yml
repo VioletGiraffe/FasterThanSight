@@ -1,5 +1,4 @@
 version: 1.0.{build}
-platform: x86
 install:
 - git submodule update --init --recursive 
 - set PATH=%PATH%;C:\Qt\5.7\msvc2013\bin; 
