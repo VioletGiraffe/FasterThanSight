@@ -171,7 +171,6 @@ void CMainWindow::initToolBars()
 	_brightnessSlider->setMaximum(100);
 	connect(_brightnessSlider, &QSlider::valueChanged, [](int value){
 		CSettings().setValue(UI_BRIGHTNESS, value);
-		qApp->setStyleSheet(CThemesDialog::currentAcceptedStyle());
 	});
 	_brightnessSlider->setValue(s.value(UI_BRIGHTNESS, UI_BRIGHTNESS_DEFAULT).toInt());
 	_readingSettingsToolbar->addWidget(new QLabel(tr("Brightness") + "  "));

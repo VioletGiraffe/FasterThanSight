@@ -2,7 +2,6 @@
 
 #include "assert/advanced_assert.h"
 #include "settings/csettings.h"
-#include "styling/cthemesdialog.h"
 #include "QML/creaderview.h"
 #include "logger.h"
 
@@ -23,7 +22,9 @@ inline void messageHandler(QtMsgType type, const QMessageLogContext& context, co
 
 int main(int argc, char *argv[])
 {
+	DISABLE_COMPILER_WARNINGS
 	Q_INIT_RESOURCE(app_resources);
+	RESTORE_COMPILER_WARNINGS
 
 	standardMessageHandler = qInstallMessageHandler(messageHandler);
 
@@ -43,8 +44,6 @@ int main(int argc, char *argv[])
 
 	CMainWindow w;
 	w.show();
-
-	app.setStyleSheet(CThemesDialog::currentAcceptedStyle());
 
 	return app.exec();
 }
