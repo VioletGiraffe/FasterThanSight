@@ -14,8 +14,6 @@ class CReaderView : public QQuickPaintedItem
 {
 	Q_OBJECT
 
-	Q_PROPERTY(QColor pivotCharacterColor MEMBER _pivotCharacterColor DESIGNABLE true)
-	Q_PROPERTY(QColor textBackgroundColor MEMBER _textBackgroundColor DESIGNABLE true)
 	Q_PROPERTY(qreal textOpacity WRITE setTextOpacity MEMBER _textOpacity)
 
 public:
@@ -40,8 +38,6 @@ private:
 	int _pivotCharacterIndex = -1;
 
 // Style
-	QColor _textBackgroundColor;
-	QColor _pivotCharacterColor;
 	QFont _font;
 
 // Rendering

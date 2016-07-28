@@ -1,5 +1,6 @@
 #include "creaderview.h"
 #include "assert/advanced_assert.h"
+#include "../styling/cthemeprovider.h"
 
 DISABLE_COMPILER_WARNINGS
 #include <QFontMetrics>
@@ -18,6 +19,10 @@ CReaderView::CReaderView(QQuickItem* parent) : QQuickPaintedItem(parent)
 	_textFadeOutAnimation->setEndValue(0.0f);
 	_textFadeOutAnimation->setEasingCurve(QEasingCurve::OutQuad);
 	_textFadeOutAnimation->setDuration(75);
+
+	connect(&CThemeProvider::instance(), &CThemeProvider::currentThemeChanged, [this](){
+		update();
+	});
 }
 
 CReaderView::~CReaderView()
@@ -91,13 +96,14 @@ void CReaderView::paint(QPainter* painter)
 {
 	assert_and_return_r(painter, );
 
+	CThemeProvider& themeProvider = CThemeProvider::instance();
+
 	_backgroundPixmap = QPixmap(width(), height());
 	QPainter backgroundPainter(&_backgroundPixmap);
-	// TODO:
-//	backgroundPainter.fillRect(rect(), palette().color(QPalette::Background));
+	backgroundPainter.fillRect(0, 0, width(), height(), themeProvider.currentTheme()._windowBgColor);
 
 	QFontMetrics fontMetrics(_font);
-	backgroundPainter.fillRect(0, height() / 2 - 3 * fontMetrics.height() / 2, width(), 3 * fontMetrics.height(), _textBackgroundColor);
+	backgroundPainter.fillRect(0, height() / 2 - 3 * fontMetrics.height() / 2, width(), 3 * fontMetrics.height(), themeProvider.currentTheme()._textBgColor);
 
 	const QString string = _text.text();
 	QTextDocument doc;
@@ -106,8 +112,7 @@ void CReaderView::paint(QPainter* painter)
 	{
 		doc.setDefaultFont(_font);
 
-		// TODO:
-		const QColor& textColor = Qt::red;//palette().color(QPalette::Text);
+		const QColor& textColor = themeProvider.currentTheme()._textColor;
 
 		if (_pivotCharacterIndex >= 0)
 		{
@@ -117,7 +122,7 @@ void CReaderView::paint(QPainter* painter)
 
 			doc.setHtml(
 				coloredHtmlText(string.left(_pivotCharacterIndex), textColor)
-				% coloredHtmlText(QString(string[_pivotCharacterIndex]), _pivotCharacterColor.name())
+				% coloredHtmlText(QString(string[_pivotCharacterIndex]), themeProvider.currentTheme()._pivotColor.name())
 				% coloredHtmlText(string.mid(_pivotCharacterIndex + 1), textColor)
 			);
 		}

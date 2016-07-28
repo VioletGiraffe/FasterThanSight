@@ -4,14 +4,17 @@
 
 DISABLE_COMPILER_WARNINGS
 #include <QColor>
+#include <QObject>
 #include <QString>
 RESTORE_COMPILER_WARNINGS
 
 #include <deque>
 #include <utility>
 
-class CThemeProvider
+class CThemeProvider : public QObject
 {
+	Q_OBJECT
+
 public:
 	struct Theme {
 		explicit Theme(const QString& str);
@@ -24,7 +27,6 @@ public:
 		QColor _pivotColor;
 
 		QString toString() const;
-		QString style() const;
 	};
 
 	static CThemeProvider& instance();
@@ -43,7 +45,11 @@ public:
 	void addNewTheme(const Theme& theme);
 	void deleteCurrentTheme();
 
+	void notifyThemeChanged();
 	void saveThemes() const;
+
+signals:
+	void currentThemeChanged();
 
 private:
 	CThemeProvider();

@@ -50,6 +50,7 @@ void CThemeProvider::setCurrentThemeIndex(size_t index)
 {
 	assert_and_return_r(_currentThemeIndex < _themes.size(), );
 	_currentThemeIndex = index;
+	notifyThemeChanged();
 }
 
 size_t CThemeProvider::acceptedThemeIndex() const
@@ -118,6 +119,12 @@ void CThemeProvider::deleteCurrentTheme()
 {
 	assert_and_return_r(_currentThemeIndex < _themes.size(), );
 	_themes.erase(_themes.begin() + _currentThemeIndex);
+	notifyThemeChanged();
+}
+
+void CThemeProvider::notifyThemeChanged()
+{
+	emit currentThemeChanged();
 }
 
 void CThemeProvider::saveThemes() const
@@ -129,6 +136,9 @@ void CThemeProvider::saveThemes() const
 	CSettings().setValue(THEMES_SETTING, list);
 	CSettings().setValue(CURRENT_THEME_SETTING, (qulonglong)_currentThemeIndex);
 }
+
+
+
 
 CThemeProvider::Theme::Theme(const QString& str)
 {

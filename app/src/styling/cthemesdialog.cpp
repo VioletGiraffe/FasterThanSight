@@ -24,6 +24,7 @@ CThemesDialog::CThemesDialog(QWidget *parent) :
 			return;
 
 		CThemeProvider& themeProvider = CThemeProvider::instance();
+		themeProvider.setCurrentThemeIndex(index);
 		
 		CThemeProvider::Theme& theme = themeProvider.currentTheme();
 		initColorPicker(ui->btnWindowBackgroundColor, theme._windowBgColor);
@@ -55,8 +56,7 @@ void CThemesDialog::loadThemes()
 	ui->_cbTheme->blockSignals(true);
 	ui->_cbTheme->clear();
 
-	CThemeProvider& themeProvider = CThemeProvider::instance();
-	const auto themes = themeProvider.acceptedThemes();
+	const auto themes = CThemeProvider::instance().acceptedThemes();
 
 	for (const auto& theme : themes.first)
 		ui->_cbTheme->addItem(theme._name);
@@ -80,6 +80,8 @@ void CThemesDialog::initColorPicker(QToolButton* btn, QColor& color)
 
 		color = c;
 		btn->setStyleSheet(QString("background-color: %1;").arg(color.name()));
+		CThemeProvider& provider = CThemeProvider::instance();
+		provider.notifyThemeChanged();
 	});
 }
 
