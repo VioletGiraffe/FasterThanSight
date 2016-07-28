@@ -98,12 +98,12 @@ void CReaderView::paint(QPainter* painter)
 
 	CThemeProvider& themeProvider = CThemeProvider::instance();
 
-	_backgroundPixmap = QPixmap(width(), height());
+	_backgroundPixmap = QPixmap((int)width(), (int)height());
 	QPainter backgroundPainter(&_backgroundPixmap);
-	backgroundPainter.fillRect(0, 0, width(), height(), themeProvider.currentTheme()._windowBgColor);
+	backgroundPainter.fillRect(0, 0, (int)width(), (int)height(), themeProvider.currentTheme()._windowBgColor);
 
 	QFontMetrics fontMetrics(_font);
-	backgroundPainter.fillRect(0, height() / 2 - 3 * fontMetrics.height() / 2, width(), 3 * fontMetrics.height(), themeProvider.currentTheme()._textBgColor);
+	backgroundPainter.fillRect(0, (int)height() / 2 - 3 * fontMetrics.height() / 2, (int)width(), 3 * fontMetrics.height(), themeProvider.currentTheme()._textBgColor);
 
 	const QString string = _text.text();
 	QTextDocument doc;
@@ -117,8 +117,8 @@ void CReaderView::paint(QPainter* painter)
 		if (_pivotCharacterIndex >= 0)
 		{
 			backgroundPainter.setPen(textColor);
-			backgroundPainter.drawLine(width() / 2, height() / 2 - 3 * fontMetrics.height() / 2, width() / 2, height() / 2 - 8 * fontMetrics.height() / 10);
-			backgroundPainter.drawLine(width() / 2, height() / 2 + 8 * fontMetrics.height() / 10, width() / 2, height() / 2 + 3 * fontMetrics.height() / 2);
+			backgroundPainter.drawLine((int)width() / 2, (int)height() / 2 - 3 * fontMetrics.height() / 2, (int)width() / 2, (int)height() / 2 - 8 * fontMetrics.height() / 10);
+			backgroundPainter.drawLine((int)width() / 2, (int)height() / 2 + 8 * fontMetrics.height() / 10, (int)width() / 2, (int)height() / 2 + 3 * fontMetrics.height() / 2);
 
 			doc.setHtml(
 				coloredHtmlText(string.left(_pivotCharacterIndex), textColor)
@@ -134,7 +134,7 @@ void CReaderView::paint(QPainter* painter)
 	if (!string.isEmpty())
 	{
 		const int centerCharIndex = _pivotCharacterIndex >= 0 ? _pivotCharacterIndex : string.length() / 2;
-		const QPoint textOffset(width() / 2 - fontMetrics.width(string, centerCharIndex) - fontMetrics.width(string[centerCharIndex]) / 2, height() / 2 - fontMetrics.height() / 2);
+		const QPoint textOffset((int)width() / 2 - fontMetrics.width(string, centerCharIndex) - fontMetrics.width(string[centerCharIndex]) / 2, (int)height() / 2 - fontMetrics.height() / 2);
 		painter->translate(textOffset);
 	}
 	painter->setOpacity(_textOpacity);
