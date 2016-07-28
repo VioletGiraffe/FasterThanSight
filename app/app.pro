@@ -27,7 +27,7 @@ RCC_DIR     = ../build/$${OUTPUT_DIR}/app
 
 LIBS += -L../bin/$${OUTPUT_DIR} -lcore -lcpputils -lqtutils
 
-!android*{
+!android*:!ios*{
 	LIBS += -lautoupdater
 
 	!win*{
@@ -76,32 +76,55 @@ INCLUDEPATH += \
 
 include (src/widgets/widgets.pri)
 include (src/QML/QML.pri)
-include (src/settings/settings.pri)
 
 SOURCES += \
 	src/main.cpp \
-	src/cmainwindow.cpp \
-	src/bookmarks/cbookmarkseditor.cpp \
-	src/styling/cthemesdialog.cpp \
-	src/logviewer/clogviewer.cpp \
-    src/styling/cthemeprovider.cpp
+	src/styling/cthemeprovider.cpp
 
 HEADERS += \
-	src\cmainwindow.h \
 	src/uisettings.h \
-	src/bookmarks/cbookmarkseditor.h \
-	src/styling/cthemesdialog.h \
 	src/version.h \
 	src/uihelpers.h \
 	src/logger.h \
-	src/logviewer/clogviewer.h \
-    src/styling/cthemeprovider.h
-
-FORMS += \
-	src\cmainwindow.ui \
-	src/bookmarks/cbookmarkseditor.ui \
-	src/styling/cthemesdialog.ui \
-	src/logviewer/clogviewer.ui
+	src/styling/cthemeprovider.h
 
 RESOURCES += \
-    src/app_resources.qrc
+	src/app_resources.qrc
+
+android*|ios*{
+
+} else {
+	include (src/settings/settings.pri)
+
+	SOURCES += \
+		src/cmainwindow.cpp \
+		src/bookmarks/cbookmarkseditor.cpp \
+		src/styling/cthemesdialog.cpp \
+		src/logviewer/clogviewer.cpp
+
+	HEADERS += \
+		src\cmainwindow.h \
+		src/bookmarks/cbookmarkseditor.h \
+		src/styling/cthemesdialog.h \
+		src/logviewer/clogviewer.h
+
+	FORMS += \
+		src\cmainwindow.ui \
+		src/bookmarks/cbookmarkseditor.ui \
+		src/styling/cthemesdialog.ui \
+		src/logviewer/clogviewer.ui
+
+	RESOURCES += \
+		src/mobile/qml.qrc
+}
+
+DISTFILES += \
+    android/AndroidManifest.xml \
+    android/gradle/wrapper/gradle-wrapper.jar \
+    android/gradlew \
+    android/res/values/libs.xml \
+    android/build.gradle \
+    android/gradle/wrapper/gradle-wrapper.properties \
+    android/gradlew.bat
+
+ANDROID_PACKAGE_SOURCE_DIR = $$PWD/android
