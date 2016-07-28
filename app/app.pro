@@ -1,4 +1,10 @@
-QT = core gui widgets network
+QT = core gui network quickwidgets
+
+!android{
+	QT += widgets
+} else {
+	QT += quick
+}
 
 TARGET = FasterThanSight
 TEMPLATE = app
@@ -19,7 +25,15 @@ MOC_DIR     = ../build/$${OUTPUT_DIR}/app
 UI_DIR      = ../build/$${OUTPUT_DIR}/app
 RCC_DIR     = ../build/$${OUTPUT_DIR}/app
 
-LIBS += -L../bin/$${OUTPUT_DIR} -lcore -lautoupdater -lcpputils -lqtutils
+LIBS += -L../bin/$${OUTPUT_DIR} -lcore -lcpputils -lqtutils
+
+!android*{
+	LIBS += -lautoupdater
+
+	!win*{
+		PRE_TARGETDEPS += $${DESTDIR}/libautoupdater.a
+	}
+}
 
 win*{
 	QMAKE_CXXFLAGS += /MP /wd4251
@@ -36,14 +50,12 @@ linux*|mac*{
 
 	Release:DEFINES += NDEBUG=1
 	Debug:DEFINES += _DEBUG
+
+	PRE_TARGETDEPS += $${DESTDIR}/libcore.a
 }
 
 win32*:!*msvc2012:*msvc* {
 	QMAKE_CXXFLAGS += /FS
-}
-
-mac*|linux*{
-	PRE_TARGETDEPS += $${DESTDIR}/libcore.a $${DESTDIR}/libautoupdater.a
 }
 
 win*{
@@ -63,14 +75,15 @@ INCLUDEPATH += \
 	../github-releases-autoupdater/src
 
 include (src/widgets/widgets.pri)
+include (src/QML/QML.pri)
 include (src/settings/settings.pri)
 
 SOURCES += \
-	src/main.cpp\
+	src/main.cpp \
 	src/cmainwindow.cpp \
 	src/bookmarks/cbookmarkseditor.cpp \
 	src/styling/cthemesdialog.cpp \
-    src/logviewer/clogviewer.cpp
+	src/logviewer/clogviewer.cpp
 
 HEADERS += \
 	src\cmainwindow.h \
@@ -79,11 +92,14 @@ HEADERS += \
 	src/styling/cthemesdialog.h \
 	src/version.h \
 	src/uihelpers.h \
-    src/logger.h \
-    src/logviewer/clogviewer.h
+	src/logger.h \
+	src/logviewer/clogviewer.h
 
 FORMS += \
 	src\cmainwindow.ui \
 	src/bookmarks/cbookmarkseditor.ui \
 	src/styling/cthemesdialog.ui \
-    src/logviewer/clogviewer.ui
+	src/logviewer/clogviewer.ui
+
+RESOURCES += \
+    src/app_resources.qrc

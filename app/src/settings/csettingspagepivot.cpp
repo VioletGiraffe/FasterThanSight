@@ -4,6 +4,8 @@
 #include "settings/csettings.h"
 #include "../uisettings.h"
 
+#include "QML/creaderview.h"
+
 DISABLE_COMPILER_WARNINGS
 #include "ui_csettingspagepivot.h"
 
@@ -34,7 +36,8 @@ CSettingsPagePivot::CSettingsPagePivot(QWidget *parent) :
 	connect(ui->_cbPivotCalculationMethod, (void (QComboBox::*)(int))&QComboBox::currentIndexChanged, [this](int index){
 		const TextFragment::PivotCalculationMethod method = (TextFragment::PivotCalculationMethod)index;
 		TextFragment fragment("Paradise", QString());
-		ui->_demo->setText(fragment, true, method);
+		CReaderView* readerView = dynamic_cast<CReaderView*>(ui->_demo->rootObject());
+		readerView->setText(fragment, true, method);
 	});
 
 	ui->_cbPivotCalculationMethod->setCurrentIndex(CSettings().value(UI_PIVOT_CALCULATION_METHOD, UI_PIVOT_CALCULATION_METHOD_DEFAULT).toInt());
@@ -57,7 +60,8 @@ void CSettingsPagePivot::resizeEvent(QResizeEvent* e)
 	CSettingsPage::resizeEvent(e);
 
 	QFont textFont = ui->_demo->font();
-	const float textScaleFactor = width()/2.0f / std::max(QFontMetrics(textFont).width(ui->_demo->text()), 1);
+	CReaderView* readerView = dynamic_cast<CReaderView*>(ui->_demo->rootObject());
+	const float textScaleFactor = width()/2.0f / std::max(QFontMetrics(textFont).width(readerView->text()), 1);
 
 	const int oldTextSize = textFont.pointSize();
 	textFont.setPointSize((int)(textScaleFactor * oldTextSize));

@@ -4,21 +4,22 @@
 #include "text/ctextfragment.h"
 
 DISABLE_COMPILER_WARNINGS
-#include <QWidget>
+#include <QPixmap>
+#include <QQuickPaintedItem>
 RESTORE_COMPILER_WARNINGS
 
 class QPropertyAnimation;
 
-class CReaderView : public QWidget
+class CReaderView : public QQuickPaintedItem
 {
 	Q_OBJECT
 
-	Q_PROPERTY(QColor pivotCharacterColor MEMBER _pivotCharacterColor DESIGNABLE true);
-	Q_PROPERTY(QColor textBackgroundColor MEMBER _textBackgroundColor DESIGNABLE true);
-	Q_PROPERTY(qreal textOpacity WRITE setTextOpacity MEMBER _textOpacity);
+	Q_PROPERTY(QColor pivotCharacterColor MEMBER _pivotCharacterColor DESIGNABLE true)
+	Q_PROPERTY(QColor textBackgroundColor MEMBER _textBackgroundColor DESIGNABLE true)
+	Q_PROPERTY(qreal textOpacity WRITE setTextOpacity MEMBER _textOpacity)
 
 public:
-	explicit CReaderView(QWidget* parent = 0);
+	explicit CReaderView(QQuickItem *parent = nullptr);
 	~CReaderView();
 
 	QString text() const;
@@ -27,8 +28,11 @@ public:
 
 	void setTextOpacity(qreal opacity);
 
+	const QFont& font() const;
+	void setFont(const QFont& font);
+
 protected:
-	void paintEvent(QPaintEvent* e) override;
+	void paint(QPainter *painter) override;
 
 private:
 // Data
@@ -38,11 +42,12 @@ private:
 // Style
 	QColor _textBackgroundColor;
 	QColor _pivotCharacterColor;
+	QFont _font;
 
 // Rendering
 	QPropertyAnimation* _textFadeOutAnimation = nullptr;
 
 	QPixmap _backgroundPixmap;
-	qreal _textOpacity = 1.0f; // For dynamic effects 
+	qreal _textOpacity = 1.0f; // For dynamic effects
 };
 

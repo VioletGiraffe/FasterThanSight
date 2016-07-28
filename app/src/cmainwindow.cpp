@@ -7,7 +7,7 @@
 #include "aboutdialog/caboutdialog.h"
 #include "logviewer/clogviewer.h"
 
-#include "widgets/creaderview.h"
+#include "QML/creaderview.h"
 #include "widgets/ctextbrowser.h"
 #include "bookmarks/cbookmarkseditor.h"
 
@@ -127,7 +127,6 @@ void CMainWindow::wheelEvent(QWheelEvent *event)
 	if ((event->modifiers() & Qt::ControlModifier) && event->angleDelta().y() != 0)
 	{
 		event->accept();
-		qDebug() << event->angleDelta();
 		const int delta = event->angleDelta().y() / 8 / 15;
 		_textSizeSlider->setValue(_textSizeSlider->value() + delta * 10);
 	}
@@ -179,24 +178,25 @@ void CMainWindow::initToolBars()
 	_readingSettingsToolbar->addWidget(_brightnessSlider);
 	_readingSettingsToolbar->addSeparator();
 
+	QFont textFont; // Starting with the default application font
+	textFont.setFamily(s.value(UI_FONT_FAMILY, textFont.family()).toString());
+	textFont.setStyle((QFont::Style)s.value(UI_FONT_STYLE, textFont.style()).toInt());
+	textFont.setWeight((QFont::Weight)s.value(UI_FONT_WEIGHT, textFont.weight()).toInt());
+	ui->_text->setReaderFont(textFont);
+
 	// Font size
 	_textSizeSlider = new QSlider(Qt::Horizontal);
 	_textSizeSlider->setMinimum(20);
 	_textSizeSlider->setMaximum(300);
 	connect(_textSizeSlider, &QSlider::valueChanged, [this](int size) {
-		QFont font = ui->_text->font();
+		QFont font = ui->_text->readerFont();
 		font.setPointSize(size);
-		ui->_text->setFont(font);
+		ui->_text->setReaderFont(font);
 
 		CSettings().setValue(UI_FONT_SIZE_SETTING, size);
 	});
-	_textSizeSlider->setValue(s.value(UI_FONT_SIZE_SETTING, UI_FONT_SIZE_DEFAULT).toInt());
-
-	QFont textFont = ui->_text->font();
-	textFont.setFamily(s.value(UI_FONT_FAMILY, textFont.family()).toString());
-	textFont.setStyle((QFont::Style)s.value(UI_FONT_STYLE, textFont.style()).toInt());
-	textFont.setWeight((QFont::Weight)s.value(UI_FONT_WEIGHT, textFont.weight()).toInt());
-	ui->_text->setFont(textFont);
+	// Updating the font size
+	_textSizeSlider->setValue(s.value(UI_FONT_SIZE_SETTING, UI_FONT_SIZE_DEFAULT).toInt());	
 
 	_readingSettingsToolbar->addWidget(new QLabel(tr("Text size") + "  "));
 	_readingSettingsToolbar->addWidget(_textSizeSlider);
@@ -238,9 +238,9 @@ void CMainWindow::initToolBars()
 void CMainWindow::initActions()
 {
 	connect(ui->action_Font, &QAction::triggered, [this](){
-		QFontDialog fontDialog(ui->_text->font(), this);
+		QFontDialog fontDialog(ui->_text->readerFont(), this);
 		connect(&fontDialog, &QFontDialog::fontSelected, [this](const QFont &font){
-			ui->_text->setFont(font);
+			ui->_text->setReaderFont(font);
 			_textSizeSlider->setValue(font.pointSize());
 			CSettings().setValue(UI_FONT_STYLE, font.style());
 			CSettings().setValue(UI_FONT_WEIGHT, font.weight());
@@ -289,7 +289,8 @@ void CMainWindow::initActions()
 	ui->actionStop->setIcon(QApplication::style()->standardIcon(QStyle::SP_MediaStop));
 	connect(ui->actionStop, &QAction::triggered, [this](){
 		_reader.resetAndStop();
-		ui->_text->clear();
+		CReaderView* readerView = dynamic_cast<CReaderView*>(ui->_text->rootObject());
+		readerView->clear();
 	});
 
 	ui->actionPrevious_chapter->setIcon(QApplication::style()->standardIcon(QStyle::SP_MediaSkipBackward));
@@ -518,7 +519,9 @@ void CMainWindow::settingsChanged()
 void CMainWindow::updateDisplay(const size_t currentTextFragmentIndex)
 {
 	const auto& currentFragment = _reader.textFragment(currentTextFragmentIndex);
-	ui->_text->setText(currentFragment._textFragment, ui->actionShow_pivot->isChecked(), (TextFragment::PivotCalculationMethod)CSettings().value(UI_PIVOT_CALCULATION_METHOD, UI_PIVOT_CALCULATION_METHOD_DEFAULT).toInt());
+
+	CReaderView* readerView = dynamic_cast<CReaderView*>(ui->_text->rootObject());
+	readerView->setText(currentFragment._textFragment, ui->actionShow_pivot->isChecked(), (TextFragment::PivotCalculationMethod)CSettings().value(UI_PIVOT_CALCULATION_METHOD, UI_PIVOT_CALCULATION_METHOD_DEFAULT).toInt());
 
 	const auto chapterProgress = _reader.currentChapterProgress();
 	_chapterProgressBar->setValue(chapterProgress.progressPercentage());

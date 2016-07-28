@@ -1,4 +1,5 @@
 #include "creaderview.h"
+#include "assert/advanced_assert.h"
 
 DISABLE_COMPILER_WARNINGS
 #include <QFontMetrics>
@@ -8,8 +9,10 @@ DISABLE_COMPILER_WARNINGS
 #include <QTextDocument>
 RESTORE_COMPILER_WARNINGS
 
-CReaderView::CReaderView(QWidget* parent) : QWidget(parent)
+CReaderView::CReaderView(QQuickItem* parent) : QQuickPaintedItem(parent)
 {
+	setOpaquePainting(true);
+
 	_textFadeOutAnimation = new QPropertyAnimation(this, "textOpacity", this);
 	_textFadeOutAnimation->setStartValue(1.0f);
 	_textFadeOutAnimation->setEndValue(0.0f);
@@ -68,18 +71,32 @@ void CReaderView::setTextOpacity(qreal opacity)
 	update();
 }
 
+const QFont& CReaderView::font() const
+{
+	return _font;
+}
+
+void CReaderView::setFont(const QFont& font)
+{
+	_font = font;
+	update();
+}
+
 inline QString coloredHtmlText(const QString& text, const QColor& color)
 {
 	return "<font color=\"" % color.name() % "\">" % text % "</font>";
 }
 
-void CReaderView::paintEvent(QPaintEvent* /*e*/)
+void CReaderView::paint(QPainter* painter)
 {
-	_backgroundPixmap = QPixmap(size());
-	QPainter backgroundPainter(&_backgroundPixmap);
-	backgroundPainter.fillRect(rect(), palette().color(QPalette::Background));
+	assert_and_return_r(painter, );
 
-	QFontMetrics fontMetrics(font());
+	_backgroundPixmap = QPixmap(width(), height());
+	QPainter backgroundPainter(&_backgroundPixmap);
+	// TODO:
+//	backgroundPainter.fillRect(rect(), palette().color(QPalette::Background));
+
+	QFontMetrics fontMetrics(_font);
 	backgroundPainter.fillRect(0, height() / 2 - 3 * fontMetrics.height() / 2, width(), 3 * fontMetrics.height(), _textBackgroundColor);
 
 	const QString string = _text.text();
@@ -87,9 +104,10 @@ void CReaderView::paintEvent(QPaintEvent* /*e*/)
 
 	if (!string.isEmpty())
 	{
-		doc.setDefaultFont(font());
+		doc.setDefaultFont(_font);
 
-		const QColor& textColor = palette().color(QPalette::Text);
+		// TODO:
+		const QColor& textColor = Qt::red;//palette().color(QPalette::Text);
 
 		if (_pivotCharacterIndex >= 0)
 		{
@@ -107,14 +125,13 @@ void CReaderView::paintEvent(QPaintEvent* /*e*/)
 			doc.setHtml(coloredHtmlText(string, textColor));
 	}
 
-	QPainter mainPainter(this);
-	mainPainter.drawPixmap(0, 0, _backgroundPixmap);
+	painter->drawPixmap(0, 0, _backgroundPixmap);
 	if (!string.isEmpty())
 	{
 		const int centerCharIndex = _pivotCharacterIndex >= 0 ? _pivotCharacterIndex : string.length() / 2;
 		const QPoint textOffset(width() / 2 - fontMetrics.width(string, centerCharIndex) - fontMetrics.width(string[centerCharIndex]) / 2, height() / 2 - fontMetrics.height() / 2);
-		mainPainter.translate(textOffset);
+		painter->translate(textOffset);
 	}
-	mainPainter.setOpacity(_textOpacity);
-	doc.drawContents(&mainPainter);
+	painter->setOpacity(_textOpacity);
+	doc.drawContents(painter);
 }

@@ -31,7 +31,19 @@
      <number>0</number>
     </property>
     <item>
-     <widget class="CReaderView" name="_text" native="true"/>
+     <widget class="CReaderViewWidget" name="_text">
+      <property name="acceptDrops">
+       <bool>false</bool>
+      </property>
+      <property name="resizeMode">
+       <enum>QQuickWidget::SizeRootObjectToView</enum>
+      </property>
+      <property name="source">
+       <url>
+        <string>qrc:/QML/creaderview.qml</string>
+       </url>
+      </property>
+     </widget>
     </item>
    </layout>
   </widget>
@@ -286,10 +298,14 @@
  <layoutdefault spacing="6" margin="11"/>
  <customwidgets>
   <customwidget>
-   <class>CReaderView</class>
+   <class>QQuickWidget</class>
    <extends>QWidget</extends>
-   <header>widgets/creaderview.h</header>
-   <container>1</container>
+   <header>QtQuickWidgets/QQuickWidget</header>
+  </customwidget>
+  <customwidget>
+   <class>CReaderViewWidget</class>
+   <extends>QQuickWidget</extends>
+   <header>QML/creaderviewwidget.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

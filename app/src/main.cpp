@@ -3,6 +3,7 @@
 #include "assert/advanced_assert.h"
 #include "settings/csettings.h"
 #include "styling/cthemesdialog.h"
+#include "QML/creaderview.h"
 #include "logger.h"
 
 DISABLE_COMPILER_WARNINGS
@@ -22,9 +23,13 @@ inline void messageHandler(QtMsgType type, const QMessageLogContext& context, co
 
 int main(int argc, char *argv[])
 {
+	Q_INIT_RESOURCE(app_resources);
+
 	standardMessageHandler = qInstallMessageHandler(messageHandler);
 
 	QApplication app(argc, argv);
+
+	qmlRegisterType<CReaderView>("ReaderView", 1, 0, "CReaderView");
 
 	AdvancedAssert::setLoggingFunc([](const char* message) {
 		qDebug() << message;

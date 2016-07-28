@@ -29,16 +29,19 @@
     </layout>
    </item>
    <item>
-    <widget class="CReaderView" name="_demo" native="true"/>
+    <widget class="QQuickWidget" name="_demo">
+     <property name="resizeMode">
+      <enum>QQuickWidget::SizeRootObjectToView</enum>
+     </property>
+    </widget>
    </item>
   </layout>
  </widget>
  <customwidgets>
   <customwidget>
-   <class>CReaderView</class>
+   <class>QQuickWidget</class>
    <extends>QWidget</extends>
-   <header>widgets/creaderview.h</header>
-   <container>1</container>
+   <header>QtQuickWidgets/QQuickWidget</header>
   </customwidget>
  </customwidgets>
  <resources/>
