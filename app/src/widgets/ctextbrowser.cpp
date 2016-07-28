@@ -3,6 +3,7 @@
 #include "system/ctimeelapsed.h"
 #include "reader/creader.h"
 #include "container/algorithms.h"
+#include "../styling/cthemeprovider.h"
 
 DISABLE_COMPILER_WARNINGS
 #include "ui_ctextbrowser.h"
@@ -42,21 +43,11 @@ CTextBrowser::CTextBrowser(QWidget *parent, CReader& reader) :
 		ui->_textView->setTextCursor(cursor);
 	});
 
-	QStringList styleItems = qApp->styleSheet().remove("CReaderView").remove("{").remove("}").split(';');
-	ContainerAlgorithms::erase_if(styleItems, [](const QString& item){
-		return item.contains("qproperty");
-	});
+	const CThemeProvider& themeProvider = CThemeProvider::instance();
+	_textColor = themeProvider.currentTheme()._textColor;
+	_backgroundColor = themeProvider.currentTheme()._windowBgColor;
 
-	const QString qss = styleItems.join(';');
-	for (const QString& item : styleItems)
-	{
-		if (item.trimmed().startsWith("color"))
-			_textColor = QVariant(item.split(':')[1].trimmed()).value<QColor>();
-		else if (item.trimmed().startsWith("background-color"))
-			_backgroundColor = QVariant(item.split(':')[1].trimmed()).value<QColor>();
-	}
-
-	ui->_textView->setStyleSheet(QString("QPlainTextEdit {" + qss + "}"));
+	ui->_textView->setStyleSheet("QPlainTextEdit {" + QString("color:%1; background-color:%2;").arg(_textColor.name()).arg(_backgroundColor.name()) + "}");
 }
 
 CTextBrowser::~CTextBrowser()
@@ -103,17 +94,6 @@ bool CTextBrowser::eventFilter(QObject * o, QEvent * e)
 			if (chapterStartCharacterIndex < character)
 			{
 				currentChapterItemIndex = i;
-				break;
-			}
-		}
-
-		QString pivotColorString;
-		QStringList styleItems = qApp->styleSheet().remove("CReaderView").remove("{").remove("}").split(';');
-		for (int i = 0, size = styleItems.size(); i < size; ++i)
-		{
-			if (styleItems[i].contains("pivot"))
-			{
-				pivotColorString = styleItems[i].split(':')[1].trimmed();
 				break;
 			}
 		}
