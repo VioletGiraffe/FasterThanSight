@@ -92,6 +92,8 @@ RESOURCES += \
 	src/app_resources.qrc
 
 android*|ios*{
+	RESOURCES += \
+		src/mobile/qml.qrc
 
 } else {
 	include (src/settings/settings.pri)
@@ -113,18 +115,15 @@ android*|ios*{
 		src/bookmarks/cbookmarkseditor.ui \
 		src/styling/cthemesdialog.ui \
 		src/logviewer/clogviewer.ui
-
-	RESOURCES += \
-		src/mobile/qml.qrc
 }
 
 DISTFILES += \
-    android/AndroidManifest.xml \
-    android/gradle/wrapper/gradle-wrapper.jar \
-    android/gradlew \
-    android/res/values/libs.xml \
-    android/build.gradle \
-    android/gradle/wrapper/gradle-wrapper.properties \
-    android/gradlew.bat
+	android/AndroidManifest.xml \
+	android/gradle/wrapper/gradle-wrapper.jar \
+	android/gradlew \
+	android/res/values/libs.xml \
+	android/build.gradle \
+	android/gradle/wrapper/gradle-wrapper.properties \
+	android/gradlew.bat
 
 ANDROID_PACKAGE_SOURCE_DIR = $$PWD/android

@@ -35,6 +35,9 @@ int main(int argc, char *argv[])
 {
 	DISABLE_COMPILER_WARNINGS
 	Q_INIT_RESOURCE(app_resources);
+	#ifdef Q_OS_MOBILE
+		Q_INIT_RESOURCE(qml);
+	#endif
 	RESTORE_COMPILER_WARNINGS
 
 	QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
