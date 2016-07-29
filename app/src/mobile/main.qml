@@ -1,37 +1,27 @@
 import QtQuick 2.7
 import QtQuick.Controls 2.0
-import QtQuick.Layouts 1.0
+import QtQuick.Layouts 1.3
+import ReaderView 1.0
 
 ApplicationWindow {
     visible: true
-    width: 640
-    height: 480
-    title: qsTr("Hello World")
+    title: "Faster Than Sight"
 
-    SwipeView {
-        id: swipeView
+    ColumnLayout {
+        spacing: 0
         anchors.fill: parent
-        currentIndex: tabBar.currentIndex
 
-        Page1 {
-        }
+        CReaderView {
+            Layout.fillHeight: true
+            Layout.fillWidth: true
 
-        Page {
-            Label {
-                text: qsTr("Second page")
-                anchors.centerIn: parent
-            }
-        }
-    }
+            Layout.minimumHeight: 0
+            Layout.maximumHeight: Number.POSITIVE_INFINITY
 
-    footer: TabBar {
-        id: tabBar
-        currentIndex: swipeView.currentIndex
-        TabButton {
-            text: qsTr("First")
-        }
-        TabButton {
-            text: qsTr("Second")
+            Layout.minimumWidth: 0
+            Layout.maximumWidth: Number.POSITIVE_INFINITY
+
+            objectName: "_readerView"
         }
     }
 }
