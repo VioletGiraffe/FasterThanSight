@@ -142,12 +142,6 @@ size_t CReader::currentChapterTimeRemainingSeconds() const
 	return timeMs / 1000;
 }
 
-void CReader::updateInterface() const
-{
-	_interface->stateChanged(_state);
-	_interface->updateDisplay(_position);
-}
-
 size_t CReader::totalNumWords() const
 {
 	return _text.totalFragmentsCount();

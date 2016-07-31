@@ -57,9 +57,6 @@ public:
 	const ChapterProgress currentChapterProgress() const;
 	size_t currentChapterTimeRemainingSeconds() const;
 
-	// Notify the client of current reader state via ReaderInterface
-	void updateInterface() const;
-
 // Data
 	inline TextFragmentWithPause textFragment(const size_t fragmentIndex) const {
 		assert_and_return_r(_text.totalFragmentsCount() == _pauseForFragment.size(), (TextFragmentWithPause{TextFragment(), 0}));

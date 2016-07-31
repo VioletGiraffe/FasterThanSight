@@ -39,9 +39,6 @@ private:
 	void initActions();
 	void initStatusBar();
 
-	void openBookmark(const CBookmark& bookmark);
-	void openFile(const QString& filePath, size_t position);
-
 	void keepScreenFromTurningOff(bool keepFromTurningOff);
 
 	void updateBookmarksMenuItemsList();
@@ -50,8 +47,6 @@ private:
 	void toggleFullScreen();
 	void setFullScreen(bool fullScreen);
 
-	void settingsChanged();
-
 	// CController signal handlers
 	void onDisplayUpdateRequired(QString text, bool showPivot, int pivotCharacterIndex);
 
@@ -59,6 +54,8 @@ private:
 	void onGlobalProgressDescriptionUpdated(QString progressDescription);
 
 	void onReaderStateChanged(CReader::State state);
+
+	void onFileOpened(bool success, QString shortFileName);
 
 private:
 	Ui::CMainWindow *ui;

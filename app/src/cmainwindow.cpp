@@ -24,7 +24,6 @@ DISABLE_COMPILER_WARNINGS
 #include <QDebug>
 #include <QDragEnterEvent>
 #include <QFileDialog>
-#include <QFileInfo>
 #include <QFontDialog>
 #include <QInputDialog>
 #include <QLabel>
@@ -58,6 +57,7 @@ CMainWindow::CMainWindow(QWidget *parent) :
 	connect(&_controller, &CController::onGlobalProgressDescriptionUpdated, this, &CMainWindow::onGlobalProgressDescriptionUpdated);
 	connect(&_controller, &CController::onChapterProgressUpdated, this, &CMainWindow::onChapterProgressUpdated);
 	connect(&_controller, &CController::onReaderStateChanged, this, &CMainWindow::onReaderStateChanged);
+	connect(&_controller, &CController::onFileOpened, this, &CMainWindow::onFileOpened);
 
 	setUnifiedTitleAndToolBarOnMac(true);
 	setAcceptDrops(true);
@@ -71,20 +71,13 @@ CMainWindow::CMainWindow(QWidget *parent) :
 	updateBookmarksMenuItemsList();
 
 	updateRecentFilesMenu();
-	if (!_recentFiles.items().empty())
-	{
-		const CBookmark& lastBookmark = _recentFiles.items().front();
-		openBookmark(lastBookmark);
-	}
-
-	settingsChanged();
+	if (!_controller.recentLocations().empty())
+		_controller.openBookmark(_controller.recentLocations().front());
 }
 
 CMainWindow::~CMainWindow()
 {
-	_reader.pauseReading();
-	if (!_reader.filePath().isEmpty())
-		_recentFiles.updateWith(_reader.filePath(), _reader.position());
+	_controller.disconnect();
 
 	delete ui;
 	ui = nullptr;
@@ -120,7 +113,7 @@ void CMainWindow::dropEvent(QDropEvent *event)
 {
 	const auto urls = event->mimeData()->urls();
 	if (!urls.empty())
-		openFile(urls.front().toLocalFile(), 0);
+		_controller.openFile(urls.front().toLocalFile(), 0);
 }
 
 void CMainWindow::wheelEvent(QWheelEvent *event)
@@ -141,7 +134,7 @@ bool CMainWindow::eventFilter(QObject* /*o*/, QEvent* e)
 	{
 	case QEvent::MouseButtonRelease:
 		ui->_text->setFocus();
-		_reader.togglePause();
+		_controller.togglePause();
 		break;
 	case QEvent::MouseButtonDblClick:
 		toggleFullScreen();
@@ -226,10 +219,10 @@ void CMainWindow::initToolBars()
 	});
 
 	connect(_readingSpeedSlider, &QSlider::valueChanged, [this](int WPM){
-		_reader.setReadingSpeed(WPM);
+		_controller.setReadingSpeed(WPM);
 	});
 
-	_readingSpeedSlider->setValue(_reader.readingSpeed());
+	_readingSpeedSlider->setValue(_controller.readingSpeed());
 
 	_readingSettingsToolbar->addWidget(_readingSpeedSlider);
 	_readingSettingsToolbar->addWidget(_readingSpeedSpinBox);
@@ -249,15 +242,11 @@ void CMainWindow::initActions()
 		fontDialog.exec();
 	});
 
-	connect(ui->actionShow_pivot, &QAction::triggered, [this](bool checked) {
-		CSettings().setValue(UI_SHOW_PIVOT_SETTING, checked);
-		_reader.updateInterface();
-	});
-	ui->actionShow_pivot->setChecked(CSettings().value(UI_SHOW_PIVOT_SETTING, UI_SHOW_PIVOT_DEFAULT).toBool());
+	ui->actionShow_pivot->setChecked(_controller.showPivot());
+	connect(ui->actionShow_pivot, &QAction::triggered, &_controller, &CController::setShowPivot);
 
 	connect(ui->actionClear_screen_after_sentence_end, &QAction::triggered, [this](bool checked) {
-		CSettings().setValue(UI_CLEAR_SCREEN_AFTER_SENTENCE_END, checked);
-		_reader.setClearScreenAfterSentenceEnd(checked);
+		_controller.setClearScreenAfterSentenceEnd(checked);
 
 		QMessageBox::information(this, QString(), tr("The file must be reloaded for the change to take effect."));
 	});
@@ -273,49 +262,37 @@ void CMainWindow::initActions()
 			tr("Pick a text file to open"),
 			CSettings().value(UI_OPEN_FILE_LAST_USED_DIR_SETTING, QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation).front()).toString());
 
-		openFile(filePath, 0);
+		_controller.openFile(filePath, 0);
 	});
 
 	ui->action_Read->setIcon(QApplication::style()->standardIcon(QStyle::SP_MediaPlay));
-	connect(ui->action_Read, &QAction::triggered, [this](){
-		_reader.togglePause();
-	});
+	connect(ui->action_Read, &QAction::triggered, &_controller, &CController::togglePause);
 
 	ui->action_Pause->setIcon(QApplication::style()->standardIcon(QStyle::SP_MediaPause));
-	connect(ui->action_Pause, &QAction::triggered, [this](){
-		_reader.pauseReading();
-	});
+	connect(ui->action_Pause, &QAction::triggered, &_controller, &CController::pauseReading);
 
 	ui->actionStop->setIcon(QApplication::style()->standardIcon(QStyle::SP_MediaStop));
 	connect(ui->actionStop, &QAction::triggered, [this](){
-		_reader.resetAndStop();
+		_controller.resetAndStop();
 		CReaderView* readerView = dynamic_cast<CReaderView*>(ui->_text->rootObject());
 		readerView->clear();
 	});
 
 	ui->actionPrevious_chapter->setIcon(QApplication::style()->standardIcon(QStyle::SP_MediaSkipBackward));
-	connect(ui->actionPrevious_chapter, &QAction::triggered, [this](){
-		_reader.toPreviousChapter();
-	});
+	connect(ui->actionPrevious_chapter, &QAction::triggered, &_controller, &CController::toPreviousChapter);
 
 	ui->actionPrevious_paragraph->setIcon(QApplication::style()->standardIcon(QStyle::SP_MediaSeekBackward));
-	connect(ui->actionPrevious_paragraph, &QAction::triggered, [this](){
-		_reader.toPreviousParagraph();
-	});
+	connect(ui->actionPrevious_paragraph, &QAction::triggered, &_controller, &CController::toPreviousParagraph);
 
 	ui->actionNext_paragraph->setIcon(QApplication::style()->standardIcon(QStyle::SP_MediaSeekForward));
-	connect(ui->actionNext_paragraph, &QAction::triggered, [this](){
-		_reader.toNextParagraph();
-	});
+	connect(ui->actionNext_paragraph, &QAction::triggered, &_controller, &CController::toNextParagraph);
 
 	ui->actionNext_chapter->setIcon(QApplication::style()->standardIcon(QStyle::SP_MediaSkipForward));
-	connect(ui->actionNext_chapter, &QAction::triggered, [this](){
-		_reader.toNextChapter();
-	});
+	connect(ui->actionNext_chapter, &QAction::triggered, &_controller, &CController::toNextChapter);
 
 	connect(ui->actionGo_to_word, &QAction::triggered, [this](){
 
-		const int maxValue = (int)_reader.totalNumWords();
+		const int maxValue = (int)_controller.totalNumWords();
 		const int minValue = maxValue > 0 ? 1 : 0;
 		bool ok = false;
 		const int word = QInputDialog::getInt(this,
@@ -328,7 +305,7 @@ void CMainWindow::initActions()
 			&ok);
 
 		if (ok)
-			_reader.goToWord(word - 1);
+			_controller.goToWord(word - 1);
 	});
 
 #ifndef __APPLE__
@@ -340,27 +317,23 @@ void CMainWindow::initActions()
 #endif
 
 	connect(ui->action_Bookmark_current_position, &QAction::triggered, [this](){
-		if (_reader.filePath().isEmpty())
-			return;
-
-		_controller.bookmarks().emplace_back(_reader.filePath(), _reader.position());
-		_controller.saveBookmarksToSettings();
-		updateBookmarksMenuItemsList();
+		if (_controller.bookmarkCurrentPosition())
+			updateBookmarksMenuItemsList();
 	});
 
 	connect(ui->action_Remove_bookmarks, &QAction::triggered, [this](){
 		CBookmarksEditor editor(_controller.bookmarks(), this);
 		editor.exec();
 
-		_controller.bookmarks() = editor.bookmarks();
-		_controller.saveBookmarksToSettings();
+		_controller.updateBookmarks(editor.bookmarks());
 		updateBookmarksMenuItemsList();
 	});
 
 	connect(ui->actionView_navigate_text, &QAction::triggered, [this](){
-		CTextBrowser browser(this, _reader);
-		browser.loadText(_reader.text());
-		browser.exec();
+//		TODO:
+// 		CTextBrowser browser(this, _reader);
+// 		browser.loadText(_reader.text());
+// 		browser.exec();
 	});
 
 	connect(ui->actionSettings, &QAction::triggered, [this](){
@@ -371,8 +344,7 @@ void CMainWindow::initActions()
 				.addSettingsPage(new CSettingsPagePauses)
 				.addSettingsPage(new CSettingsPageTools);
 
-		connect(&settingsDialog, &CSettingsDialog::settingsChanged, this, &CMainWindow::settingsChanged);
-
+		connect(&settingsDialog, &CSettingsDialog::settingsChanged, &_controller, &CController::settingsChanged);
 		settingsDialog.exec();
 	});
 
@@ -402,33 +374,6 @@ void CMainWindow::initStatusBar()
 	bar->addWidget(_progressLabel, 1);
 }
 
-void CMainWindow::openBookmark(const CBookmark& bookmark)
-{
-	openFile(bookmark.filePath, bookmark.wordIndex);
-}
-
-void CMainWindow::openFile(const QString &filePath, size_t position)
-{
-	const CBookmark lastPosition(_reader.filePath(), _reader.position());
-	if (!filePath.isEmpty() && _reader.loadFromFile(filePath))
-	{
-		// Opening a new file - store the previous one in the Recent files list
-		if (!lastPosition.filePath.isEmpty())
-		{
-			_recentFiles.updateWith(lastPosition);
-			updateRecentFilesMenu();
-		}
-
-		_reader.goToWord(position);
-
-		CSettings().setValue(UI_OPEN_FILE_LAST_USED_DIR_SETTING, filePath);
-		setWindowTitle(qApp->applicationName() % " - " % QFileInfo(filePath).baseName());
-		_chapterProgressBar->setVisible(true);
-	}
-	else
-		_chapterProgressBar->setVisible(false);
-}
-
 void CMainWindow::keepScreenFromTurningOff(bool keepFromTurningOff)
 {
 #if defined _WIN32
@@ -449,7 +394,7 @@ void CMainWindow::updateBookmarksMenuItemsList()
 	for (const CBookmark& bm: _controller.bookmarks())
 	{
 		ui->menu_Bookmarks->addAction(bm.filePath % ": " % QString::number(bm.wordIndex + 1), [this, bm](){
-			openBookmark(bm);
+			_controller.openBookmark(bm);
 		});
 	}
 }
@@ -459,11 +404,10 @@ void CMainWindow::updateRecentFilesMenu()
 	QMenu * menu = ui->menuOpen_recent;
 	menu->clear();
 
-	for (const CBookmark& item : _recentFiles.items())
+	for (const CBookmark& item : _controller.recentLocations())
 	{
 		menu->addAction(item.filePath, [item, this](){
-			_reader.loadFromFile(item.filePath);
-			_reader.goToWord(item.wordIndex);
+			_controller.openBookmark(item);
 		});
 	}
 }
@@ -490,13 +434,6 @@ void CMainWindow::setFullScreen(bool fullScreen)
 	}
 }
 
-void CMainWindow::settingsChanged()
-{
-	CSettings s;
-	_reader.setLongWordPauseScaling(s.value(UI_LONG_WORD_THRESHOLD_SETTING, UI_LONG_WORD_THRESHOLD_DEFAULT).toUInt(),
-									s.value(UI_LONG_WORD_DELAY_FACTOR_SETTING, UI_LONG_WORD_DELAY_FACTOR_DEFAULT).toFloat());
-}
-
 void CMainWindow::onDisplayUpdateRequired(QString text, bool showPivot, int pivotCharacterIndex)
 {
 	CReaderView* readerView = dynamic_cast<CReaderView*>(ui->_text->rootObject());
@@ -520,4 +457,14 @@ void CMainWindow::onReaderStateChanged(CReader::State state)
 	keepScreenFromTurningOff(state == CReader::Reading);
 
 	assert(state == CReader::Reading || state == CReader::Paused || state == CReader::Finished);
+}
+
+void CMainWindow::onFileOpened(bool success, QString shortFileName)
+{
+	_chapterProgressBar->setVisible(success);
+
+	if (success)
+		setWindowTitle(qApp->applicationName() % " - " % shortFileName);
+	else
+		setWindowTitle(qApp->applicationName());
 }

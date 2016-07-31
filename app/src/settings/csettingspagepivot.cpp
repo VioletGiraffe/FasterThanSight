@@ -35,9 +35,8 @@ CSettingsPagePivot::CSettingsPagePivot(QWidget *parent) :
 
 	connect(ui->_cbPivotCalculationMethod, (void (QComboBox::*)(int))&QComboBox::currentIndexChanged, [this](int index){
 		const TextFragment::PivotCalculationMethod method = (TextFragment::PivotCalculationMethod)index;
-		TextFragment fragment("Paradise", QString());
 		CReaderView* readerView = dynamic_cast<CReaderView*>(ui->_demo->rootObject());
-		readerView->setText(fragment, true, method);
+		readerView->setText(QStringLiteral("Paradise"), true, method);
 	});
 
 	ui->_cbPivotCalculationMethod->setCurrentIndex(CSettings().value(UI_PIVOT_CALCULATION_METHOD, UI_PIVOT_CALCULATION_METHOD_DEFAULT).toInt());
