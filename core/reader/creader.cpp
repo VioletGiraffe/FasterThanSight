@@ -202,6 +202,7 @@ void CReader::goToWord(size_t wordIndex)
 	{
 		_state = Finished;
 		_interface->stateChanged(_state);
+		_interface->updateInfo();
 		return;
 	}
 

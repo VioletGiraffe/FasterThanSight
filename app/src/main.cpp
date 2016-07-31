@@ -3,11 +3,7 @@
 #include "QML/creaderview.h"
 #include "logger.h"
 
-#if defined Q_OS_ANDROID || defined Q_OS_IOS
-#define Q_OS_MOBILE
-#endif
-
-#ifndef Q_OS_MOBILE
+#ifndef MOBILE_PLATFORM
 #include "cmainwindow.h"
 #endif
 
@@ -15,7 +11,7 @@ DISABLE_COMPILER_WARNINGS
 #include <QApplication>
 #include <QDebug>
 
-#ifdef Q_OS_MOBILE
+#ifdef MOBILE_PLATFORM
 #include <QQmlApplicationEngine>
 #endif
 
@@ -35,7 +31,7 @@ int main(int argc, char *argv[])
 {
 	DISABLE_COMPILER_WARNINGS
 	Q_INIT_RESOURCE(app_resources);
-	#ifdef Q_OS_MOBILE
+	#ifdef MOBILE_PLATFORM
 		Q_INIT_RESOURCE(qml);
 	#endif
 	RESTORE_COMPILER_WARNINGS
@@ -58,7 +54,7 @@ int main(int argc, char *argv[])
 	CSettings::setApplicationName(app.applicationName());
 	CSettings::setOrganizationName(app.organizationName());
 
-#ifdef Q_OS_MOBILE
+#ifdef MOBILE_PLATFORM
 	QQmlApplicationEngine engine;
 	engine.load(QUrl(QLatin1String("qrc:/main.qml")));
 #else

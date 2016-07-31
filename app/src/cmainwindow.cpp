@@ -3,7 +3,6 @@
 #include "assert/advanced_assert.h"
 #include "updaterUI/cupdaterdialog.h"
 #include "version.h"
-#include "uihelpers.h"
 #include "aboutdialog/caboutdialog.h"
 #include "logviewer/clogviewer.h"
 
@@ -51,24 +50,26 @@ RESTORE_COMPILER_WARNINGS
 CMainWindow::CMainWindow(QWidget *parent) :
 	QMainWindow(parent),
 	ui(new Ui::CMainWindow),
-	_reader(this),
 	_colorsSetupDialog(this)
 {
 	ui->setupUi(this);
+
+	connect(&_controller, &CController::onDisplayUpdateRequired, this, &CMainWindow::onDisplayUpdateRequired);
+	connect(&_controller, &CController::onGlobalProgressDescriptionUpdated, this, &CMainWindow::onGlobalProgressDescriptionUpdated);
+	connect(&_controller, &CController::onChapterProgressUpdated, this, &CMainWindow::onChapterProgressUpdated);
+	connect(&_controller, &CController::onReaderStateChanged, this, &CMainWindow::onReaderStateChanged);
 
 	setUnifiedTitleAndToolBarOnMac(true);
 	setAcceptDrops(true);
 
 	ui->_text->installEventFilter(this);
 
-	_reader.setClearScreenAfterSentenceEnd(CSettings().value(UI_CLEAR_SCREEN_AFTER_SENTENCE_END, UI_CLEAR_SCREEN_AFTER_SENTENCE_END_DEFAULT).toBool());
-
-	// Status bar should be inited first so that the rest of the init code can call updateProgressLabel and such
 	initStatusBar();
 	initToolBars();
 	initActions();
 
-	loadBookmarksFromSettings();
+	updateBookmarksMenuItemsList();
+
 	updateRecentFilesMenu();
 	if (!_recentFiles.items().empty())
 	{
@@ -342,18 +343,18 @@ void CMainWindow::initActions()
 		if (_reader.filePath().isEmpty())
 			return;
 
-		_bookmarks.emplace_back(_reader.filePath(), _reader.position());
-		saveBookmarksToSettings();
+		_controller.bookmarks().emplace_back(_reader.filePath(), _reader.position());
+		_controller.saveBookmarksToSettings();
 		updateBookmarksMenuItemsList();
 	});
 
 	connect(ui->action_Remove_bookmarks, &QAction::triggered, [this](){
-		CBookmarksEditor editor(_bookmarks, this);
+		CBookmarksEditor editor(_controller.bookmarks(), this);
 		editor.exec();
 
-		_bookmarks = editor.bookmarks();
-		saveBookmarksToSettings();
-		loadBookmarksFromSettings(); // to update the menu items list
+		_controller.bookmarks() = editor.bookmarks();
+		_controller.saveBookmarksToSettings();
+		updateBookmarksMenuItemsList();
 	});
 
 	connect(ui->actionView_navigate_text, &QAction::triggered, [this](){
@@ -439,32 +440,13 @@ void CMainWindow::keepScreenFromTurningOff(bool keepFromTurningOff)
 #endif
 }
 
-void CMainWindow::loadBookmarksFromSettings()
-{
-	_bookmarks.clear();
-	const QStringList serializedBookmarks = CSettings().value(UI_BOOKMARKS_STORAGE).toStringList();
-	for (const QString& entry: serializedBookmarks)
-		_bookmarks.emplace_back(entry);
-
-	updateBookmarksMenuItemsList();
-}
-
-void CMainWindow::saveBookmarksToSettings() const
-{
-	QStringList serialzedBookmarks;
-	for (const CBookmark& bm : _bookmarks)
-		serialzedBookmarks.push_back(bm.toString());
-
-	CSettings().setValue(UI_BOOKMARKS_STORAGE, serialzedBookmarks);
-}
-
 void CMainWindow::updateBookmarksMenuItemsList()
 {
 	for (QAction* action: ui->menu_Bookmarks->actions())
 		if (action != ui->action_Bookmark_current_position && action != ui->action_Remove_bookmarks && !action->isSeparator())
 			ui->menu_Bookmarks->removeAction(action);
 
-	for (const CBookmark& bm: _bookmarks)
+	for (const CBookmark& bm: _controller.bookmarks())
 	{
 		ui->menu_Bookmarks->addAction(bm.filePath % ": " % QString::number(bm.wordIndex + 1), [this, bm](){
 			openBookmark(bm);
@@ -515,61 +497,27 @@ void CMainWindow::settingsChanged()
 									s.value(UI_LONG_WORD_DELAY_FACTOR_SETTING, UI_LONG_WORD_DELAY_FACTOR_DEFAULT).toFloat());
 }
 
-void CMainWindow::updateDisplay(const size_t currentTextFragmentIndex)
+void CMainWindow::onDisplayUpdateRequired(QString text, bool showPivot, int pivotCharacterIndex)
 {
-	const auto& currentFragment = _reader.textFragment(currentTextFragmentIndex);
-
 	CReaderView* readerView = dynamic_cast<CReaderView*>(ui->_text->rootObject());
-	readerView->setText(currentFragment._textFragment, ui->actionShow_pivot->isChecked(), (TextFragment::PivotCalculationMethod)CSettings().value(UI_PIVOT_CALCULATION_METHOD, UI_PIVOT_CALCULATION_METHOD_DEFAULT).toInt());
-
-	const auto chapterProgress = _reader.currentChapterProgress();
-	_chapterProgressBar->setValue(chapterProgress.progressPercentage());
-	_chapterProgressBar->setToolTip(tr("%1 out of %2 words read in this chapter\n%3 remaining")
-		.arg(chapterProgress.wordsRead)
-		.arg(chapterProgress.totalNumWords)
-		.arg(secondsToHhhMmSs(_reader.currentChapterTimeRemainingSeconds()))
-		);
+	readerView->setText(text, showPivot, pivotCharacterIndex);
 }
 
-void CMainWindow::updateInfo()
+void CMainWindow::onChapterProgressUpdated(int progressPercentage, QString chapterProgressDescription)
 {
-	if (_reader.state() != CReader::Finished)
-	{
-		_progressLabel->setText(
-			tr("Reading word %1 out of %2 total (%3%); estimated time remaining: %4")
-			.arg(_reader.totalNumWords() > 0 ? _reader.position() + 1 : 0)
-			.arg(_reader.totalNumWords())
-			.arg(QString::number(100 * (double)_reader.progress(), 'f', 2))
-			.arg(secondsToHhhMmSs(_reader.timeRemainingSeconds()))
-		);
-	}
-	else
-	{
-		_progressLabel->setText(tr("Reading finished"));
-		_chapterProgressBar->setToolTip(tr("Reading finished"));
-		_chapterProgressBar->setValue(100);
-	}
+	_chapterProgressBar->setValue(progressPercentage);
+	_chapterProgressBar->setToolTip(chapterProgressDescription);
 }
 
-void CMainWindow::stateChanged(const CReader::State newState)
+void CMainWindow::onGlobalProgressDescriptionUpdated(QString progressDescription)
 {
-	if (newState == CReader::Reading)
-	{
-		ui->action_Pause->setEnabled(true);
-		keepScreenFromTurningOff(true);
-	}
-	else if (newState == CReader::Paused)
-	{
-		ui->action_Pause->setEnabled(false);
-		keepScreenFromTurningOff(false);
-	}
-	else if (newState == CReader::Finished)
-	{
-		updateInfo();
-		keepScreenFromTurningOff(false);
-	}
-	else
-	{
-		assert_unconditional_r("Unknown reader state");
-	}
+	_progressLabel->setText(progressDescription);
+}
+
+void CMainWindow::onReaderStateChanged(CReader::State state)
+{
+	ui->action_Pause->setEnabled(state == CReader::Reading);
+	keepScreenFromTurningOff(state == CReader::Reading);
+
+	assert(state == CReader::Reading || state == CReader::Paused || state == CReader::Finished);
 }

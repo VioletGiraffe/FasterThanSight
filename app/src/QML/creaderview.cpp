@@ -32,20 +32,22 @@ CReaderView::~CReaderView()
 
 QString CReaderView::text() const
 {
-	return _text.text();
+	return _text;
 }
 
-void CReaderView::setText(const TextFragment& textFragment, bool showPivot, TextFragment::PivotCalculationMethod pivotCalculationMethod)
+void CReaderView::setText(const QString& newText, bool showPivot, int pivotCharacterIndex)
 {
-	const auto setTextImplementation = [textFragment, showPivot, pivotCalculationMethod, this]() {
-		_text = textFragment;
-		_pivotCharacterIndex = showPivot ? textFragment.pivotLetterIndex(pivotCalculationMethod) : -1;
+	assert(pivotCharacterIndex >= 0 || !showPivot);
+
+	const auto setTextImplementation = [this, newText, showPivot, pivotCharacterIndex]() {
+		_text = newText;
+		_pivotCharacterIndex = showPivot ? pivotCharacterIndex : -1;
 		_textOpacity = 1.0f;
 
 		update();
 	};
 
-	if (_text.text() == textFragment.text() || textFragment.isEmpty())
+	if (_text == newText || newText.isEmpty())
 	{
 		QMetaObject::Connection* connection = new QMetaObject::Connection();
 		*connection = connect(_textFadeOutAnimation, &QPropertyAnimation::finished, [this, connection, setTextImplementation]() {
@@ -64,7 +66,7 @@ void CReaderView::setText(const TextFragment& textFragment, bool showPivot, Text
 
 void CReaderView::clear()
 {
-	_text = TextFragment();
+	_text.clear();
 	_pivotCharacterIndex = -1;
 
 	update();
@@ -105,10 +107,9 @@ void CReaderView::paint(QPainter* painter)
 	QFontMetrics fontMetrics(_font);
 	backgroundPainter.fillRect(0, (int)height() / 2 - 3 * fontMetrics.height() / 2, (int)width(), 3 * fontMetrics.height(), themeProvider.currentTheme()._textBgColor);
 
-	const QString string = _text.text();
 	QTextDocument doc;
 
-	if (!string.isEmpty())
+	if (!_text.isEmpty())
 	{
 		doc.setDefaultFont(_font);
 
@@ -121,20 +122,20 @@ void CReaderView::paint(QPainter* painter)
 			backgroundPainter.drawLine((int)width() / 2, (int)height() / 2 + 8 * fontMetrics.height() / 10, (int)width() / 2, (int)height() / 2 + 3 * fontMetrics.height() / 2);
 
 			doc.setHtml(
-				coloredHtmlText(string.left(_pivotCharacterIndex), textColor)
-				% coloredHtmlText(QString(string[_pivotCharacterIndex]), themeProvider.currentTheme()._pivotColor.name())
-				% coloredHtmlText(string.mid(_pivotCharacterIndex + 1), textColor)
+				coloredHtmlText(_text.left(_pivotCharacterIndex), textColor)
+				% coloredHtmlText(QString(_text[_pivotCharacterIndex]), themeProvider.currentTheme()._pivotColor.name())
+				% coloredHtmlText(_text.mid(_pivotCharacterIndex + 1), textColor)
 			);
 		}
 		else
-			doc.setHtml(coloredHtmlText(string, textColor));
+			doc.setHtml(coloredHtmlText(_text, textColor));
 	}
 
 	painter->drawPixmap(0, 0, _backgroundPixmap);
-	if (!string.isEmpty())
+	if (!_text.isEmpty())
 	{
-		const int centerCharIndex = _pivotCharacterIndex >= 0 ? _pivotCharacterIndex : string.length() / 2;
-		const QPoint textOffset((int)width() / 2 - fontMetrics.width(string, centerCharIndex) - fontMetrics.width(string[centerCharIndex]) / 2, (int)height() / 2 - fontMetrics.height() / 2);
+		const int centerCharIndex = _pivotCharacterIndex >= 0 ? _pivotCharacterIndex : _text.length() / 2;
+		const QPoint textOffset((int)width() / 2 - fontMetrics.width(_text, centerCharIndex) - fontMetrics.width(_text[centerCharIndex]) / 2, (int)height() / 2 - fontMetrics.height() / 2);
 		painter->translate(textOffset);
 	}
 	painter->setOpacity(_textOpacity);

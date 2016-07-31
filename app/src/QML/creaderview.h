@@ -1,7 +1,6 @@
 #pragma once
 
 #include "compiler/compiler_warnings_control.h"
-#include "text/ctextfragment.h"
 
 DISABLE_COMPILER_WARNINGS
 #include <QPixmap>
@@ -14,6 +13,7 @@ class CReaderView : public QQuickPaintedItem
 {
 	Q_OBJECT
 
+	// Has to be a property in order for QPropertyAnimation to work with it
 	Q_PROPERTY(qreal textOpacity WRITE setTextOpacity MEMBER _textOpacity)
 
 public:
@@ -21,7 +21,7 @@ public:
 	~CReaderView();
 
 	QString text() const;
-	void setText(const TextFragment& textFragment, bool showPivot, TextFragment::PivotCalculationMethod pivotCalculationMethod = TextFragment::pcmMagic);
+	void setText(const QString& newText, bool showPivot, int pivotCharacterIndex);
 	void clear();
 
 	void setTextOpacity(qreal opacity);
@@ -34,7 +34,7 @@ protected:
 
 private:
 // Data
-	TextFragment _text;
+	QString _text;
 	int _pivotCharacterIndex = -1;
 
 // Style

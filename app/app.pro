@@ -1,6 +1,12 @@
 QT = core gui network quickwidgets
 
-!android{
+android*|ios*{
+	CONFIG += mobile
+
+	DEFINES += MOBILE_PLATFORM
+}
+
+!mobile{
 	QT += widgets
 } else {
 	QT += quick
@@ -27,7 +33,7 @@ RCC_DIR     = ../build/$${OUTPUT_DIR}/app
 
 LIBS += -L../bin/$${OUTPUT_DIR} -lcore -lcpputils -lqtutils
 
-!android*:!ios*{
+!mobile{
 	LIBS += -lautoupdater
 
 	!win*{
@@ -79,21 +85,34 @@ include (src/QML/QML.pri)
 
 SOURCES += \
 	src/main.cpp \
-	src/styling/cthemeprovider.cpp
+	src/styling/cthemeprovider.cpp \
+    src/ccontroller.cpp
 
 HEADERS += \
 	src/uisettings.h \
 	src/version.h \
 	src/uihelpers.h \
 	src/logger.h \
-	src/styling/cthemeprovider.h
+	src/styling/cthemeprovider.h \
+    src/ccontroller.h
 
 RESOURCES += \
 	src/app_resources.qrc
 
-android*|ios*{
+mobile{
 	RESOURCES += \
 		src/mobile/qml.qrc
+
+	DISTFILES += \
+		android/AndroidManifest.xml \
+		android/gradle/wrapper/gradle-wrapper.jar \
+		android/gradlew \
+		android/res/values/libs.xml \
+		android/build.gradle \
+		android/gradle/wrapper/gradle-wrapper.properties \
+		android/gradlew.bat
+
+	ANDROID_PACKAGE_SOURCE_DIR = $$PWD/android
 
 } else {
 	include (src/settings/settings.pri)
@@ -116,14 +135,3 @@ android*|ios*{
 		src/styling/cthemesdialog.ui \
 		src/logviewer/clogviewer.ui
 }
-
-DISTFILES += \
-	android/AndroidManifest.xml \
-	android/gradle/wrapper/gradle-wrapper.jar \
-	android/gradlew \
-	android/res/values/libs.xml \
-	android/build.gradle \
-	android/gradle/wrapper/gradle-wrapper.properties \
-	android/gradlew.bat
-
-ANDROID_PACKAGE_SOURCE_DIR = $$PWD/android

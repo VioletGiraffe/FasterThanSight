@@ -1,16 +1,11 @@
 #pragma once
 
-#include "bookmarks/cbookmark.h"
-#include "reader/creader.h"
-#include "compiler/compiler_warnings_control.h"
+#include "ccontroller.h"
 #include "styling/cthemesdialog.h"
-#include "recentFiles/crecentfileslist.h"
 
 DISABLE_COMPILER_WARNINGS
 #include <QMainWindow>
 RESTORE_COMPILER_WARNINGS
-
-#include <deque>
 
 class QLabel;
 class QProgressBar;
@@ -22,7 +17,7 @@ namespace Ui {
 class CMainWindow;
 }
 
-class CMainWindow : public QMainWindow, private CReader::ReaderInterface
+class CMainWindow : public QMainWindow
 {
 public:
 	explicit CMainWindow(QWidget *parent = 0);
@@ -49,8 +44,6 @@ private:
 
 	void keepScreenFromTurningOff(bool keepFromTurningOff);
 
-	void loadBookmarksFromSettings();
-	void saveBookmarksToSettings() const;
 	void updateBookmarksMenuItemsList();
 	void updateRecentFilesMenu();
 
@@ -59,14 +52,18 @@ private:
 
 	void settingsChanged();
 
-private:
-// Reader callbacks
-	void updateDisplay(const size_t currentTextFragmentIndex) override;
-	void updateInfo() override;
-	void stateChanged(const CReader::State newState) override;
+	// CController signal handlers
+	void onDisplayUpdateRequired(QString text, bool showPivot, int pivotCharacterIndex);
+
+	void onChapterProgressUpdated(int progressPercentage, QString chapterProgressDescription);
+	void onGlobalProgressDescriptionUpdated(QString progressDescription);
+
+	void onReaderStateChanged(CReader::State state);
 
 private:
 	Ui::CMainWindow *ui;
+
+	CController _controller;
 
 	QToolBar* _defaultToolbar = nullptr;
 // Reading settings controls
@@ -80,13 +77,6 @@ private:
 // Status bar widgets
 	QProgressBar * _chapterProgressBar = nullptr;
 	QLabel* _progressLabel = nullptr;
-
-// Reader
-	CReader _reader;
-
-// Bookmarks
-	std::deque<CBookmark> _bookmarks;
-	CRecentFilesList _recentFiles;
 
 // Settings
 	CThemesDialog _colorsSetupDialog;
