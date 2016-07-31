@@ -8,7 +8,7 @@ RESTORE_COMPILER_WARNINGS
 
 #include <vector>
 
-class CReader;
+class CController;
 
 namespace Ui {
 class CTextBrowser;
@@ -19,7 +19,7 @@ class CStructuredText;
 class CTextBrowser : public QDialog
 {
 public:
-	explicit CTextBrowser(QWidget *parent, CReader& reader);
+	explicit CTextBrowser(QWidget *parent, CController& controller);
 	~CTextBrowser();
 
 	void loadText(const CStructuredText& text);
@@ -31,7 +31,7 @@ private:
 	size_t wordIndexForGlobalCoordinates(QPoint pos) const;
 
 private:
-	CReader& _reader;
+	CController& _controller;
 
 	Ui::CTextBrowser *ui;
 	std::vector<int> _firstCharacterIndexForFragment;

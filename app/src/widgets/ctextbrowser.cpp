@@ -1,7 +1,7 @@
 #include "ctextbrowser.h"
 #include "text/cstructuredtext.h"
 #include "system/ctimeelapsed.h"
-#include "reader/creader.h"
+#include "../ccontroller.h"
 #include "container/algorithms.h"
 #include "../styling/cthemeprovider.h"
 
@@ -13,9 +13,9 @@ DISABLE_COMPILER_WARNINGS
 #include <QScrollBar>
 RESTORE_COMPILER_WARNINGS
 
-CTextBrowser::CTextBrowser(QWidget *parent, CReader& reader) :
+CTextBrowser::CTextBrowser(QWidget *parent, CController& controller) :
 	QDialog(parent),
-	_reader(reader),
+	_controller(controller),
 	ui(new Ui::CTextBrowser)
 {
 	ui->setupUi(this);
@@ -31,7 +31,7 @@ CTextBrowser::CTextBrowser(QWidget *parent, CReader& reader) :
 		QMenu menu;
 		QAction * readFromHereAction = menu.addAction("Read from here");
 		if (menu.exec(ui->_textView->mapToGlobal(pos)) == readFromHereAction)
-			_reader.goToWord(wordIndexForGlobalCoordinates(ui->_textView->mapToGlobal(pos)));
+			_controller.goToWord(wordIndexForGlobalCoordinates(ui->_textView->mapToGlobal(pos)));
 	});
 
 	connect(ui->_chaptersList, &QListWidget::itemActivated, [this](const QListWidgetItem* item){
@@ -75,7 +75,7 @@ void CTextBrowser::loadText(const CStructuredText& text)
 	ui->_chaptersList->setFixedWidth(ui->_chaptersList->sizeHintForColumn(0) + qApp->style()->pixelMetric(QStyle::PM_ScrollBarExtent) + 10);
 
 	auto cursor = ui->_textView->textCursor();
-	cursor.setPosition(_firstCharacterIndexForFragment[_reader.position()]);
+	cursor.setPosition(_firstCharacterIndexForFragment[_controller.position()]);
 	ui->_textView->setTextCursor(cursor);
 	ui->_textView->ensureCursorVisible();
 }
@@ -124,7 +124,7 @@ bool CTextBrowser::eventFilter(QObject * o, QEvent * e)
 		QMouseEvent* mouseEvent = static_cast<QMouseEvent*>(e);
 		if (!_firstCharacterIndexForFragment.empty())
 		{
-			_reader.goToWord(wordIndexForGlobalCoordinates(static_cast<QWidget*>(o)->mapToGlobal(mouseEvent->pos())));
+			_controller.goToWord(wordIndexForGlobalCoordinates(static_cast<QWidget*>(o)->mapToGlobal(mouseEvent->pos())));
 			accept();
 		}
 	}

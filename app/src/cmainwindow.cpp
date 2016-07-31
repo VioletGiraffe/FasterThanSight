@@ -330,10 +330,9 @@ void CMainWindow::initActions()
 	});
 
 	connect(ui->actionView_navigate_text, &QAction::triggered, [this](){
-//		TODO:
-// 		CTextBrowser browser(this, _reader);
-// 		browser.loadText(_reader.text());
-// 		browser.exec();
+		CTextBrowser browser(this, _controller);
+		browser.loadText(_controller.text());
+		browser.exec();
 	});
 
 	connect(ui->actionSettings, &QAction::triggered, [this](){

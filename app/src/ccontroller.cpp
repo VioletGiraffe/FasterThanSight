@@ -158,9 +158,19 @@ size_t CController::totalNumWords() const
 	return _reader.totalNumWords();
 }
 
+size_t CController::position() const
+{
+	return _reader.position();
+}
+
 void CController::goToWord(size_t wordIndex)
 {
 	_reader.goToWord(wordIndex);
+}
+
+const CStructuredText& CController::text() const
+{
+	return _reader.text();
 }
 
 void CController::loadBookmarksFromSettings()

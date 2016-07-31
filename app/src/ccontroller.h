@@ -49,7 +49,10 @@ public:
 	void toNextChapter();
 
 	size_t totalNumWords() const;
+	size_t position() const;
 	void goToWord(size_t wordIndex);
+
+	const CStructuredText& text() const;
 
 private:
 	void loadBookmarksFromSettings();
