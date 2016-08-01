@@ -163,8 +163,9 @@ void CMainWindow::initToolBars()
 	_brightnessSlider = new QSlider(Qt::Horizontal);
 	_brightnessSlider->setMinimum(1);
 	_brightnessSlider->setMaximum(100);
-	connect(_brightnessSlider, &QSlider::valueChanged, [](int value){
+	connect(_brightnessSlider, &QSlider::valueChanged, [this](int value){
 		CSettings().setValue(UI_BRIGHTNESS, value);
+		ui->_text->readerView()->setBrightnessPercentage(value);
 	});
 	_brightnessSlider->setValue(s.value(UI_BRIGHTNESS, UI_BRIGHTNESS_DEFAULT).toInt());
 	_readingSettingsToolbar->addWidget(new QLabel(tr("Brightness") + "  "));

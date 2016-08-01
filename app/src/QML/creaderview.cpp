@@ -78,6 +78,12 @@ void CReaderView::setTextOpacity(qreal opacity)
 	update();
 }
 
+void CReaderView::setBrightnessPercentage(int brightness)
+{
+	_brightnessPercentage = brightness;
+	update();
+}
+
 const QFont& CReaderView::font() const
 {
 	return _font;
@@ -94,6 +100,11 @@ inline QString coloredHtmlText(const QString& text, const QColor& color)
 	return "<font color=\"" % color.name() % "\">" % text % "</font>";
 }
 
+inline QColor adjustBrightness(const QColor& c, const int brightnessPercentage)
+{
+	return QColor(c.red() * brightnessPercentage / 100, c.green() * brightnessPercentage / 100, c.blue() * brightnessPercentage / 100);
+}
+
 void CReaderView::paint(QPainter* painter)
 {
 	assert_and_return_r(painter, );
@@ -102,10 +113,10 @@ void CReaderView::paint(QPainter* painter)
 
 	_backgroundPixmap = QPixmap((int)width(), (int)height());
 	QPainter backgroundPainter(&_backgroundPixmap);
-	backgroundPainter.fillRect(0, 0, (int)width(), (int)height(), themeProvider.currentTheme()._windowBgColor);
+	backgroundPainter.fillRect(0, 0, (int)width(), (int)height(), adjustBrightness(themeProvider.currentTheme()._windowBgColor, _brightnessPercentage));
 
 	QFontMetrics fontMetrics(_font);
-	backgroundPainter.fillRect(0, (int)height() / 2 - 3 * fontMetrics.height() / 2, (int)width(), 3 * fontMetrics.height(), themeProvider.currentTheme()._textBgColor);
+	backgroundPainter.fillRect(0, (int)height() / 2 - 3 * fontMetrics.height() / 2, (int)width(), 3 * fontMetrics.height(), adjustBrightness(themeProvider.currentTheme()._textBgColor, _brightnessPercentage));
 
 	QTextDocument doc;
 
@@ -113,7 +124,7 @@ void CReaderView::paint(QPainter* painter)
 	{
 		doc.setDefaultFont(_font);
 
-		const QColor& textColor = themeProvider.currentTheme()._textColor;
+		const QColor& textColor = adjustBrightness(themeProvider.currentTheme()._textColor, _brightnessPercentage);
 
 		if (_pivotCharacterIndex >= 0)
 		{
@@ -123,7 +134,7 @@ void CReaderView::paint(QPainter* painter)
 
 			doc.setHtml(
 				coloredHtmlText(_text.left(_pivotCharacterIndex), textColor)
-				% coloredHtmlText(QString(_text[_pivotCharacterIndex]), themeProvider.currentTheme()._pivotColor.name())
+				% coloredHtmlText(QString(_text[_pivotCharacterIndex]), adjustBrightness(themeProvider.currentTheme()._pivotColor, _brightnessPercentage).name())
 				% coloredHtmlText(_text.mid(_pivotCharacterIndex + 1), textColor)
 			);
 		}

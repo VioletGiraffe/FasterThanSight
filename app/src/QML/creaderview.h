@@ -26,6 +26,8 @@ public:
 
 	void setTextOpacity(qreal opacity);
 
+	void setBrightnessPercentage(int brightness);
+
 	const QFont& font() const;
 	void setFont(const QFont& font);
 
@@ -45,5 +47,6 @@ private:
 
 	QPixmap _backgroundPixmap;
 	qreal _textOpacity = 1.0f; // For dynamic effects
+	int _brightnessPercentage = 100;
 };
 

@@ -163,11 +163,3 @@ QString CThemeProvider::Theme::toString() const
 		QVariant(_pivotColor).toString()
 		;
 }
-
-// TODO: brightness
-//const int brightnessPercentage = CSettings().value(UI_BRIGHTNESS, UI_BRIGHTNESS_DEFAULT).toInt();
-
-inline QColor adjustBrightness(const QColor& c, const int brightnessPercentage)
-{
-	return QColor(c.red() * brightnessPercentage / 100, c.green() * brightnessPercentage / 100, c.blue() * brightnessPercentage / 100);
-}
