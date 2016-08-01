@@ -86,7 +86,7 @@ include (src/QML/QML.pri)
 SOURCES += \
 	src/main.cpp \
 	src/styling/cthemeprovider.cpp \
-    src/ccontroller.cpp
+	src/ccontroller.cpp
 
 HEADERS += \
 	src/uisettings.h \
@@ -94,7 +94,7 @@ HEADERS += \
 	src/uihelpers.h \
 	src/logger.h \
 	src/styling/cthemeprovider.h \
-    src/ccontroller.h
+	src/ccontroller.h
 
 RESOURCES += \
 	src/app_resources.qrc
@@ -103,16 +103,18 @@ mobile{
 	RESOURCES += \
 		src/mobile/qml.qrc
 
-	DISTFILES += \
-		android/AndroidManifest.xml \
-		android/gradle/wrapper/gradle-wrapper.jar \
-		android/gradlew \
-		android/res/values/libs.xml \
-		android/build.gradle \
-		android/gradle/wrapper/gradle-wrapper.properties \
-		android/gradlew.bat
+	android{
+		DISTFILES += \
+			android/AndroidManifest.xml \
+			android/gradle/wrapper/gradle-wrapper.jar \
+			android/gradlew \
+			android/res/values/libs.xml \
+			android/build.gradle \
+			android/gradle/wrapper/gradle-wrapper.properties \
+			android/gradlew.bat
 
-	ANDROID_PACKAGE_SOURCE_DIR = $$PWD/android
+		ANDROID_PACKAGE_SOURCE_DIR = $$PWD/android
+	}
 
 } else {
 	include (src/settings/settings.pri)
