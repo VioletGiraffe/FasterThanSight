@@ -8,7 +8,7 @@ qtutils.depends = cpputils
 
 app.depends = core
 
-!android*{
+!android:!ios{
 	SUBDIRS += autoupdater
 	autoupdater.subdir = github-releases-autoupdater
 	autoupdater.depends = cpputils
