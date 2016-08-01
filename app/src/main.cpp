@@ -5,6 +5,9 @@
 
 #ifndef MOBILE_PLATFORM
 #include "cmainwindow.h"
+#else
+#include "../android/native/candroidnative.h"
+#include "ccontroller.h"
 #endif
 
 DISABLE_COMPILER_WARNINGS
@@ -57,6 +60,13 @@ int main(int argc, char *argv[])
 #ifdef MOBILE_PLATFORM
 	QQmlApplicationEngine engine;
 	engine.load(QUrl(QLatin1String("qrc:/main.qml")));
+
+	CController controller;
+
+#ifdef Q_OS_ANDROID
+	CAndroidNativeHelper nativeHelper(controller);
+#endif
+
 #else
 	CMainWindow w;
 	w.show();
