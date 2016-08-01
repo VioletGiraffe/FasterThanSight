@@ -18,6 +18,7 @@ public:
 	CController();
 	~CController();
 
+public slots:
 	void settingsChanged();
 
 	bool showPivot() const;
