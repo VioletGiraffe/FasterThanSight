@@ -86,8 +86,7 @@ include (src/QML/QML.pri)
 SOURCES += \
 	src/main.cpp \
 	src/styling/cthemeprovider.cpp \
-	src/ccontroller.cpp \
-    android/native/candroidnative.cpp
+	src/ccontroller.cpp
 
 HEADERS += \
 	src/uisettings.h \
@@ -95,8 +94,7 @@ HEADERS += \
 	src/uihelpers.h \
 	src/logger.h \
 	src/styling/cthemeprovider.h \
-	src/ccontroller.h \
-    android/native/candroidnative.h
+	src/ccontroller.h
 
 RESOURCES += \
 	src/app_resources.qrc
@@ -116,9 +114,9 @@ mobile{
 			android/gradlew.bat \
 			android/src/VioletGiraffe/FasterThanSight/FasterThanSightActivity.java
 
-			HEADERS +=
+			HEADERS += android/native/candroidnative.h
 
-			SOURCES +=
+			SOURCES += android/native/candroidnative.cpp
 
 		ANDROID_PACKAGE_SOURCE_DIR = $$PWD/android
 	}
