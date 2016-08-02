@@ -35,8 +35,11 @@ CSettingsPagePivot::CSettingsPagePivot(QWidget *parent) :
 
 	connect(ui->_cbPivotCalculationMethod, (void (QComboBox::*)(int))&QComboBox::currentIndexChanged, [this](int index){
 		const TextFragment::PivotCalculationMethod method = (TextFragment::PivotCalculationMethod)index;
-		CReaderView* readerView = dynamic_cast<CReaderView*>(ui->_demo->rootObject());
-		readerView->setText(QStringLiteral("Paradise"), true, method);
+		CReaderView* readerView = ui->_demo->readerView();
+		assert_and_return_r(readerView, );
+
+		const QString testWord = QStringLiteral("Paradise");
+		readerView->setText(testWord, true, TextFragment(testWord, QString()).pivotLetterIndex(method));
 	});
 
 	ui->_cbPivotCalculationMethod->setCurrentIndex(CSettings().value(UI_PIVOT_CALCULATION_METHOD, UI_PIVOT_CALCULATION_METHOD_DEFAULT).toInt());
@@ -59,10 +62,12 @@ void CSettingsPagePivot::resizeEvent(QResizeEvent* e)
 	CSettingsPage::resizeEvent(e);
 
 	QFont textFont = ui->_demo->font();
-	CReaderView* readerView = dynamic_cast<CReaderView*>(ui->_demo->rootObject());
-	const float textScaleFactor = width()/2.0f / std::max(QFontMetrics(textFont).width(readerView->text()), 1);
+	CReaderView* readerView = ui->_demo->readerView();
+	assert_and_return_r(readerView, );
+
+	const float textScaleFactor = ui->_demo->width()/2.0f / std::max(QFontMetrics(textFont).width(readerView->text()), 1);
 
 	const int oldTextSize = textFont.pointSize();
 	textFont.setPointSize((int)(textScaleFactor * oldTextSize));
-	ui->_demo->setFont(textFont);
+	readerView->setFont(textFont);
 }

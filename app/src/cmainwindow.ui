@@ -38,11 +38,6 @@
       <property name="resizeMode">
        <enum>QQuickWidget::SizeRootObjectToView</enum>
       </property>
-      <property name="source">
-       <url>
-        <string>qrc:/QML/creaderview.qml</string>
-       </url>
-      </property>
      </widget>
     </item>
    </layout>

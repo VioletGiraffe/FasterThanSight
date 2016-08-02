@@ -274,7 +274,8 @@ void CMainWindow::initActions()
 	ui->actionStop->setIcon(QApplication::style()->standardIcon(QStyle::SP_MediaStop));
 	connect(ui->actionStop, &QAction::triggered, [this](){
 		_controller.resetAndStop();
-		CReaderView* readerView = dynamic_cast<CReaderView*>(ui->_text->rootObject());
+		CReaderView* readerView = ui->_text->readerView();
+		assert_and_return_r(readerView, );
 		readerView->clear();
 	});
 
@@ -435,7 +436,8 @@ void CMainWindow::setFullScreen(bool fullScreen)
 
 void CMainWindow::onDisplayUpdateRequired(QString text, bool showPivot, int pivotCharacterIndex)
 {
-	CReaderView* readerView = dynamic_cast<CReaderView*>(ui->_text->rootObject());
+	CReaderView* readerView = ui->_text->readerView();
+	assert_and_return_r(readerView, );
 	readerView->setText(text, showPivot, pivotCharacterIndex);
 }
 

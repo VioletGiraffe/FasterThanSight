@@ -29,7 +29,7 @@
     </layout>
    </item>
    <item>
-    <widget class="QQuickWidget" name="_demo">
+    <widget class="CReaderViewWidget" name="_demo">
      <property name="resizeMode">
       <enum>QQuickWidget::SizeRootObjectToView</enum>
      </property>
@@ -42,6 +42,11 @@
    <class>QQuickWidget</class>
    <extends>QWidget</extends>
    <header>QtQuickWidgets/QQuickWidget</header>
+  </customwidget>
+  <customwidget>
+   <class>CReaderViewWidget</class>
+   <extends>QQuickWidget</extends>
+   <header>QML/creaderviewwidget.h</header>
   </customwidget>
  </customwidgets>
  <resources/>
