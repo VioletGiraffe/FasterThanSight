@@ -31,6 +31,7 @@ public slots:
 
 	const QFont& font() const;
 	void setFont(const QFont& font);
+	void setFontSizePoints(int pointSize);
 
 protected:
 	void paint(QPainter *painter) override;

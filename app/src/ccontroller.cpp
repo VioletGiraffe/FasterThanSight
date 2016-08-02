@@ -58,27 +58,15 @@ void CController::setClearScreenAfterSentenceEnd(bool clear)
 
 void CController::setFontSize(int points)
 {
-	CSettings s;
-	// Using the fact that QFont() is guaranteed to construct an object with the system default font settings
-	const int originalSize = s.value(UI_FONT_SIZE_SETTING, QFont().pointSize()).toInt();
 	points = Math::clamp(6, points, 400);
 
-	s.setValue(UI_FONT_SIZE_SETTING, points);
+	CSettings().setValue(UI_FONT_SIZE_SETTING, points);
 	emit fontSizeChanged(points);
-}
-
-void CController::setFontZoom(float zoomFactor)
-{
-	// Using the fact that QFont() is guaranteed to construct an object with the system default font settings
-	const int originalSize = fontSizePoints();
-	const int textSizePoints = Math::clamp(6, Math::round<int>(originalSize * zoomFactor), 400);
-
-	setFontSize(textSizePoints);
 }
 
 int CController::fontSizePoints() const
 {
-	return CSettings().value(UI_FONT_SIZE_SETTING, QFont().pointSize()).toInt();
+	return CSettings().value(UI_FONT_SIZE_SETTING, 28).toInt();
 }
 
 const std::deque<CBookmark>& CController::bookmarks() const

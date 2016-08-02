@@ -8,9 +8,6 @@ ApplicationWindow {
     visible: true
     title: "Faster Than Sight"
 
-    // Initialization
-    Component.onCompleted: controller.openLastPosition()
-
     ColumnLayout {
         spacing: 0
         anchors.fill: parent
@@ -19,15 +16,40 @@ ApplicationWindow {
             anchors.fill: parent
             id: readerView
 
-            MouseArea {
+            // Initialization
+            Component.onCompleted: {
+                controller.setFontSize(controller.fontSizePoints())
+                controller.openLastPosition()
+            }
+
+//            MouseArea {
+//                anchors.fill: parent
+//                onClicked: controller.togglePause()
+//            }
+
+            PinchArea {
                 anchors.fill: parent
-                onClicked: controller.togglePause()
+
+                property int textPointSize
+
+                onPinchStarted: textPointSize = controller.fontSizePoints()
+                onPinchUpdated: controller.setFontSize(textPointSize * pinch.scale)
             }
 
             Connections {
                 target: controller
-                onOnDisplayUpdateRequired: readerView.setText(text, showPivot, pivotCharacterIndex)
+                onDisplayUpdateRequired: readerView.setText(text, showPivot, pivotCharacterIndex)
+                onFontSizeChanged: readerView.setFontSizePoints(pointSize)
+                onReaderStateChanged: btnPauseResume.text = state == 0 ? "Start" : "Pause"
             }
+        }
+
+        Button {
+            width: 64
+            height: 64
+            id: btnPauseResume
+            text: "Start"
+            onClicked: controller.togglePause()
         }
     }
 }

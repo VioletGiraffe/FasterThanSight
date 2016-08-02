@@ -95,6 +95,14 @@ void CReaderView::setFont(const QFont& font)
 	update();
 }
 
+void CReaderView::setFontSizePoints(int pointSize)
+{
+	qDebug() << pointSize;
+	QFont f = font();
+	f.setPointSize(pointSize);
+	setFont(f);
+}
+
 inline QString coloredHtmlText(const QString& text, const QColor& color)
 {
 	return "<font color=\"" % color.name() % "\">" % text % "</font>";

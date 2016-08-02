@@ -58,11 +58,7 @@ CMainWindow::CMainWindow(QWidget *parent) :
 	connect(&_controller, &CController::chapterProgressUpdated, this, &CMainWindow::onChapterProgressUpdated);
 	connect(&_controller, &CController::readerStateChanged, this, &CMainWindow::onReaderStateChanged);
 	connect(&_controller, &CController::fileOpened, this, &CMainWindow::onFileOpened);
-	connect(&_controller, &CController::fontSizeChanged, [this](int pointSize){
-		QFont f = ui->_text->readerFont();
-		f.setPointSize(pointSize);
-		ui->_text->setReaderFont(f);
-	});
+	connect(&_controller, &CController::fontSizeChanged, ui->_text->readerView(), &CReaderView::setFontSizePoints);
 
 	setUnifiedTitleAndToolBarOnMac(true);
 	setAcceptDrops(true);
@@ -180,7 +176,7 @@ void CMainWindow::initToolBars()
 	textFont.setFamily(s.value(UI_FONT_FAMILY, textFont.family()).toString());
 	textFont.setStyle((QFont::Style)s.value(UI_FONT_STYLE, textFont.style()).toInt());
 	textFont.setWeight((QFont::Weight)s.value(UI_FONT_WEIGHT, textFont.weight()).toInt());
-	ui->_text->setReaderFont(textFont);
+	ui->_text->readerView()->setFont(textFont);
 
 	// Font size
 	_textSizeSlider = new QSlider(Qt::Horizontal);
@@ -230,9 +226,9 @@ void CMainWindow::initToolBars()
 void CMainWindow::initActions()
 {
 	connect(ui->action_Font, &QAction::triggered, [this](){
-		QFontDialog fontDialog(ui->_text->readerFont(), this);
+		QFontDialog fontDialog(ui->_text->readerView()->font(), this);
 		connect(&fontDialog, &QFontDialog::fontSelected, [this](const QFont &font){
-			ui->_text->setReaderFont(font);
+			ui->_text->readerView()->setFont(font);
 			_textSizeSlider->setValue(font.pointSize());
 			CSettings().setValue(UI_FONT_STYLE, font.style());
 			CSettings().setValue(UI_FONT_WEIGHT, font.weight());

@@ -14,7 +14,4 @@ public:
 	explicit CReaderViewWidget(QWidget *parent = nullptr);
 
 	CReaderView* readerView() const;
-
-	const QFont& readerFont() const;
-	void setReaderFont(const QFont& font);
 };

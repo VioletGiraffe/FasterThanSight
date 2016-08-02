@@ -26,7 +26,6 @@ public slots:
 	void setClearScreenAfterSentenceEnd(bool clear);
 
 	void setFontSize(int points);
-	void setFontZoom(float zoomFactor);
 	int fontSizePoints() const;
 
 	const std::deque<CBookmark>& bookmarks() const;
@@ -75,7 +74,7 @@ private:
 
 signals:
 	void displayUpdateRequired(QString text, bool showPivot, int pivotCharacterIndex);
-	void fontSizeChanged(int points);
+	void fontSizeChanged(int pointSize);
 
 	void chapterProgressUpdated(int progressPercentage, QString chapterProgressDescription);
 	void globalProgressDescriptionUpdated(QString progressDescription);
