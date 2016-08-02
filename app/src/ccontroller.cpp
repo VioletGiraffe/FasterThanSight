@@ -180,10 +180,14 @@ const CStructuredText& CController::text() const
 
 void CController::saveState()
 {
-	qDebug() << "CController::saveState()" << _reader.filePath();
 	_reader.pauseReading();
 	if (!_reader.filePath().isEmpty())
 		_recentFiles.updateWith(_reader.filePath(), _reader.position());
+}
+
+void CController::log(const QString &message)
+{
+	qDebug() << message;
 }
 
 void CController::loadBookmarksFromSettings()
@@ -211,7 +215,7 @@ void CController::updateDisplay(const size_t currentTextFragmentIndex)
 		:
 		-1;
 
-	emit onDisplayUpdateRequired(currentFragment._textFragment.text(), _showPivot, pivot);
+	emit onDisplayUpdateRequired(currentFragment._textFragment.text(), _showPivot && pivot >= 0, pivot);
 
 	const auto chapterProgress = _reader.currentChapterProgress();
 	const QString chapterProgressDescription = tr("%1 out of %2 words read in this chapter\n%3 remaining")

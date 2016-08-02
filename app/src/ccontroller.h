@@ -58,6 +58,8 @@ public slots:
 
 	void saveState();
 
+	void log(const QString& message);
+
 private:
 	void loadBookmarksFromSettings();
 	void saveBookmarksToSettings() const;
