@@ -31,6 +31,7 @@ public slots:
 	bool bookmarkCurrentPosition();
 	void updateBookmarks(const std::deque<CBookmark>& newBookmarks);
 
+	void openLastPosition();
 	void openBookmark(const CBookmark& bookmark);
 	void openFile(const QString& filePath, size_t position);
 
@@ -54,6 +55,8 @@ public slots:
 	void goToWord(size_t wordIndex);
 
 	const CStructuredText& text() const;
+
+	void saveState();
 
 private:
 	void loadBookmarksFromSettings();

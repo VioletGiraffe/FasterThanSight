@@ -20,6 +20,7 @@ public:
 	explicit CReaderView(QQuickItem *parent = nullptr);
 	~CReaderView();
 
+public slots:
 	QString text() const;
 	void setText(const QString& newText, bool showPivot, int pivotCharacterIndex);
 	void clear();

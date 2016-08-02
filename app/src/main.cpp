@@ -16,6 +16,7 @@ DISABLE_COMPILER_WARNINGS
 
 #ifdef MOBILE_PLATFORM
 #include <QQmlApplicationEngine>
+#include <QQmlContext>
 #endif
 
 RESTORE_COMPILER_WARNINGS
@@ -58,10 +59,18 @@ int main(int argc, char *argv[])
 	CSettings::setOrganizationName(app.organizationName());
 
 #ifdef MOBILE_PLATFORM
+	qmlRegisterType<CController>("Controller", 1, 0, "CController");
+
 	QQmlApplicationEngine engine;
 	engine.load(QUrl(QLatin1String("qrc:/main.qml")));
 
 	CController controller;
+	engine.rootContext()->setContextProperty("controller", &controller);
+
+	app.connect(&app, &QApplication::applicationStateChanged, [&controller](Qt::ApplicationState state){
+		if (state != Qt::ApplicationActive)
+			controller.saveState();
+	});
 
 #ifdef Q_OS_ANDROID
 	CAndroidNativeHelper nativeHelper(controller);

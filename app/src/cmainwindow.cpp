@@ -71,8 +71,7 @@ CMainWindow::CMainWindow(QWidget *parent) :
 	updateBookmarksMenuItemsList();
 
 	updateRecentFilesMenu();
-	if (!_controller.recentLocations().empty())
-		_controller.openBookmark(_controller.recentLocations().front());
+	_controller.openLastPosition();
 }
 
 CMainWindow::~CMainWindow()
@@ -190,7 +189,7 @@ void CMainWindow::initToolBars()
 		CSettings().setValue(UI_FONT_SIZE_SETTING, size);
 	});
 	// Updating the font size
-	_textSizeSlider->setValue(s.value(UI_FONT_SIZE_SETTING, UI_FONT_SIZE_DEFAULT).toInt());	
+	_textSizeSlider->setValue(s.value(UI_FONT_SIZE_SETTING, UI_FONT_SIZE_DEFAULT).toInt());
 
 	_readingSettingsToolbar->addWidget(new QLabel(tr("Text size") + "  "));
 	_readingSettingsToolbar->addWidget(_textSizeSlider);

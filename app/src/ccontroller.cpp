@@ -5,6 +5,7 @@
 #include "uihelpers.h"
 
 DISABLE_COMPILER_WARNINGS
+#include <QDebug>
 #include <QFileInfo>
 RESTORE_COMPILER_WARNINGS
 
@@ -20,9 +21,7 @@ CController::CController() : _reader(this)
 
 CController::~CController()
 {
-	_reader.pauseReading();
-	if (!_reader.filePath().isEmpty())
-		_recentFiles.updateWith(_reader.filePath(), _reader.position());
+	saveState();
 }
 
 void CController::settingsChanged()
@@ -77,6 +76,12 @@ void CController::updateBookmarks(const std::deque<CBookmark>& newBookmarks)
 {
 	_bookmarks = newBookmarks;
 	saveBookmarksToSettings();
+}
+
+void CController::openLastPosition()
+{
+	if (!_recentFiles.items().empty())
+		openBookmark(_recentFiles.items().front());
 }
 
 void CController::openBookmark(const CBookmark& bookmark)
@@ -171,6 +176,14 @@ void CController::goToWord(size_t wordIndex)
 const CStructuredText& CController::text() const
 {
 	return _reader.text();
+}
+
+void CController::saveState()
+{
+	qDebug() << "CController::saveState()" << _reader.filePath();
+	_reader.pauseReading();
+	if (!_reader.filePath().isEmpty())
+		_recentFiles.updateWith(_reader.filePath(), _reader.position());
 }
 
 void CController::loadBookmarksFromSettings()
