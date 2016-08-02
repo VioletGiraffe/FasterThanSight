@@ -25,6 +25,10 @@ public slots:
 	void setShowPivot(bool show);
 	void setClearScreenAfterSentenceEnd(bool clear);
 
+	void setFontSize(int points);
+	void setFontZoom(float zoomFactor);
+	int fontSizePoints() const;
+
 	const std::deque<CBookmark>& bookmarks() const;
 	void addBookmark(const QString& path, const size_t position);
 	// Returns true on success, false if nothing was opened
@@ -70,14 +74,15 @@ private:
 	void stateChanged(const CReader::State newState) override;
 
 signals:
-	void onDisplayUpdateRequired(QString text, bool showPivot, int pivotCharacterIndex);
+	void displayUpdateRequired(QString text, bool showPivot, int pivotCharacterIndex);
+	void fontSizeChanged(int points);
 
-	void onChapterProgressUpdated(int progressPercentage, QString chapterProgressDescription);
-	void onGlobalProgressDescriptionUpdated(QString progressDescription);
+	void chapterProgressUpdated(int progressPercentage, QString chapterProgressDescription);
+	void globalProgressDescriptionUpdated(QString progressDescription);
 
-	void onReaderStateChanged(CReader::State state);
+	void readerStateChanged(CReader::State state);
 
-	void onFileOpened(bool success, QString shortFileName);
+	void fileOpened(bool success, QString shortFileName);
 
 private:
 	// Reader

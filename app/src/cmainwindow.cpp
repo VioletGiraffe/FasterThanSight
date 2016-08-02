@@ -53,11 +53,16 @@ CMainWindow::CMainWindow(QWidget *parent) :
 {
 	ui->setupUi(this);
 
-	connect(&_controller, &CController::onDisplayUpdateRequired, this, &CMainWindow::onDisplayUpdateRequired);
-	connect(&_controller, &CController::onGlobalProgressDescriptionUpdated, this, &CMainWindow::onGlobalProgressDescriptionUpdated);
-	connect(&_controller, &CController::onChapterProgressUpdated, this, &CMainWindow::onChapterProgressUpdated);
-	connect(&_controller, &CController::onReaderStateChanged, this, &CMainWindow::onReaderStateChanged);
-	connect(&_controller, &CController::onFileOpened, this, &CMainWindow::onFileOpened);
+	connect(&_controller, &CController::displayUpdateRequired, this, &CMainWindow::onDisplayUpdateRequired);
+	connect(&_controller, &CController::globalProgressDescriptionUpdated, this, &CMainWindow::onGlobalProgressDescriptionUpdated);
+	connect(&_controller, &CController::chapterProgressUpdated, this, &CMainWindow::onChapterProgressUpdated);
+	connect(&_controller, &CController::readerStateChanged, this, &CMainWindow::onReaderStateChanged);
+	connect(&_controller, &CController::fileOpened, this, &CMainWindow::onFileOpened);
+	connect(&_controller, &CController::fontSizeChanged, [this](int pointSize){
+		QFont f = ui->_text->readerFont();
+		f.setPointSize(pointSize);
+		ui->_text->setReaderFont(f);
+	});
 
 	setUnifiedTitleAndToolBarOnMac(true);
 	setAcceptDrops(true);
@@ -181,15 +186,9 @@ void CMainWindow::initToolBars()
 	_textSizeSlider = new QSlider(Qt::Horizontal);
 	_textSizeSlider->setMinimum(20);
 	_textSizeSlider->setMaximum(300);
-	connect(_textSizeSlider, &QSlider::valueChanged, [this](int size) {
-		QFont font = ui->_text->readerFont();
-		font.setPointSize(size);
-		ui->_text->setReaderFont(font);
-
-		CSettings().setValue(UI_FONT_SIZE_SETTING, size);
-	});
+	connect(_textSizeSlider, &QSlider::valueChanged, &_controller, &CController::setFontSize);
 	// Updating the font size
-	_textSizeSlider->setValue(s.value(UI_FONT_SIZE_SETTING, UI_FONT_SIZE_DEFAULT).toInt());
+	_textSizeSlider->setValue(_controller.fontSizePoints());
 
 	_readingSettingsToolbar->addWidget(new QLabel(tr("Text size") + "  "));
 	_readingSettingsToolbar->addWidget(_textSizeSlider);

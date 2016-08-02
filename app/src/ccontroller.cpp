@@ -3,11 +3,15 @@
 #include "settings/csettings.h"
 #include "uisettings.h"
 #include "uihelpers.h"
+#include "math/math.hpp"
 
 DISABLE_COMPILER_WARNINGS
 #include <QDebug>
 #include <QFileInfo>
+#include <QFont>
 RESTORE_COMPILER_WARNINGS
+
+#include <math.h>
 
 CController::CController() : _reader(this)
 {
@@ -50,6 +54,31 @@ void CController::setClearScreenAfterSentenceEnd(bool clear)
 {
 	CSettings().setValue(UI_CLEAR_SCREEN_AFTER_SENTENCE_END, clear);
 	_reader.setClearScreenAfterSentenceEnd(clear);
+}
+
+void CController::setFontSize(int points)
+{
+	CSettings s;
+	// Using the fact that QFont() is guaranteed to construct an object with the system default font settings
+	const int originalSize = s.value(UI_FONT_SIZE_SETTING, QFont().pointSize()).toInt();
+	points = Math::clamp(6, points, 400);
+
+	s.setValue(UI_FONT_SIZE_SETTING, points);
+	emit fontSizeChanged(points);
+}
+
+void CController::setFontZoom(float zoomFactor)
+{
+	// Using the fact that QFont() is guaranteed to construct an object with the system default font settings
+	const int originalSize = fontSizePoints();
+	const int textSizePoints = Math::clamp(6, Math::round<int>(originalSize * zoomFactor), 400);
+
+	setFontSize(textSizePoints);
+}
+
+int CController::fontSizePoints() const
+{
+	return CSettings().value(UI_FONT_SIZE_SETTING, QFont().pointSize()).toInt();
 }
 
 const std::deque<CBookmark>& CController::bookmarks() const
@@ -102,10 +131,10 @@ void CController::openFile(const QString &filePath, size_t position)
 
 		CSettings().setValue(UI_OPEN_FILE_LAST_USED_DIR_SETTING, filePath);
 
-		emit onFileOpened(true, QFileInfo(filePath).baseName());
+		emit fileOpened(true, QFileInfo(filePath).baseName());
 	}
 	else
-		emit onFileOpened(false, QString());
+		emit fileOpened(false, QString());
 }
 
 const std::deque<CBookmark>& CController::recentLocations() const
@@ -215,7 +244,7 @@ void CController::updateDisplay(const size_t currentTextFragmentIndex)
 		:
 		-1;
 
-	emit onDisplayUpdateRequired(currentFragment._textFragment.text(), _showPivot && pivot >= 0, pivot);
+	emit displayUpdateRequired(currentFragment._textFragment.text(), _showPivot && pivot >= 0, pivot);
 
 	const auto chapterProgress = _reader.currentChapterProgress();
 	const QString chapterProgressDescription = tr("%1 out of %2 words read in this chapter\n%3 remaining")
@@ -223,14 +252,14 @@ void CController::updateDisplay(const size_t currentTextFragmentIndex)
 		.arg(chapterProgress.totalNumWords)
 		.arg(secondsToHhhMmSs(_reader.currentChapterTimeRemainingSeconds()));
 
-	emit onChapterProgressUpdated(chapterProgress.progressPercentage(), chapterProgressDescription);
+	emit chapterProgressUpdated(chapterProgress.progressPercentage(), chapterProgressDescription);
 }
 
 void CController::updateInfo()
 {
 	if (_reader.state() != CReader::Finished)
 	{
-		emit onGlobalProgressDescriptionUpdated(
+		emit globalProgressDescriptionUpdated(
 			tr("Reading word %1 out of %2 total (%3%); estimated time remaining: %4")
 			.arg(_reader.totalNumWords() > 0 ? _reader.position() + 1 : 0)
 			.arg(_reader.totalNumWords())
@@ -239,12 +268,12 @@ void CController::updateInfo()
 	}
 	else
 	{
-		emit onGlobalProgressDescriptionUpdated(tr("Reading finished"));
-		emit onChapterProgressUpdated(100, tr("Reading finished"));
+		emit globalProgressDescriptionUpdated(tr("Reading finished"));
+		emit chapterProgressUpdated(100, tr("Reading finished"));
 	}
 }
 
 void CController::stateChanged(const CReader::State newState)
 {
-	emit onReaderStateChanged(newState);
+	emit readerStateChanged(newState);
 }

@@ -1,6 +1,6 @@
 #include "cstructuredtext.h"
 #include "assert/advanced_assert.h"
-#include "container/algorithms.h"
+#include "container/algorithms.hpp"
 
 #include <algorithm>
 #include <numeric>

@@ -2,7 +2,7 @@
 #include "text/cstructuredtext.h"
 #include "system/ctimeelapsed.h"
 #include "../ccontroller.h"
-#include "container/algorithms.h"
+#include "container/algorithms.hpp"
 #include "../styling/cthemeprovider.h"
 
 DISABLE_COMPILER_WARNINGS

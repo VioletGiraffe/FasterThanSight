@@ -1,7 +1,7 @@
 #pragma once
 
 #include "ctextfragment.h"
-#include "container/iterator_helpers.h"
+#include "container/iterator_helpers.hpp"
 #include "cchapter.h"
 
 #include <vector>
