@@ -11,25 +11,23 @@ ApplicationWindow {
     // Initialization
     Component.onCompleted: controller.openLastPosition()
 
-    MouseArea {
-        anchors.fill: parent
-
-        onClicked: {
-            console.log("onClicked!")
-            controller.togglePause()
-        }
-    }
-
     ColumnLayout {
         spacing: 0
         anchors.fill: parent
 
         CReaderView {
             anchors.fill: parent
+            id: readerView
 
-            objectName: "_readerView"
+            MouseArea {
+                anchors.fill: parent
+                onClicked: controller.togglePause()
+            }
 
-            controller.onOnDisplayUpdateRequired: setText()
+            Connections {
+                target: controller
+                onOnDisplayUpdateRequired: readerView.setText(text, showPivot, pivotCharacterIndex)
+            }
         }
     }
 }

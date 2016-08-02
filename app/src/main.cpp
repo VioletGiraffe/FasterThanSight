@@ -62,10 +62,11 @@ int main(int argc, char *argv[])
 	qmlRegisterType<CController>("Controller", 1, 0, "CController");
 
 	QQmlApplicationEngine engine;
-	engine.load(QUrl(QLatin1String("qrc:/main.qml")));
 
 	CController controller;
 	engine.rootContext()->setContextProperty("controller", &controller);
+
+	engine.load(QUrl(QLatin1String("qrc:/main.qml")));
 
 	app.connect(&app, &QApplication::applicationStateChanged, [&controller](Qt::ApplicationState state){
 		if (state != Qt::ApplicationActive)

@@ -33,7 +33,8 @@ public class FasterThanSightActivity extends QtActivity {
 		String action = intent.getAction();
 		String type = intent.getType();
 
-		Log.e("FasterThanSight.handleIntent", "Intent action: " + action + ", type: " + type);
+		if (action != null)
+			Log.d("FasterThanSight.handleIntent", "Intent action: " + action + ", type: " + type);
 
 		if (Intent.ACTION_VIEW.equals(action) && type != null && "text/plain".equals(type)) {
 			Uri uri = intent.getData();
