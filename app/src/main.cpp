@@ -17,6 +17,7 @@ DISABLE_COMPILER_WARNINGS
 #ifdef MOBILE_PLATFORM
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
+#include <QQuickStyle>
 #endif
 
 RESTORE_COMPILER_WARNINGS
@@ -59,6 +60,8 @@ int main(int argc, char *argv[])
 	CSettings::setOrganizationName(app.organizationName());
 
 #ifdef MOBILE_PLATFORM
+	QQuickStyle::setStyle("Material");
+
 	qmlRegisterType<CController>("Controller", 1, 0, "CController");
 
 	QQmlApplicationEngine engine;

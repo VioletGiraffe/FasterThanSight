@@ -9,7 +9,7 @@ android*|ios*{
 !mobile{
 	QT += widgets
 } else {
-	QT += quick
+	QT += quick quickcontrols2
 }
 
 TARGET = FasterThanSight
