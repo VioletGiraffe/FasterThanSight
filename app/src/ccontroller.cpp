@@ -95,18 +95,17 @@ void CController::updateBookmarks(const std::deque<CBookmark>& newBookmarks)
 	saveBookmarksToSettings();
 }
 
-void CController::openLastPosition()
+bool CController::openLastPosition()
 {
-	if (!_recentFiles.items().empty())
-		openBookmark(_recentFiles.items().front());
+	return !_recentFiles.items().empty() ? openBookmark(_recentFiles.items().front()) : false;
 }
 
-void CController::openBookmark(const CBookmark& bookmark)
+bool CController::openBookmark(const CBookmark& bookmark)
 {
-	openFile(bookmark.filePath, bookmark.wordIndex);
+	return openFile(bookmark.filePath, bookmark.wordIndex);
 }
 
-void CController::openFile(const QString &filePath, size_t position)
+bool CController::openFile(const QString &filePath, size_t position)
 {
 	const CBookmark lastPosition(_reader.filePath(), _reader.position());
 	if (!filePath.isEmpty() && _reader.loadFromFile(filePath))
@@ -120,9 +119,11 @@ void CController::openFile(const QString &filePath, size_t position)
 		CSettings().setValue(UI_OPEN_FILE_LAST_USED_DIR_SETTING, filePath);
 
 		emit fileOpened(true, QFileInfo(filePath).baseName());
+		return true;
 	}
-	else
-		emit fileOpened(false, QString());
+
+	emit fileOpened(false, QString());
+	return false;
 }
 
 const std::deque<CBookmark>& CController::recentLocations() const
@@ -264,4 +265,5 @@ void CController::updateInfo()
 void CController::stateChanged(const CReader::State newState)
 {
 	emit readerStateChanged(newState);
+	emit readerStateChangedInt(newState);
 }

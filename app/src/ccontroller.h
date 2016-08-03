@@ -34,9 +34,9 @@ public slots:
 	bool bookmarkCurrentPosition();
 	void updateBookmarks(const std::deque<CBookmark>& newBookmarks);
 
-	void openLastPosition();
-	void openBookmark(const CBookmark& bookmark);
-	void openFile(const QString& filePath, size_t position);
+	bool openLastPosition();
+	bool openBookmark(const CBookmark& bookmark);
+	bool openFile(const QString& filePath, size_t position);
 
 	const std::deque<CBookmark>& recentLocations() const;
 
@@ -80,6 +80,8 @@ signals:
 	void globalProgressDescriptionUpdated(QString progressDescription);
 
 	void readerStateChanged(CReader::State state);
+	// Can be used in QML to avoid having to register the CReader::State type
+	void readerStateChangedInt(int state);
 
 	void fileOpened(bool success, QString shortFileName);
 
