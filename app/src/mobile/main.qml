@@ -17,17 +17,29 @@ ApplicationWindow {
     header: ToolBar {
         id: toolBar
 
-        Slider {
+        RowLayout {
             anchors.fill: parent
 
-            id: wpmSlider
+            Slider {
+                Layout.fillWidth: true
 
-            from: 100
-            to: 800
-            stepSize: 5
-            value: controller.readingSpeed()
+                id: wpmSlider
 
-            onValueChanged: controller.setReadingSpeed(value)
+                from: 100
+                to: 800
+                stepSize: 5
+                value: controller.readingSpeed()
+
+                onValueChanged: {
+                    wpmLabel.text = value
+                    controller.setReadingSpeed(value)
+                }
+            }
+
+            Label {
+                id: wpmLabel
+                text: controller.readingSpeed()
+            }
         }
     }
 
@@ -105,6 +117,7 @@ ApplicationWindow {
 
         Button {
             id: btnPauseResume
+            font.pointSize: 28
             text: "Start"
             onClicked: controller.togglePause()
         }

@@ -7,6 +7,7 @@
 #include "cpausehandler.h"
 
 #include <math.h>
+#include <stdint.h>
 
 #include <algorithm>
 #include <map>
