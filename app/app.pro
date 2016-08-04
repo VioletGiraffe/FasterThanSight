@@ -60,7 +60,7 @@ linux*|mac*{
 	Release:DEFINES += NDEBUG=1
 	Debug:DEFINES += _DEBUG
 
-	PRE_TARGETDEPS += $${DESTDIR}/libcore.a $${DESTDIR}/libcpputils.a $${DESTDIR}/libqtutils.a $${DESTDIR}/libautoupdater.a
+	PRE_TARGETDEPS += $${DESTDIR}/libcore.a $${DESTDIR}/libcpputils.a $${DESTDIR}/libqtutils.a
 }
 
 win32*:!*msvc2012:*msvc* {

@@ -54,4 +54,13 @@ android {
     lintOptions {
         abortOnError false
     }
+
+    signingConfigs {
+        debug {
+            storeFile file('debug_keystore.jks')
+            storePassword "123456"
+            keyAlias "debug"
+            keyPassword "123456"
+        }
+    }
 }
