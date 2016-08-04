@@ -7,8 +7,8 @@ import Controller 1.0
 
 ApplicationWindow {
     Material.theme: Material.Dark
-    Material.accent: "#FFFFC000"
-    Material.primary: "#80000000"
+    Material.accent: themeProvider.pivotColor()
+    Material.primary: ((themeProvider.backgroundColor().r + themeProvider.backgroundColor().g + themeProvider.backgroundColor().b) / 3 < 0.5) ? "#FFFFFFFF" : "#80000000"
 
     id: window
     visible: true
@@ -16,6 +16,8 @@ ApplicationWindow {
 
     header: ToolBar {
         id: toolBar
+        property int defaultHeight
+        Component.onCompleted: defaultHeight = height;
 
         RowLayout {
             anchors.fill: parent
@@ -31,7 +33,7 @@ ApplicationWindow {
                 value: controller.readingSpeed()
 
                 onValueChanged: {
-                    wpmLabel.text = value
+                    wpmLabel.text = Math.round(value)
                     controller.setReadingSpeed(value)
                 }
             }
@@ -85,8 +87,10 @@ ApplicationWindow {
                 tapArea.enabled = reading
                 buttons.visible = !reading
 
-                toolBar.visible = !reading
-                statusBar.visible = !reading
+                window.header.visible = !reading
+                toolBar.height = reading ? 0 : toolBar.defaultHeight
+                window.footer.visible = !reading
+                statusBar.height = reading ? 0 : statusBar.defaultHeight
 
                 if (reading) {
                     btnPauseResume.text = "Pause"
@@ -135,5 +139,8 @@ ApplicationWindow {
 
     footer: ToolBar {
         id: statusBar
+
+        property int defaultHeight
+        Component.onCompleted: defaultHeight = height
     }
 }

@@ -138,6 +138,21 @@ void CThemeProvider::saveThemes() const
 	CSettings().setValue(CURRENT_THEME_SETTING, (qulonglong)_currentThemeIndex);
 }
 
+QColor CThemeProvider::pivotColor() const
+{
+	return currentTheme()._pivotColor;
+}
+
+QColor CThemeProvider::backgroundColor() const
+{
+	return currentTheme()._windowBgColor;
+}
+
+QColor CThemeProvider::textColor() const
+{
+	return currentTheme()._textColor;
+}
+
 
 
 

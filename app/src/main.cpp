@@ -1,6 +1,7 @@
 #include "assert/advanced_assert.h"
 #include "settings/csettings.h"
 #include "QML/creaderview.h"
+#include "styling/cthemeprovider.h"
 #include "logger.h"
 
 #ifndef MOBILE_PLATFORM
@@ -66,11 +67,13 @@ int main(int argc, char *argv[])
 	QQuickStyle::setStyle("Material");
 
 	qmlRegisterType<CController>("Controller", 1, 0, "CController");
+	qmlRegisterType<CThemeProvider>("ThemeProvider", 1, 0, "CThemeProvider");
 
 	QQmlApplicationEngine engine;
 
 	CController controller;
 	engine.rootContext()->setContextProperty("controller", &controller);
+	engine.rootContext()->setContextProperty("themeProvider", &CThemeProvider::instance());
 
 	engine.load(QUrl(QLatin1String("qrc:/main.qml")));
 

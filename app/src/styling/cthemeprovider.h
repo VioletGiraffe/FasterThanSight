@@ -29,6 +29,7 @@ public:
 		QString toString() const;
 	};
 
+	CThemeProvider(); // The default constructor cannot be private because then it would be impossible to register this type in QML
 	static CThemeProvider& instance();
 
 	size_t currentThemeIndex() const;
@@ -48,11 +49,13 @@ public:
 	void notifyThemeChanged();
 	void saveThemes() const;
 
+	// Helper methods for styling the QML UI
+	Q_INVOKABLE QColor pivotColor() const;
+	Q_INVOKABLE QColor backgroundColor() const;
+	Q_INVOKABLE QColor textColor() const;
+
 signals:
 	void currentThemeChanged();
-
-private:
-	CThemeProvider();
 
 private:
 	std::deque<Theme> _themes;
