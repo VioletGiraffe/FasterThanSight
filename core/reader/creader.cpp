@@ -232,7 +232,7 @@ size_t CReader::readingSpeed() const
 
 void CReader::setReadingSpeed(size_t wpm)
 {
-	CSettings().setValue(READER_READING_SPEED_SETTING, (quint64)wpm);
+	CSettings().setValue(READER_READING_SPEED_SETTING, (uint32_t)wpm);
 	_speedWpm = wpm;
 	updatePauseValues();
 }

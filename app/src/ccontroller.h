@@ -41,8 +41,8 @@ public slots:
 	const std::deque<CBookmark>& recentLocations() const;
 
 	// Reading process control
-	size_t readingSpeed() const;
-	void setReadingSpeed(size_t wpm);
+	int readingSpeed() const;
+	void setReadingSpeed(int wpm);
 
 	void togglePause();
 	void pauseReading();
@@ -53,9 +53,9 @@ public slots:
 	void toNextParagraph();
 	void toNextChapter();
 
-	size_t totalNumWords() const;
-	size_t position() const;
-	void goToWord(size_t wordIndex);
+	int totalNumWords() const;
+	int position() const;
+	void goToWord(int wordIndex);
 
 	const CStructuredText& text() const;
 

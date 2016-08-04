@@ -131,14 +131,14 @@ const std::deque<CBookmark>& CController::recentLocations() const
 	return _recentFiles.items();
 }
 
-size_t CController::readingSpeed() const
+int CController::readingSpeed() const
 {
-	return _reader.readingSpeed();
+	return (int)_reader.readingSpeed();
 }
 
-void CController::setReadingSpeed(size_t wpm)
+void CController::setReadingSpeed(int wpm)
 {
-	_reader.setReadingSpeed(wpm);
+	_reader.setReadingSpeed((size_t)wpm);
 }
 
 void CController::togglePause()
@@ -176,17 +176,17 @@ void CController::toNextChapter()
 	_reader.toNextChapter();
 }
 
-size_t CController::totalNumWords() const
+int CController::totalNumWords() const
 {
 	return _reader.totalNumWords();
 }
 
-size_t CController::position() const
+int CController::position() const
 {
 	return _reader.position();
 }
 
-void CController::goToWord(size_t wordIndex)
+void CController::goToWord(int wordIndex)
 {
 	_reader.goToWord(wordIndex);
 }
