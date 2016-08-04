@@ -97,7 +97,6 @@ void CReaderView::setFont(const QFont& font)
 
 void CReaderView::setFontSizePoints(int pointSize)
 {
-	qDebug() << pointSize;
 	QFont f = font();
 	f.setPointSize(pointSize);
 	setFont(f);

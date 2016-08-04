@@ -13,6 +13,7 @@
 DISABLE_COMPILER_WARNINGS
 #include <QApplication>
 #include <QDebug>
+#include <QStringBuilder>
 
 #ifdef MOBILE_PLATFORM
 #include <QQmlApplicationEngine>
@@ -29,11 +30,13 @@ inline void messageHandler(QtMsgType type, const QMessageLogContext& context, co
 	if (standardMessageHandler)
 		standardMessageHandler(type, context, msg);
 
-	loggerInstance().log(msg);
+	loggerInstance().log(qFormatLogMessage(type, context, msg));
 }
 
 int main(int argc, char *argv[])
 {
+	qSetMessagePattern("%{function} (%{file}:%{line}): %{message}");
+
 	DISABLE_COMPILER_WARNINGS
 	Q_INIT_RESOURCE(app_resources);
 	#ifdef MOBILE_PLATFORM

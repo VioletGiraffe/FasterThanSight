@@ -19,6 +19,9 @@ MOC_DIR     = ../build/$${OUTPUT_DIR}/core
 UI_DIR      = ../build/$${OUTPUT_DIR}/core
 RCC_DIR     = ../build/$${OUTPUT_DIR}/core
 
+# Required for qDebug() to log function name, file and line in release build
+DEFINES += QT_MESSAGELOGCONTEXT
+
 win*{
 	QMAKE_CXXFLAGS += /MP /wd4251
 	QMAKE_CXXFLAGS_WARN_ON = /W4

@@ -33,6 +33,9 @@ RCC_DIR     = ../build/$${OUTPUT_DIR}/app
 
 LIBS += -L../bin/$${OUTPUT_DIR} -lcore -lcpputils -lqtutils
 
+# Required for qDebug() to log function name, file and line in release build
+DEFINES += QT_MESSAGELOGCONTEXT
+
 !mobile{
 	LIBS += -lautoupdater
 
@@ -57,7 +60,7 @@ linux*|mac*{
 	Release:DEFINES += NDEBUG=1
 	Debug:DEFINES += _DEBUG
 
-	PRE_TARGETDEPS += $${DESTDIR}/libcore.a
+	PRE_TARGETDEPS += $${DESTDIR}/libcore.a $${DESTDIR}/libcpputils.a $${DESTDIR}/libqtutils.a $${DESTDIR}/libautoupdater.a
 }
 
 win32*:!*msvc2012:*msvc* {
