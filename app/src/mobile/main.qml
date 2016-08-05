@@ -6,148 +6,156 @@ import ReaderView 1.0
 import Controller 1.0
 
 ApplicationWindow {
-    Material.theme: Material.Dark
-    Material.accent: themeProvider.pivotColor()
-    //Material.primary: ((themeProvider.backgroundColor().r + themeProvider.backgroundColor().g + themeProvider.backgroundColor().b) / 3 < 0.5) ? "#10FFFFFF" : "#80000000"
-    Material.primary: Material.Lime
+	property color accentColor: themeProvider.pivotColor()
+	property color primaryColor: ((themeProvider.backgroundColor().r + themeProvider.backgroundColor().g + themeProvider.backgroundColor().b) / 3 < 0.5) ? Qt.lighter(themeProvider.backgroundColor(), 1.5) : Qt.darker(themeProvider.backgroundColor(), 1.5)
 
-    id: window
-    visible: true
-    title: "Faster Than Sight"
+	Material.theme: Material.Dark
+	Material.accent: accentColor
+	Material.primary: primaryColor
 
-    header: ToolBar {
-        id: toolBar
-        property int defaultHeight: window.header.height
+	property bool toolBarsVisible: true
 
-        RowLayout {
-            anchors.fill: parent
+	id: window
+	visible: true
+	title: "Faster Than Sight"
 
-            Slider {
-                Layout.fillWidth: true
+	header: toolBarsVisible ? toolBarLoader : null
 
-                id: wpmSlider
+	Loader {
+		id: toolBarLoader
+		sourceComponent: toolbarComponent
+	}
 
-                from: 100
-                to: 800
-                stepSize: 5
-                value: controller.readingSpeed()
+	Component {
+		id: toolbarComponent
 
-                onValueChanged: {
-                    wpmLabel.text = Math.round(value)
-                    controller.setReadingSpeed(value)
-                }
-            }
+		ToolBar {
 
-            Label {
-                id: wpmLabel
-                text: controller.readingSpeed()
-            }
+			RowLayout {
+				anchors.fill: parent
 
-            ToolButton {
-                anchors.leftMargin: 10
-                font.pointSize: 26
-                text: "≡"
-            }
-        }
-    }
+				Slider {
+					Layout.fillWidth: true
+					id: wpmSlider
 
-    CReaderView {
-        anchors.fill: parent
-        id: readerView
+					from: 100
+					to: 800
+					stepSize: 5
+					value: controller.readingSpeed()
 
-        // Initialization
-        Component.onCompleted: {
-            controller.setFontSize(controller.fontSizePoints())
-            readerView.setText(qsTr("Loading..."), false, -1);
+					onValueChanged: {
+						wpmLabel.text = Math.round(value)
+						controller.setReadingSpeed(value)
+					}
+				}
 
-            if (!controller.openLastPosition()) {
-                readerView.setText(qsTr("No text loaded."), false, -1);
-            }
-        }
+				Label {
+					id: wpmLabel
+					text: controller.readingSpeed()
+				}
 
-        PinchArea {
-            anchors.fill: parent
-            id: pinchArea
+				ToolButton {
+					anchors.leftMargin: 10
+					font.pointSize: 26
+					text: "≡"
+				}
+			}
+		}
+	}
 
-            property int textPointSize
+	CReaderView {
+		anchors.fill: parent
+		id: readerView
 
-            onPinchStarted: textPointSize = controller.fontSizePoints()
-            onPinchUpdated: controller.setFontSize(textPointSize * pinch.scale)
-        }
+		// Initialization
+		Component.onCompleted: {
+			controller.setFontSize(controller.fontSizePoints())
+			readerView.setText(qsTr("Loading..."), false, -1);
 
-        MouseArea {
-            anchors.fill: parent
-            id: tapArea
+			if (!controller.openLastPosition()) {
+				readerView.setText(qsTr("No text loaded."), false, -1);
+			}
+		}
 
-            onClicked: controller.pauseReading()
-        }
+		PinchArea {
+			anchors.fill: parent
+			id: pinchArea
 
-        Connections {
-            target: controller
-            onDisplayUpdateRequired: readerView.setText(text, showPivot, pivotCharacterIndex)
-            onFontSizeChanged: readerView.setFontSizePoints(pointSize)
-            onReaderStateChangedInt: {
-                var reading = state == 0
+			property int textPointSize
 
-                pinchArea.enabled = !reading;
-                tapArea.enabled = reading
-                buttons.visible = !reading
+			onPinchStarted: textPointSize = controller.fontSizePoints()
+			onPinchUpdated: controller.setFontSize(textPointSize * pinch.scale)
+		}
 
-                controller.log("Toolbar height:" + toolBar.defaultHeight)
+		MouseArea {
+			anchors.fill: parent
+			id: tapArea
 
-                window.header.visible = !reading
-                toolBar.height = reading ? 0 : toolBar.defaultHeight
-                window.footer.visible = !reading
-                statusBar.height = reading ? 0 : statusBar.defaultHeight
+			onClicked: controller.pauseReading()
+		}
 
-                if (reading) {
-                    btnPauseResume.text = "Pause"
-                }
-                else {
-                    btnPauseResume.text = "Start"
-                }
-            }
-        }
-    }
+		Connections {
+			target: controller
+			onDisplayUpdateRequired: readerView.setText(text, showPivot, pivotCharacterIndex)
+			onFontSizeChanged: readerView.setFontSizePoints(pointSize)
+			onReaderStateChangedInt: {
+				var reading = state == 0
 
-    RowLayout {
-        anchors.bottom: readerView.bottom
-        anchors.horizontalCenter: readerView.horizontalCenter
-        anchors.bottomMargin: 32
+				pinchArea.enabled = !reading;
+				tapArea.enabled = reading
+				buttons.visible = !reading
 
-        id: buttons
+				window.toolBarsVisible = !reading
+			}
+		}
+	}
 
-        Button {
-            text: "Prev. chapter"
-            onClicked: controller.toPreviousChapter()
-        }
+	RowLayout {
+		anchors.bottom: readerView.bottom
+		anchors.horizontalCenter: readerView.horizontalCenter
+		anchors.bottomMargin: 32
 
-        Button {
-            text: "Prev. paragraph"
-            onClicked: controller.toPreviousParagraph()
-        }
+		id: buttons
 
-        Button {
-            id: btnPauseResume
-            font.pointSize: 28
-            text: "Start"
-            onClicked: controller.togglePause()
-        }
+		Button {
+			text: "Prev. chapter"
+			onClicked: controller.toPreviousChapter()
+		}
 
-        Button {
-            text: "Next paragraph"
-            onClicked: controller.toNextParagraph()
-        }
+		Button {
+			text: "Prev. paragraph"
+			onClicked: controller.toPreviousParagraph()
+		}
 
-        Button {
-            text: "Next chapter"
-            onClicked: controller.toNextChapter()
-        }
-    }
+		Button {
+			id: btnPauseResume
+			font.pointSize: 28
+			text: "Start"
+			onClicked: controller.togglePause()
+		}
 
-    footer: ToolBar {
-        id: statusBar
+		Button {
+			text: "Next paragraph"
+			onClicked: controller.toNextParagraph()
+		}
 
-        property int defaultHeight: window.footer.height
-    }
+		Button {
+			text: "Next chapter"
+			onClicked: controller.toNextChapter()
+		}
+	}
+
+	footer: toolBarsVisible ? statusBarLoader : null
+
+	Loader {
+		id: statusBarLoader
+		sourceComponent: statusBarComponent
+	}
+
+	Component {
+		id: statusBarComponent
+
+		ToolBar {
+		}
+	}
 }
