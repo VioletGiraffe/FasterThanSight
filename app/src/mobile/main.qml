@@ -1,9 +1,12 @@
 import QtQuick 2.7
 import QtQuick.Controls 2.0
 import QtQuick.Layouts 1.3
+import QtQuick.Dialogs 1.2
 import QtQuick.Controls.Material 2.0
+
 import ReaderView 1.0
 import Controller 1.0
+import ThemeProvider 1.0
 
 ApplicationWindow {
 	property color accentColor: themeProvider.pivotColor()
@@ -55,9 +58,41 @@ ApplicationWindow {
 				}
 
 				ToolButton {
+					id: mainMenuButton
 					anchors.leftMargin: 10
 					font.pointSize: 26
 					text: "≡"
+
+					onClicked: mainMenu.open()
+				}
+
+				Menu {
+					id: mainMenu
+					y: mainMenuButton.height
+					x: mainMenuButton.x
+
+					MenuItem {
+						FileDialog {
+							id: openFileDIalog
+							title: "Pick a text file"
+							folder: shortcuts.home
+							onAccepted: {
+								controller.log("You chose: " + fileDialog.fileUrls)
+								Qt.quit()
+							}
+							onRejected: {
+								controller.log("Canceled")
+								Qt.quit()
+							}
+						}
+
+						text: "Open..."
+						onClicked: openFileDIalog.open()
+					}
+
+					MenuItem {
+						text: "Settings..."
+					}
 				}
 			}
 		}
