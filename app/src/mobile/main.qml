@@ -8,7 +8,8 @@ import Controller 1.0
 ApplicationWindow {
     Material.theme: Material.Dark
     Material.accent: themeProvider.pivotColor()
-    Material.primary: ((themeProvider.backgroundColor().r + themeProvider.backgroundColor().g + themeProvider.backgroundColor().b) / 3 < 0.5) ? "#FFFFFFFF" : "#80000000"
+    //Material.primary: ((themeProvider.backgroundColor().r + themeProvider.backgroundColor().g + themeProvider.backgroundColor().b) / 3 < 0.5) ? "#10FFFFFF" : "#80000000"
+    Material.primary: Material.Lime
 
     id: window
     visible: true
@@ -16,8 +17,7 @@ ApplicationWindow {
 
     header: ToolBar {
         id: toolBar
-        property int defaultHeight
-        Component.onCompleted: defaultHeight = height;
+        property int defaultHeight: window.header.height
 
         RowLayout {
             anchors.fill: parent
@@ -41,6 +41,12 @@ ApplicationWindow {
             Label {
                 id: wpmLabel
                 text: controller.readingSpeed()
+            }
+
+            ToolButton {
+                anchors.leftMargin: 10
+                font.pointSize: 26
+                text: "≡"
             }
         }
     }
@@ -86,6 +92,8 @@ ApplicationWindow {
                 pinchArea.enabled = !reading;
                 tapArea.enabled = reading
                 buttons.visible = !reading
+
+                controller.log("Toolbar height:" + toolBar.defaultHeight)
 
                 window.header.visible = !reading
                 toolBar.height = reading ? 0 : toolBar.defaultHeight
@@ -140,7 +148,6 @@ ApplicationWindow {
     footer: ToolBar {
         id: statusBar
 
-        property int defaultHeight
-        Component.onCompleted: defaultHeight = height
+        property int defaultHeight: window.footer.height
     }
 }
