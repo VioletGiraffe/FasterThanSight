@@ -13,6 +13,8 @@ class QSlider;
 class QSpinBox;
 class QToolBar;
 
+class CClickableLabel;
+
 namespace Ui {
 class CMainWindow;
 }
@@ -73,7 +75,8 @@ private:
 
 // Status bar widgets
 	QProgressBar * _chapterProgressBar = nullptr;
-	QLabel* _progressLabel = nullptr;
+	CClickableLabel* _progressLabel = nullptr;
+	enum { Chapter, Book } _statusBarDisplayMode = Book;
 
 // Settings
 	CThemesDialog _colorsSetupDialog;

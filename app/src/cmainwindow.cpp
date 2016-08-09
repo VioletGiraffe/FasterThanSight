@@ -8,6 +8,7 @@
 
 #include "QML/creaderview.h"
 #include "widgets/ctextbrowser.h"
+#include "widgets/cclickablelabel.h"
 #include "bookmarks/cbookmarkseditor.h"
 
 #include "settings/csettings.h"
@@ -364,9 +365,13 @@ void CMainWindow::initStatusBar()
 	_chapterProgressBar->setTextVisible(false);
 	bar->addWidget(_chapterProgressBar, 100);
 
-	_progressLabel = new QLabel(this);
+	_progressLabel = new CClickableLabel(this);
 	_progressLabel->setAlignment(Qt::AlignRight);
 	bar->addWidget(_progressLabel, 1);
+
+	connect(_progressLabel, &CClickableLabel::singleClicked, [this](){
+		_statusBarDisplayMode = _statusBarDisplayMode == Book ? Chapter : Book;
+	});
 }
 
 void CMainWindow::keepScreenFromTurningOff(bool keepFromTurningOff)
@@ -440,11 +445,15 @@ void CMainWindow::onChapterProgressUpdated(int progressPercentage, QString chapt
 {
 	_chapterProgressBar->setValue(progressPercentage);
 	_chapterProgressBar->setToolTip(chapterProgressDescription);
+
+	if (_statusBarDisplayMode == Chapter)
+		_progressLabel->setText(chapterProgressDescription.replace('\n', "; "));
 }
 
 void CMainWindow::onGlobalProgressDescriptionUpdated(QString progressDescription)
 {
-	_progressLabel->setText(progressDescription);
+	if (_statusBarDisplayMode == Book)
+		_progressLabel->setText(progressDescription);
 }
 
 void CMainWindow::onReaderStateChanged(CReader::State state)
