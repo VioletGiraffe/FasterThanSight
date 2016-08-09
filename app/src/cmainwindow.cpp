@@ -61,7 +61,8 @@ CMainWindow::CMainWindow(QWidget *parent) :
 	connect(&_controller, &CController::fileOpened, this, &CMainWindow::onFileOpened);
 	connect(&_controller, &CController::fontSizeChanged, ui->_text->readerView(), &CReaderView::setFontSizePoints);
 
-	setUnifiedTitleAndToolBarOnMac(true);
+	// Disabled due to Qt bug
+//	setUnifiedTitleAndToolBarOnMac(true);
 	setAcceptDrops(true);
 
 	ui->_text->installEventFilter(this);
