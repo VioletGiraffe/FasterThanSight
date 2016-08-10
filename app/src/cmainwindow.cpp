@@ -368,6 +368,7 @@ void CMainWindow::initStatusBar()
 
 	_progressLabel = new CClickableLabel(this);
 	_progressLabel->setAlignment(Qt::AlignRight);
+	_progressLabel->setToolTip(tr("Click here to toggle between chapter progress and book progress."));
 	bar->addWidget(_progressLabel, 1);
 
 	connect(_progressLabel, &CClickableLabel::singleClicked, [this](){
