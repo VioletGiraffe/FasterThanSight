@@ -13,7 +13,7 @@ class CAndroidNativeHelper : public QObject
 	Q_OBJECT
 
 public:
-	CAndroidNativeHelper(CController& controller);
+	explicit CAndroidNativeHelper(CController& controller);
 	~CAndroidNativeHelper();
 
 	CController& controller();
