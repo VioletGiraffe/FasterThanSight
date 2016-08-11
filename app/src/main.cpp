@@ -79,7 +79,7 @@ int main(int argc, char *argv[])
 
 	app.connect(&app, &QApplication::applicationStateChanged, [&controller](Qt::ApplicationState state){
 		if (state != Qt::ApplicationActive)
-			controller.saveState();
+			controller.pauseAndSaveState();
 	});
 
 #ifdef Q_OS_ANDROID

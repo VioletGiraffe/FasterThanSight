@@ -130,6 +130,15 @@ void CMainWindow::wheelEvent(QWheelEvent *event)
 		QMainWindow::wheelEvent(event);
 }
 
+bool CMainWindow::event(QEvent* e)
+{
+	if (e->type() == QEvent::WindowDeactivate)
+		_controller.pauseAndSaveState();
+
+
+	return QMainWindow::event(e);
+}
+
 bool CMainWindow::eventFilter(QObject* /*o*/, QEvent* e)
 {
 	switch (e->type())

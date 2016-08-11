@@ -59,7 +59,7 @@ public slots:
 
 	const CStructuredText& text() const;
 
-	void saveState();
+	void pauseAndSaveState();
 
 	void log(const QString& message);
 

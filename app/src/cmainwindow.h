@@ -34,6 +34,8 @@ protected:
 
 	void wheelEvent(QWheelEvent *event) override;
 
+	bool event(QEvent* e) override;
+
 	bool eventFilter(QObject* o, QEvent* e) override;
 
 private:

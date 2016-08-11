@@ -25,7 +25,7 @@ CController::CController() : _reader(this)
 
 CController::~CController()
 {
-	saveState();
+	pauseAndSaveState();
 }
 
 void CController::settingsChanged()
@@ -196,7 +196,7 @@ const CStructuredText& CController::text() const
 	return _reader.text();
 }
 
-void CController::saveState()
+void CController::pauseAndSaveState()
 {
 	_reader.pauseReading();
 	if (!_reader.filePath().isEmpty())
