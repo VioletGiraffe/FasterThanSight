@@ -373,7 +373,10 @@ void CMainWindow::initStatusBar()
 
 	connect(_progressLabel, &CClickableLabel::singleClicked, [this](){
 		_statusBarDisplayMode = _statusBarDisplayMode == Book ? Chapter : Book;
+		CSettings().setValue(UI_STATUSBAR_PROGRESS_MODE, _statusBarDisplayMode);
 	});
+
+	_statusBarDisplayMode = (ProgressDisplayMode)CSettings().value(UI_STATUSBAR_PROGRESS_MODE, UI_STATUSBAR_PROGRESS_MODE_DEFAULT).toInt();
 }
 
 void CMainWindow::keepScreenFromTurningOff(bool keepFromTurningOff)

@@ -76,7 +76,7 @@ private:
 // Status bar widgets
 	QProgressBar * _chapterProgressBar = nullptr;
 	CClickableLabel* _progressLabel = nullptr;
-	enum { Chapter, Book } _statusBarDisplayMode = Book;
+	enum ProgressDisplayMode { Chapter, Book } _statusBarDisplayMode = Book;
 
 // Settings
 	CThemesDialog _colorsSetupDialog;
