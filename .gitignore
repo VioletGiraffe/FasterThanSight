@@ -15,6 +15,10 @@ app/android/gradle.properties
 app/android/local.properties
 app/android-libFasterThanSight.so-deployment-settings.json
 
+#Android built binaries
+app_process
+libc.so
+
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
 
