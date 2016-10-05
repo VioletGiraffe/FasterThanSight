@@ -20,7 +20,7 @@ CReaderView::CReaderView(QQuickItem* parent) : QQuickPaintedItem(parent)
 	_textFadeOutAnimation->setEasingCurve(QEasingCurve::OutQuad);
 	_textFadeOutAnimation->setDuration(75);
 
-	connect(&CThemeProvider::instance(), &CThemeProvider::currentThemeChanged, [this](){
+	connect(&CThemeProvider::instance(), &CThemeProvider::currentThemeChanged, this, [this](){
 		update();
 	});
 }
