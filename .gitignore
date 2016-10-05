@@ -10,6 +10,11 @@
 *.vcxproj*
 *.VC.db
 
+#Auto-generated Android files
+app/android/gradle.properties
+app/android/local.properties
+app/android-libFasterThanSight.so-deployment-settings.json
+
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
 
