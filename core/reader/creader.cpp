@@ -25,7 +25,7 @@ CReader::CReader(ReaderInterface* interface) : _interface(interface)
 	CPauseHandler::instance().addOnPauseValuesChangedListener(this);
 
 	_readingTimer.setSingleShot(true);
-	QObject::connect(&_readingTimer, &QTimer::timeout, [this](){
+	QObject::connect(&_readingTimer, &QTimer::timeout, &_readingTimer, [this](){
 		readNextFragment();
 	});
 

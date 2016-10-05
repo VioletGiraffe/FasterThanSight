@@ -33,7 +33,7 @@ CSettingsPagePivot::CSettingsPagePivot(QWidget *parent) :
 	ui->_cbPivotCalculationMethod->addItem("Cubic root");
 	ui->_cbPivotCalculationMethod->addItem("Logarithm");
 
-	connect(ui->_cbPivotCalculationMethod, (void (QComboBox::*)(int))&QComboBox::currentIndexChanged, [this](int index){
+	connect(ui->_cbPivotCalculationMethod, (void (QComboBox::*)(int))&QComboBox::currentIndexChanged, this, [this](int index){
 		const TextFragment::PivotCalculationMethod method = (TextFragment::PivotCalculationMethod)index;
 		CReaderView* readerView = ui->_demo->readerView();
 		assert_and_return_r(readerView, );

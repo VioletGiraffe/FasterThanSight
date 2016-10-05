@@ -19,7 +19,7 @@ CThemesDialog::CThemesDialog(QWidget *parent) :
 {
 	ui->setupUi(this);
 
-	connect(ui->_cbTheme, (void (QComboBox::*)(int))&QComboBox::currentIndexChanged, [this](int index){
+	connect(ui->_cbTheme, (void (QComboBox::*)(int))&QComboBox::currentIndexChanged, this, [this](int index){
 		if (index < 0)
 			return;
 
@@ -36,12 +36,12 @@ CThemesDialog::CThemesDialog(QWidget *parent) :
 	connect(ui->_btnCopy, &QPushButton::clicked, this, &CThemesDialog::createNewTheme);
 	connect(ui->_btnDelete, &QPushButton::clicked, this, &CThemesDialog::deleteTheme);
 
-	connect(this, &QDialog::rejected, [this]() {
+	connect(this, &QDialog::rejected, this, [this]() {
 		CThemeProvider& themeProvider = CThemeProvider::instance();
 		themeProvider.setCurrentThemeIndex(themeProvider.acceptedThemeIndex());
 	});
 
-	connect(this, &QDialog::accepted, [](){
+	connect(this, &QDialog::accepted, this, [](){
 		CThemeProvider::instance().saveThemes();
 	});
 }
@@ -73,7 +73,7 @@ void CThemesDialog::initColorPicker(QToolButton* btn, QColor& color)
 
 	btn->disconnect();
 
-	connect(btn, &QToolButton::clicked, [this, &color, btn](){
+	connect(btn, &QToolButton::clicked, this, [this, &color, btn](){
 		const QColor c = QColorDialog::getColor(color, this, "Pick a color");
 		if (!c.isValid())
 			return;

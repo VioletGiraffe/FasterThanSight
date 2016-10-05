@@ -72,22 +72,21 @@ ApplicationWindow {
 					x: mainMenuButton.x
 
 					MenuItem {
-						FileDialog {
-							id: openFileDIalog
-							title: "Pick a text file"
-							folder: shortcuts.home
+						ColorDialog {
+							id: colorDialog
+							title: "Please choose a color"
 							onAccepted: {
-								controller.log("You chose: " + fileDialog.fileUrls)
+								console.log("You chose: " + colorDialog.color)
 								Qt.quit()
 							}
 							onRejected: {
-								controller.log("Canceled")
+								console.log("Canceled")
 								Qt.quit()
 							}
 						}
 
 						text: "Open..."
-						onClicked: openFileDIalog.open()
+						onClicked: colorDialog.open()
 					}
 
 					MenuItem {

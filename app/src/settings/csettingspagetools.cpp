@@ -13,7 +13,7 @@ CSettingsPageTools::CSettingsPageTools(QWidget *parent) :
 {
 	ui->setupUi(this);
 
-	connect(ui->_btnWipeSettings, &QPushButton::clicked, [this](){
+	connect(ui->_btnWipeSettings, &QPushButton::clicked, this, [this](){
 		CSettings().clear();
 		QMessageBox::information(this, tr("Settings have been wiped"), tr("Restart the application for the default settings to take effect."));
 	});

@@ -23,7 +23,7 @@ CTextBrowser::CTextBrowser(QWidget *parent, CController& controller) :
 	ui->_textView->verticalScrollBar()->installEventFilter(this);
 	ui->_textView->viewport()->installEventFilter(this);
 	ui->_textView->setContextMenuPolicy(Qt::CustomContextMenu);
-	connect(ui->_textView, &QWidget::customContextMenuRequested, [this](QPoint pos){
+	connect(ui->_textView, &QWidget::customContextMenuRequested, this, [this](QPoint pos){
 
 		if (_firstCharacterIndexForFragment.empty())
 			return;
@@ -34,7 +34,7 @@ CTextBrowser::CTextBrowser(QWidget *parent, CController& controller) :
 			_controller.goToWord(wordIndexForGlobalCoordinates(ui->_textView->mapToGlobal(pos)));
 	});
 
-	connect(ui->_chaptersList, &QListWidget::itemActivated, [this](const QListWidgetItem* item){
+	connect(ui->_chaptersList, &QListWidget::itemActivated, this, [this](const QListWidgetItem* item){
 		ui->_textView->moveCursor(QTextCursor::Start);
 		QTextCursor cursor = ui->_textView->textCursor();
 		CTimeElapsed t(true);

@@ -174,7 +174,7 @@ void CMainWindow::initToolBars()
 	_brightnessSlider = new QSlider(Qt::Horizontal);
 	_brightnessSlider->setMinimum(1);
 	_brightnessSlider->setMaximum(100);
-	connect(_brightnessSlider, &QSlider::valueChanged, [this](int value){
+	connect(_brightnessSlider, &QSlider::valueChanged, this, [this](int value){
 		CSettings().setValue(UI_BRIGHTNESS, value);
 		ui->_text->readerView()->setBrightnessPercentage(value);
 	});
@@ -219,12 +219,12 @@ void CMainWindow::initToolBars()
 	_readingSpeedSpinBox->setAccelerated(true);
 
 	connect(_readingSpeedSlider, &QSlider::valueChanged, _readingSpeedSpinBox, &QSpinBox::setValue);
-	connect(_readingSpeedSpinBox, &QSpinBox::editingFinished, [this](){
+	connect(_readingSpeedSpinBox, &QSpinBox::editingFinished, this, [this](){
 		_readingSpeedSlider->setValue(_readingSpeedSpinBox->value());
 		ui->_text->setFocus();
 	});
 
-	connect(_readingSpeedSlider, &QSlider::valueChanged, [this](int WPM){
+	connect(_readingSpeedSlider, &QSlider::valueChanged, this, [this](int WPM){
 		_controller.setReadingSpeed(WPM);
 	});
 
@@ -236,9 +236,9 @@ void CMainWindow::initToolBars()
 
 void CMainWindow::initActions()
 {
-	connect(ui->action_Font, &QAction::triggered, [this](){
+	connect(ui->action_Font, &QAction::triggered, this, [this](){
 		QFontDialog fontDialog(ui->_text->readerView()->font(), this);
-		connect(&fontDialog, &QFontDialog::fontSelected, [this](const QFont &font){
+		connect(&fontDialog, &QFontDialog::fontSelected, this, [this](const QFont &font){
 			ui->_text->readerView()->setFont(font);
 			_textSizeSlider->setValue(font.pointSize());
 			CSettings().setValue(UI_FONT_STYLE, font.style());
@@ -258,12 +258,12 @@ void CMainWindow::initActions()
 	});
 	ui->actionClear_screen_after_sentence_end->setChecked(CSettings().value(UI_CLEAR_SCREEN_AFTER_SENTENCE_END, UI_CLEAR_SCREEN_AFTER_SENTENCE_END_DEFAULT).toBool());
 
-	connect(ui->action_Themes, &QAction::triggered, [this]() {
+	connect(ui->action_Themes, &QAction::triggered, this, [this]() {
 		_colorsSetupDialog.show();
 	});
 
 	ui->actionOpen->setIcon(QApplication::style()->standardIcon(QStyle::SP_DirOpenIcon));
-	connect(ui->actionOpen, &QAction::triggered, [this](){
+	connect(ui->actionOpen, &QAction::triggered, this, [this](){
 		const QString filePath = QFileDialog::getOpenFileName(this,
 			tr("Pick a text file to open"),
 			CSettings().value(UI_OPEN_FILE_LAST_USED_DIR_SETTING, QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation).front()).toString());
@@ -278,7 +278,7 @@ void CMainWindow::initActions()
 	connect(ui->action_Pause, &QAction::triggered, &_controller, &CController::pauseReading);
 
 	ui->actionStop->setIcon(QApplication::style()->standardIcon(QStyle::SP_MediaStop));
-	connect(ui->actionStop, &QAction::triggered, [this](){
+	connect(ui->actionStop, &QAction::triggered, this, [this](){
 		_controller.resetAndStop();
 		CReaderView* readerView = ui->_text->readerView();
 		assert_and_return_r(readerView, );
@@ -297,7 +297,7 @@ void CMainWindow::initActions()
 	ui->actionNext_chapter->setIcon(QApplication::style()->standardIcon(QStyle::SP_MediaSkipForward));
 	connect(ui->actionNext_chapter, &QAction::triggered, &_controller, &CController::toNextChapter);
 
-	connect(ui->actionGo_to_word, &QAction::triggered, [this](){
+	connect(ui->actionGo_to_word, &QAction::triggered, this, [this](){
 
 		const int maxValue = (int)_controller.totalNumWords();
 		const int minValue = maxValue > 0 ? 1 : 0;
@@ -328,7 +328,7 @@ void CMainWindow::initActions()
 			updateBookmarksMenuItemsList();
 	});
 
-	connect(ui->action_Remove_bookmarks, &QAction::triggered, [this](){
+	connect(ui->action_Remove_bookmarks, &QAction::triggered, this, [this](){
 		CBookmarksEditor editor(_controller.bookmarks(), this);
 		editor.exec();
 
@@ -336,13 +336,13 @@ void CMainWindow::initActions()
 		updateBookmarksMenuItemsList();
 	});
 
-	connect(ui->actionView_navigate_text, &QAction::triggered, [this](){
+	connect(ui->actionView_navigate_text, &QAction::triggered, this, [this](){
 		CTextBrowser browser(this, _controller);
 		browser.loadText(_controller.text());
 		browser.exec();
 	});
 
-	connect(ui->actionSettings, &QAction::triggered, [this](){
+	connect(ui->actionSettings, &QAction::triggered, this, [this](){
 		CSettingsDialog settingsDialog(this);
 		settingsDialog
 				.addSettingsPage(new CSettingsPageInterface)
@@ -354,15 +354,15 @@ void CMainWindow::initActions()
 		settingsDialog.exec();
 	});
 
-	connect(ui->actionView_application_log, &QAction::triggered, [this](){
+	connect(ui->actionView_application_log, &QAction::triggered, this, [this](){
 		CLogViewer(this).exec();
 	});
 
-	connect(ui->actionCheck_for_updates, &QAction::triggered, [this](){
+	connect(ui->actionCheck_for_updates, &QAction::triggered, this, [this](){
 		CUpdaterDialog(this, REPO_ADDRESS, VERSION_STRING).exec();
 	});
 
-	connect(ui->actionAbout, &QAction::triggered, [this](){
+	connect(ui->actionAbout, &QAction::triggered, this, [this](){
 		CAboutDialog(VERSION_STRING, this).exec();
 	});
 }
@@ -380,7 +380,7 @@ void CMainWindow::initStatusBar()
 	_progressLabel->setToolTip(tr("Click here to toggle between chapter progress and book progress."));
 	bar->addWidget(_progressLabel, 1);
 
-	connect(_progressLabel, &CClickableLabel::singleClicked, [this](){
+	connect(_progressLabel, &CClickableLabel::singleClicked, this, [this](){
 		_statusBarDisplayMode = _statusBarDisplayMode == Book ? Chapter : Book;
 		CSettings().setValue(UI_STATUSBAR_PROGRESS_MODE, _statusBarDisplayMode);
 	});

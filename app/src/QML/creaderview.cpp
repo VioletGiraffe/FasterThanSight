@@ -50,7 +50,7 @@ void CReaderView::setText(const QString& newText, bool showPivot, int pivotChara
 	if (_text == newText || newText.isEmpty())
 	{
 		QMetaObject::Connection* connection = new QMetaObject::Connection();
-		*connection = connect(_textFadeOutAnimation, &QPropertyAnimation::finished, [this, connection, setTextImplementation]() {
+		*connection = connect(_textFadeOutAnimation, &QPropertyAnimation::finished, this, [this, connection, setTextImplementation]() {
 			disconnect(*connection);
 			delete connection;
 

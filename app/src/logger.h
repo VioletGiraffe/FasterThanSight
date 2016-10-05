@@ -2,8 +2,9 @@
 
 #include "logger/cloggerinmemory.h"
 
-typedef CLoggerInMemory LoggerType;
 inline CLoggerInterface& loggerInstance()
 {
+	using LoggerType = CLoggerInMemory;
+
 	return loggerInstance<LoggerType>();
 }
