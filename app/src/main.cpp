@@ -77,7 +77,7 @@ int main(int argc, char *argv[])
 
 	engine.load(QUrl(QLatin1String("qrc:/main.qml")));
 
-	app.connect(&app, &QApplication::applicationStateChanged, this, [&controller](Qt::ApplicationState state){
+	app.connect(&app, &QApplication::applicationStateChanged, [&controller](Qt::ApplicationState state){
 		if (state != Qt::ApplicationActive)
 			controller.pauseAndSaveState();
 	});

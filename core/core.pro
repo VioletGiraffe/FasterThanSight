@@ -10,8 +10,19 @@ mac* | linux*{
 	CONFIG(debug, debug|release):CONFIG += Debug
 }
 
-Release:OUTPUT_DIR=release
-Debug:OUTPUT_DIR=debug
+android {
+	Release:OUTPUT_DIR=android/release
+	Debug:OUTPUT_DIR=android/debug
+
+} else:ios {
+	Release:OUTPUT_DIR=ios/release
+	Debug:OUTPUT_DIR=ios/debug
+
+} else {
+	Release:OUTPUT_DIR=release
+	Debug:OUTPUT_DIR=debug
+
+}
 
 DESTDIR  = ../bin/$${OUTPUT_DIR}
 OBJECTS_DIR = ../build/$${OUTPUT_DIR}/core
