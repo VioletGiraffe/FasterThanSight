@@ -1,7 +1,6 @@
 import QtQuick 2.7
-import QtQuick.Controls 2.0
+import QtQuick.Controls 2.1
 import QtQuick.Layouts 1.3
-import QtQuick.Dialogs 1.2
 import QtQuick.Controls.Material 2.0
 
 import ReaderView 1.0
@@ -72,17 +71,24 @@ ApplicationWindow {
 					x: mainMenuButton.x
 
 					MenuItem {
-						ColorDialog {
+						Dialog {
 							id: colorDialog
-							title: "Please choose a color"
-							onAccepted: {
-								console.log("You chose: " + colorDialog.color)
-								Qt.quit()
-							}
-							onRejected: {
-								console.log("Canceled")
-								Qt.quit()
-							}
+							title: "Colors"
+							standardButtons: Dialog.Ok | Dialog.Cancel
+
+							contentItem: Slider {
+									Layout.fillWidth: true
+
+									from: 100
+									to: 800
+									stepSize: 5
+
+									onValueChanged: {
+									}
+								}
+
+							onAccepted: console.log("Ok clicked")
+							onRejected: console.log("Cancel clicked")
 						}
 
 						text: "Open..."
