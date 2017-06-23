@@ -8,18 +8,21 @@ Extensively configurable speed reading software based on the [rapid serial visua
 
 ![Built with Qt](http://i.imgur.com/O7SUWxn.png)
 
-###Currently supported platforms:
+### Currently supported platforms:
 * Windows
 * Mac OS X
 * Linux
 
-###Known Issues
+### Current status of the project:
+See the issue #53 for up-to-date info on the status of the project and suggested goals for the near future.
+
+### Known Issues
 For the list of known issues, refer to the project issues on Github, sort by the "bug" label. Or just use <a href="https://github.com/VioletGiraffe/FasterThanSight/labels/bug">this link</a>.
 
-###Reporting an issue
+### Reporting an issue
 <a href="https://github.com/VioletGiraffe/FasterThanSight/issues/new">Create an issue</a> on the project's page on Github.
 
-###Contributing
+### Contributing
 
 ***Cloning the repository***
 
