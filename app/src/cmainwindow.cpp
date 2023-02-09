@@ -360,7 +360,7 @@ void CMainWindow::initActions()
 	});
 
 	connect(ui->actionCheck_for_updates, &QAction::triggered, this, [this](){
-		CUpdaterDialog(this, REPO_ADDRESS, VERSION_STRING).exec();
+		CUpdaterDialog(this, REPO_NAME, VERSION_STRING).exec();
 	});
 
 	connect(ui->actionAbout, &QAction::triggered, this, [this](){

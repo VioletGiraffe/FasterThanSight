@@ -7,4 +7,4 @@ DISABLE_COMPILER_WARNINGS
 RESTORE_COMPILER_WARNINGS
 
 #define VERSION_STRING QStringLiteral("1.2.2")
-#define REPO_ADDRESS QStringLiteral("https://github.com/VioletGiraffe/FasterThanSight")
+#define REPO_NAME QStringLiteral("VioletGiraffe/FasterThanSight")

@@ -65,7 +65,7 @@ void CSettingsPagePivot::resizeEvent(QResizeEvent* e)
 	CReaderView* readerView = ui->_demo->readerView();
 	assert_and_return_r(readerView, );
 
-	const float textScaleFactor = ui->_demo->width()/2.0f / std::max(QFontMetrics(textFont).width(readerView->text()), 1);
+	const float textScaleFactor = ui->_demo->width()/2.0f / std::max(QFontMetrics(textFont).horizontalAdvance(readerView->text()), 1);
 
 	const int oldTextSize = textFont.pointSize();
 	textFont.setPointSize((int)(textScaleFactor * oldTextSize));

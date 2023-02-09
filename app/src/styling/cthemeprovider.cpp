@@ -66,7 +66,7 @@ CThemeProvider::Theme& CThemeProvider::currentTheme()
 {
 	if (_currentThemeIndex >= _themes.size())
 	{
-		static Theme dummy(QString::null);
+		static Theme dummy(QString{});
 		return dummy;
 	}
 
@@ -77,7 +77,7 @@ const CThemeProvider::Theme& CThemeProvider::currentTheme() const
 {
 	if (_currentThemeIndex >= _themes.size())
 	{
-		static const Theme dummy(QString::null);
+		static const Theme dummy(QString{});
 		return dummy;
 	}
 
@@ -86,7 +86,7 @@ const CThemeProvider::Theme& CThemeProvider::currentTheme() const
 
 const CThemeProvider::Theme& CThemeProvider::acceptedTheme() const
 {
-	static const Theme dummy(QString::null);
+	static const Theme dummy(QString{});
 
 	const auto themes = acceptedThemes();
 	assert_and_return_r(themes.second < themes.first.size(), dummy);
@@ -158,7 +158,7 @@ QColor CThemeProvider::textColor() const
 
 CThemeProvider::Theme::Theme(const QString& str)
 {
-	const auto components = str.split(';', QString::SkipEmptyParts);
+	const auto components = str.split(';', Qt::SkipEmptyParts);
 	assert_and_return_r(components.size() == 5, );
 
 	_name = components[0];

@@ -176,17 +176,17 @@ void CController::toNextChapter()
 	_reader.toNextChapter();
 }
 
-int CController::totalNumWords() const
+size_t CController::totalNumWords() const
 {
 	return _reader.totalNumWords();
 }
 
 int CController::position() const
 {
-	return _reader.position();
+	return (int)_reader.position();
 }
 
-void CController::goToWord(int wordIndex)
+void CController::goToWord(size_t wordIndex)
 {
 	_reader.goToWord(wordIndex);
 }

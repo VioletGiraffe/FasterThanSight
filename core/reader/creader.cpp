@@ -5,6 +5,7 @@
 #include "settings.h"
 #include "assert/advanced_assert.h"
 #include "cpausehandler.h"
+#include "utility/integer_literals.hpp"
 
 #include <math.h>
 #include <stdint.h>
@@ -14,8 +15,8 @@
 #include <iterator>
 
 DISABLE_COMPILER_WARNINGS
+#include <QElapsedTimer>
 #include <QDebug>
-#include <QTime>
 RESTORE_COMPILER_WARNINGS
 
 CReader::CReader(ReaderInterface* interface) : _interface(interface)
@@ -36,7 +37,7 @@ void CReader::load(const CStructuredText& text)
 {
 	resetAndStop();
 
-	QTime timer;
+	QElapsedTimer timer;
 	timer.start();
 	_text = text;
 	qDebug() << "Assigning the text took" << timer.elapsed() << "ms";
@@ -63,7 +64,7 @@ bool CReader::loadFromFile(const QString& filePath)
 	CTextParser parser;
 	parser.setAddEmptyFragmentAfterSentence(_clearScreenAfterSentenceEnd);
 
-	QTime timer;
+	QElapsedTimer timer;
 	timer.start();
 	load(parser.parse(CFileDecoder::readDataAndDecodeText(filePath)));
 	qDebug() << "Loading the file" << filePath << "took" << QString::number(timer.elapsed() / 1000.0f, 'f', 1) << "seconds";
@@ -116,7 +117,7 @@ long double CReader::progress() const
 
 size_t CReader::timeRemainingSeconds() const
 {
-	const size_t actualTimeMs = std::accumulate(_pauseForFragment.cbegin() + _position, _pauseForFragment.cend(), 0);
+	const size_t actualTimeMs = std::accumulate(_pauseForFragment.cbegin() + _position, _pauseForFragment.cend(), 0_z);
 	return actualTimeMs / 1000;
 }
 
@@ -259,7 +260,7 @@ void CReader::readNextFragment()
 		_interface->updateDisplay(_position);
 		_interface->updateInfo();
 		// Queue up the next word
-		_readingTimer.start(_pauseForFragment[_position]);
+		_readingTimer.start((int)_pauseForFragment[_position]);
 	}
 }
 
@@ -282,7 +283,7 @@ void CReader::updatePauseValues()
 		_pauseForFragment[fragment.fragmentIndex] = pauseForFragment(fragment.fragment);
 
 #ifdef _DEBUG
-	const size_t totalTime = std::accumulate(_pauseForFragment.begin(), _pauseForFragment.end(), 0) / 1000;
+	const size_t totalTime = std::accumulate(_pauseForFragment.begin(), _pauseForFragment.end(), 0_z) / 1000;
 	if (totalTime > 0)
 	{
 		const size_t actualWPM = 60 * totalNumWords() / totalTime;

@@ -53,9 +53,9 @@ public slots:
 	void toNextParagraph();
 	void toNextChapter();
 
-	int totalNumWords() const;
+	size_t totalNumWords() const;
 	int position() const;
-	void goToWord(int wordIndex);
+	void goToWord(size_t wordIndex);
 
 	const CStructuredText& text() const;
 
