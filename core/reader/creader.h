@@ -46,7 +46,7 @@ public:
 
 		inline int progressPercentage() const // [0, 100]
 		{
-			return totalNumWords > 0 ? wordsRead * 100 / totalNumWords : 0;
+			return static_cast<int>(totalNumWords > 0 ? wordsRead * 100 / totalNumWords : 0);
 		}
 
 		size_t wordsRead;

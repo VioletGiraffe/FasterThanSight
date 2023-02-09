@@ -3,7 +3,7 @@ TARGET   = core
 
 QT = core
 CONFIG += staticlib
-CONFIG += c++14
+CONFIG += c++20
 
 mac* | linux*{
 	CONFIG(release, debug|release):CONFIG += Release
@@ -34,6 +34,7 @@ RCC_DIR     = ../build/$${OUTPUT_DIR}/core
 DEFINES += QT_MESSAGELOGCONTEXT
 
 win*{
+	QMAKE_CXXFLAGS += /std:c++latest /permissive-
 	QMAKE_CXXFLAGS += /MP /wd4251
 	QMAKE_CXXFLAGS_WARN_ON = /W4
 	DEFINES += WIN32_LEAN_AND_MEAN NOMINMAX _SCL_SECURE_NO_WARNINGS

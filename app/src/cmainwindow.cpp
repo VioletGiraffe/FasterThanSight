@@ -37,6 +37,7 @@ DISABLE_COMPILER_WARNINGS
 #include <QStandardPaths>
 #include <QStatusBar>
 #include <QStringBuilder>
+#include <QStyle>
 #include <QToolBar>
 
 #ifdef _WIN32

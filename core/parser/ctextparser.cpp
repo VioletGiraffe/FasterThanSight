@@ -163,7 +163,7 @@ void CTextParser::finalizeFragment()
 			_parsedText.lastParagraph().addFragment({_wordBuffer, _delimitersBuffer, TextFragment::Comma}, _fragmentCounter++);
 
 			// Moving the end-of-sentence delimiter off to a dummy fragment with no text - just so that we can fade the text out and hold the screen empty for a bit
-			_parsedText.lastParagraph().addFragment({QString::null, QString::null, _lastDelimiter}, _fragmentCounter++);
+			_parsedText.lastParagraph().addFragment({QString{}, QString{}, _lastDelimiter}, _fragmentCounter++);
 		}
 		else
 		{
