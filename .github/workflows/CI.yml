@@ -1,0 +1,99 @@
+name: CI
+
+on: [push, pull_request, workflow_dispatch]
+
+env:
+  # Path to the solution file relative to the root of the project.
+  SOLUTION_FILE_PATH: .
+
+  # Configuration type to build.
+  # You can convert this to a build matrix if you need coverage of multiple configuration types.
+  # https://docs.github.com/actions/learn-github-actions/managing-complex-workflows#using-a-build-matrix
+  BUILD_CONFIGURATION: Release
+
+jobs:
+  build:
+    name: Build & test on ${{ matrix.os }} with ${{ matrix.compiler }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest] # TODO:  macos-12, windows-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+
+    - name: Checkout subrepos
+      if: "!startsWith(matrix.os, 'windows')"
+      run: ./update_repository.sh
+
+    - name: Checkout subrepos
+      if: "startsWith(matrix.os, 'windows')"
+      shell: cmd
+      run: update_repository.bat
+
+    - name: Install Qt
+      if: "startsWith(matrix.os, 'windows')"
+      uses: jurplel/install-qt-action@v3
+      with:
+        version: '6.6.2'
+        arch: 'win64_msvc2019_64'
+        archives: 'qtbase icu qtsvg'
+        modules: 'qt5compat qtimageformats'
+
+    - name: Install Qt
+      if: "startsWith(matrix.os, 'ubuntu')"
+      uses: jurplel/install-qt-action@v3
+      with:
+        version: '6.6.2'
+        arch: 'gcc_64'
+        archives: 'qtbase icu qtsvg'
+        modules: 'qt5compat qtimageformats'
+
+
+    - name: Install Qt
+      if: "startsWith(matrix.os, 'macos')"
+      uses: jurplel/install-qt-action@v3
+      with:
+        version: '6.6.2'
+        arch: 'clang_64'
+        archives: 'qtbase icu qtsvg'
+        modules: 'qt5compat qtimageformats'
+
+    - name: Windows - setup MSBuild
+      if: startsWith(matrix.os, 'windows')
+      uses: microsoft/setup-msbuild@v1
+
+    - name: Windows - building main installer
+      if: startsWith(matrix.os, 'windows')
+      shell: cmd
+      run: |
+        %Qt6_DIR%\bin\qmake.exe -v
+        set QTDIR64=%Qt6_DIR%
+        cd installer\
+        create_installer.bat
+        cd ..\..
+        xcopy /R /Y .\installer\windows\binaries\64\msvcr\* .\bin\release\x64\
+        xcopy /R /Y .\installer\windows\binaries\64\Qt\* .\bin\release\x64\
+
+    - name: Mac
+      if: startsWith(matrix.os, 'macos')
+      working-directory: ${{env.GITHUB_WORKSPACE}}
+      run: |
+        clang --version
+        ./installer/mac/create_dmg.sh $Qt6_DIR
+
+    - name: Linux
+      if: startsWith(matrix.os, 'ubuntu')
+      working-directory: ${{env.GITHUB_WORKSPACE}}
+      run: |
+        export QT_DEBUG_PLUGINS=1
+        sudo apt update -y; sudo apt install -qq gcc-12 g++-12 libglu1-mesa-dev libx11-xcb-dev '^libxcb*' '^libxkb*' libfuse2
+        sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-12 50
+        sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-12 50
+        g++ --version
+        export PATH=$Qt6_DIR/bin/:$PATH
+        unset QTDIR; unset QT_PLUGIN_PATH ; unset LD_LIBRARY_PATH
+        $Qt6_DIR/bin/qmake -r CONFIG+=release
+        make -j
