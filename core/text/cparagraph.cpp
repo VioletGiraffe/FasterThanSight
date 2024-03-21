@@ -28,7 +28,7 @@ void Paragraph::reconstructText(QString& text, std::vector<int>& firstCharacterI
 		if (!fragmentText.endsWith(' '))
 			fragmentText += ' ';
 
-		firstCharacterIndexForFragment[fragment.fragmentIndex] = text.length();
+		firstCharacterIndexForFragment[fragment.fragmentIndex] = (int)text.length(); // TODO: Qt 6 types
 		text.append(fragmentText);
 	}
 }

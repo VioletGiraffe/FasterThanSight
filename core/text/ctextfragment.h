@@ -27,7 +27,7 @@ public:
 				// Newline only be used for semantical formatting, not for limiting the visual line length.
 	};
 
-	typedef Enum<DelimiterEnum> Delimiter;
+	using Delimiter = Enum<DelimiterEnum>;
 
 	enum PivotCalculationMethod {
 		pcmMagic,
@@ -39,20 +39,20 @@ public:
 		pcmLogarithm
 	};
 
-	inline TextFragment() {}
+	TextFragment() = default;
 	TextFragment(const QString& word, const QString& punctuation, Delimiter delimiter = NoDelimiter);
 
 	// Word + possible punctuation following it
-	QString text() const;
+	[[nodiscard]] QString text() const;
 	// Just the word
-	QString word() const;
+	[[nodiscard]] QString word() const;
 	// Just the punctuation
-	QString punctuation() const;
-	Delimiter delimiter() const;
+	[[nodiscard]] QString punctuation() const;
+	[[nodiscard]] Delimiter delimiter() const;
 
-	int pivotLetterIndex(PivotCalculationMethod method) const;
-	bool isEndOfSentence() const;
-	bool isEmpty() const;
+	[[nodiscard]] int pivotLetterIndex(PivotCalculationMethod method) const;
+	[[nodiscard]] bool isEndOfSentence() const;
+	[[nodiscard]] bool isEmpty() const;
 
 private:
 	QString _word;

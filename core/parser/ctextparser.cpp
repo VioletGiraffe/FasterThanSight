@@ -21,16 +21,16 @@ CStructuredText CTextParser::parse(const QString& text)
 		{ ',', TextFragment::Comma },
 		// TODO: dash should be ignored unless it has an adjacent space!
 		{ '-', TextFragment::Dash },
-		{ 0x2014, TextFragment::Dash },
-		{ 0x2026, TextFragment::Ellipsis },
+		{ char16_t{ 0x2014 }, TextFragment::Dash },
+		{ char16_t{ 0x2026 }, TextFragment::Ellipsis },
 		{ '!', TextFragment::ExclamationMark },
 		{ '\n', TextFragment::Newline },
 		{ '?', TextFragment::QuestionMark },
 		{ '\"', TextFragment::Quote },
-		{ 0x201C, TextFragment::Quote }, // “
-		{ 0x201D, TextFragment::Quote }, // ”
-		{ 0x00AB, TextFragment::Quote }, // «
-		{ 0x00BB, TextFragment::Quote }, // »
+		{ char16_t{ 0x201C }, TextFragment::Quote }, // “
+		{ char16_t{ 0x201D }, TextFragment::Quote }, // ”
+		{ char16_t{ 0x00AB }, TextFragment::Quote }, // «
+		{ char16_t{ 0x00BB }, TextFragment::Quote }, // »
 
 		{ ')', TextFragment::Bracket },
 		{ '(', TextFragment::Bracket },

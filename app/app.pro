@@ -15,7 +15,7 @@ android*|ios*{
 TARGET = FasterThanSight
 TEMPLATE = app
 
-CONFIG += c++20
+CONFIG += c++2b
 
 mac* | linux*{
 	CONFIG(release, debug|release):CONFIG += Release
