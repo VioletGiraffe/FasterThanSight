@@ -15,11 +15,17 @@ android*|ios*{
 TARGET = FasterThanSight
 TEMPLATE = app
 
-CONFIG += c++14
+CONFIG += c++20
 
 mac* | linux*{
 	CONFIG(release, debug|release):CONFIG += Release
 	CONFIG(debug, debug|release):CONFIG += Debug
+}
+
+contains(QT_ARCH, x86_64) {
+	ARCHITECTURE = x64
+} else {
+	ARCHITECTURE = x86
 }
 
 android {
@@ -42,7 +48,7 @@ MOC_DIR     = ../build/$${OUTPUT_DIR}/app
 UI_DIR      = ../build/$${OUTPUT_DIR}/app
 RCC_DIR     = ../build/$${OUTPUT_DIR}/app
 
-LIBS += -L$${DESTDIR} -lcore -lcpputils -lqtutils
+LIBS += -L$${DESTDIR} -L$${DESTDIR}/$${ARCHITECTURE} -lcore -lcpputils -lqtutils
 
 # Required for qDebug() to log function name, file and line in release build
 DEFINES += QT_MESSAGELOGCONTEXT
@@ -51,11 +57,12 @@ DEFINES += QT_MESSAGELOGCONTEXT
 	LIBS += -lautoupdater
 
 	!win*{
-		PRE_TARGETDEPS += $${DESTDIR}/libautoupdater.a
+		PRE_TARGETDEPS += $${DESTDIR}/$${ARCHITECTURE}/libautoupdater.a
 	}
 }
 
 win*{
+	QMAKE_CXXFLAGS += /std:c++latest /permissive-
 	QMAKE_CXXFLAGS += /MP /wd4251
 	QMAKE_CXXFLAGS_WARN_ON = /W4
 	DEFINES += WIN32_LEAN_AND_MEAN NOMINMAX _SCL_SECURE_NO_WARNINGS
@@ -73,7 +80,7 @@ linux*|mac*{
 	Release:DEFINES += NDEBUG=1
 	Debug:DEFINES += _DEBUG
 
-	PRE_TARGETDEPS += $${DESTDIR}/libcore.a $${DESTDIR}/libcpputils.a $${DESTDIR}/libqtutils.a
+	PRE_TARGETDEPS += $${DESTDIR}/libcore.a $${DESTDIR}/$${ARCHITECTURE}/libcpputils.a $${DESTDIR}/$${ARCHITECTURE}/libqtutils.a
 }
 
 win32*:!*msvc2012:*msvc* {

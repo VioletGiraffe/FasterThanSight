@@ -138,7 +138,17 @@ int CController::readingSpeed() const
 
 void CController::setReadingSpeed(int wpm)
 {
-	_reader.setReadingSpeed((size_t)wpm);
+    _reader.setReadingSpeed((size_t)wpm);
+}
+
+int CController::wordRewind() const
+{
+    return (int)_reader.wordRewind();
+}
+
+void CController::setWordRewind(int wordRewind)
+{
+    _reader.setWordRewind((size_t)wordRewind);
 }
 
 void CController::togglePause()
@@ -154,6 +164,16 @@ void CController::pauseReading()
 void CController::resetAndStop()
 {
 	_reader.resetAndStop();
+}
+
+void CController::toPreviousWord()
+{
+    _reader.toPreviousWord();
+}
+
+void CController::toNextWord()
+{
+    _reader.toNextWord();
 }
 
 void CController::toPreviousChapter()
@@ -176,17 +196,17 @@ void CController::toNextChapter()
 	_reader.toNextChapter();
 }
 
-int CController::totalNumWords() const
+size_t CController::totalNumWords() const
 {
 	return _reader.totalNumWords();
 }
 
 int CController::position() const
 {
-	return _reader.position();
+	return (int)_reader.position();
 }
 
-void CController::goToWord(int wordIndex)
+void CController::goToWord(size_t wordIndex)
 {
 	_reader.goToWord(wordIndex);
 }

@@ -38,6 +38,7 @@ protected:
 
 	bool eventFilter(QObject* o, QEvent* e) override;
 
+
 private:
 	void initToolBars();
 	void initActions();
@@ -74,6 +75,7 @@ private:
 
 	QSlider*  _readingSpeedSlider = nullptr;
 	QSpinBox* _readingSpeedSpinBox = nullptr;
+    QSpinBox* _workRewindSpinBox = nullptr;
 
 // Status bar widgets
 	QProgressBar * _chapterProgressBar = nullptr;

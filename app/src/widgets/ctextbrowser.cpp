@@ -106,13 +106,13 @@ bool CTextBrowser::eventFilter(QObject * o, QEvent * e)
 			item->setFont(f);
 			if (i == currentChapterItemIndex)
 			{
-				item->setTextColor(_backgroundColor);
-				item->setBackgroundColor(_textColor);
+				item->setForeground(_backgroundColor);
+				item->setBackground(_textColor);
 			}
 			else
 			{
-				item->setTextColor(_textColor);
-				item->setBackgroundColor(_backgroundColor);
+				item->setForeground(_textColor);
+				item->setBackground(_backgroundColor);
 			}
 		}
 

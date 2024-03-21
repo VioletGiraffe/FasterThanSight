@@ -207,7 +207,7 @@ std::vector<Chapter>::const_iterator CStructuredText::chapterByWordIndex(size_t 
 std::vector<Paragraph>::const_iterator CStructuredText::paragraphByWordIndex(size_t index) const
 {
 	const auto chapterIterator = chapterByWordIndex(index);
-	assert_and_return_r(chapterIterator != _chapters.cend(), std::vector<Paragraph>::const_iterator())
+	assert_and_return_r(chapterIterator != _chapters.cend(), std::vector<Paragraph>::const_iterator());
 
 	const auto paragraphIterator = std::lower_bound(chapterIterator->_paragraphs.cbegin(), chapterIterator->_paragraphs.cend(), index, [](const Paragraph& paragraph, size_t index){
 		return paragraph.lastFragmentNumber() < index;
@@ -220,7 +220,7 @@ std::vector<Paragraph>::const_iterator CStructuredText::paragraphByWordIndex(siz
 std::vector<IndexedFragment>::const_iterator CStructuredText::fragmentByWordIndex(size_t index) const
 {
 	const auto chapterIterator = chapterByWordIndex(index);
-	assert_and_return_r(chapterIterator != _chapters.cend(), std::vector<IndexedFragment>::const_iterator())
+	assert_and_return_r(chapterIterator != _chapters.cend(), std::vector<IndexedFragment>::const_iterator());
 
 		const auto paragraphIterator = std::lower_bound(chapterIterator->_paragraphs.cbegin(), chapterIterator->_paragraphs.cend(), index, [](const Paragraph& paragraph, size_t index){
 		return paragraph.lastFragmentNumber() < index;

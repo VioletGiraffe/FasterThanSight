@@ -153,7 +153,7 @@ void CReaderView::paint(QPainter* painter)
 	if (!_text.isEmpty())
 	{
 		const int centerCharIndex = _pivotCharacterIndex >= 0 ? _pivotCharacterIndex : _text.length() / 2;
-		const QPoint textOffset((int)width() / 2 - fontMetrics.width(_text, centerCharIndex) - fontMetrics.width(_text[centerCharIndex]) / 2, (int)height() / 2 - fontMetrics.height() / 2);
+		const QPoint textOffset((int)width() / 2 - fontMetrics.horizontalAdvance(_text, centerCharIndex) - fontMetrics.horizontalAdvance(_text[centerCharIndex]) / 2, (int)height() / 2 - fontMetrics.height() / 2);
 		painter->translate(textOffset);
 	}
 	painter->setOpacity(_textOpacity);

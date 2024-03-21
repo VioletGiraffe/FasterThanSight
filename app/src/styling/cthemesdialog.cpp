@@ -63,8 +63,8 @@ void CThemesDialog::loadThemes()
 
 	ui->_cbTheme->blockSignals(false);
 
-	ui->_cbTheme->setCurrentIndex(themes.second);
-	ui->_cbTheme->currentIndexChanged(themes.second);
+	ui->_cbTheme->setCurrentIndex((int)themes.second);
+	ui->_cbTheme->currentIndexChanged((int)themes.second);
 }
 
 void CThemesDialog::initColorPicker(QToolButton* btn, QColor& color)
@@ -110,7 +110,7 @@ void CThemesDialog::deleteTheme()
 	CThemeProvider& themeProvider = CThemeProvider::instance();
 	const auto currentThemeIndex = themeProvider.currentThemeIndex();
 	themeProvider.deleteCurrentTheme();
-	ui->_cbTheme->removeItem(currentThemeIndex);
+	ui->_cbTheme->removeItem((int)currentThemeIndex);
 }
 
 void CThemesDialog::showEvent(QShowEvent* e)
