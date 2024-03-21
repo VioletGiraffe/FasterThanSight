@@ -171,6 +171,24 @@ void CMainWindow::initToolBars()
 	_readingSettingsToolbar = addToolBar(tr("Reading settings"));
 	_readingSettingsToolbar->setObjectName("_readingSettingsToolbar");
 
+
+    // Word rewind
+    _workRewindSpinBox = new QSpinBox();
+    _workRewindSpinBox->setMinimum(5);
+    _workRewindSpinBox->setMaximum(999);
+    _workRewindSpinBox->setSuffix(" WORD");
+    _workRewindSpinBox->setAccelerated(true);
+    _workRewindSpinBox->setValue(_controller.wordRewind());
+
+    connect(_workRewindSpinBox, QOverload<int>::of(&QSpinBox::valueChanged), [this](int wordRewind){
+        _controller.setWordRewind(wordRewind);
+    });
+
+
+    _readingSettingsToolbar->addWidget(_workRewindSpinBox);
+    _readingSettingsToolbar->addSeparator();
+
+
 	// Screen brightness
 	_brightnessSlider = new QSlider(Qt::Horizontal);
 	_brightnessSlider->setMinimum(1);
@@ -206,7 +224,7 @@ void CMainWindow::initToolBars()
 	_readingSettingsToolbar->addWidget(new QLabel(tr("Reading speed") + "  "));
 
 	_readingSpeedSlider = new QSlider(Qt::Horizontal);
-	_readingSpeedSpinBox = new QSpinBox();
+    _readingSpeedSpinBox = new QSpinBox();
 
 	_readingSpeedSlider->setMinimum(100);
 	_readingSpeedSpinBox->setMinimum(100);
@@ -233,6 +251,7 @@ void CMainWindow::initToolBars()
 
 	_readingSettingsToolbar->addWidget(_readingSpeedSlider);
 	_readingSettingsToolbar->addWidget(_readingSpeedSpinBox);
+
 }
 
 void CMainWindow::initActions()
@@ -269,7 +288,7 @@ void CMainWindow::initActions()
 			tr("Pick a text file to open"),
 			CSettings().value(UI_OPEN_FILE_LAST_USED_DIR_SETTING, QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation).front()).toString());
 
-		_controller.openFile(filePath, 0);
+        _controller.openFile(filePath, 0);
 	});
 
 	ui->action_Read->setIcon(QApplication::style()->standardIcon(QStyle::SP_MediaPlay));
@@ -286,7 +305,13 @@ void CMainWindow::initActions()
 		readerView->clear();
 	});
 
-	ui->actionPrevious_chapter->setIcon(QApplication::style()->standardIcon(QStyle::SP_MediaSkipBackward));
+    ui->actionPrevious_word->setIcon(QApplication::style()->standardIcon(QStyle::SP_ArrowBack));
+    connect(ui->actionPrevious_word, &QAction::triggered, &_controller, &CController::toPreviousWord);
+
+    ui->actionNext_word->setIcon(QApplication::style()->standardIcon(QStyle::SP_ArrowForward));
+    connect(ui->actionNext_word, &QAction::triggered, &_controller, &CController::toNextWord);
+
+    ui->actionPrevious_chapter->setIcon(QApplication::style()->standardIcon(QStyle::SP_MediaSkipBackward));
 	connect(ui->actionPrevious_chapter, &QAction::triggered, &_controller, &CController::toPreviousChapter);
 
 	ui->actionPrevious_paragraph->setIcon(QApplication::style()->standardIcon(QStyle::SP_MediaSeekBackward));
