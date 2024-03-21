@@ -74,14 +74,19 @@ public:
 	// Specify 0-based word index to go to
 	void goToWord(size_t wordIndex);
 
+    void toPreviousWord();
 	void toPreviousChapter();
 	void toPreviousParagraph();
 	void toNextParagraph();
 	void toNextChapter();
+    void toNextWord();
 
 // Settings
 	size_t readingSpeed() const;
 	void setReadingSpeed(size_t wpm);
+
+    size_t wordRewind() const;
+    void setWordRewind(size_t wordRewind);
 
 private:
 	void readNextFragment();
@@ -105,6 +110,7 @@ private:
 	bool                _currentWordRead = false;
 
 	size_t              _speedWpm = 250;
+    size_t              _wordRewind = 5;
 
 	State _state = Paused;
 

@@ -44,14 +44,19 @@ public slots:
 	int readingSpeed() const;
 	void setReadingSpeed(int wpm);
 
+    int wordRewind() const;
+    void setWordRewind(int wordRewind);
+
 	void togglePause();
 	void pauseReading();
 	void resetAndStop();
 
+    void toPreviousWord();
 	void toPreviousChapter();
 	void toPreviousParagraph();
 	void toNextParagraph();
 	void toNextChapter();
+    void toNextWord();
 
 	size_t totalNumWords() const;
 	int position() const;

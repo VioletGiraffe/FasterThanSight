@@ -147,6 +147,8 @@
    <addaction name="actionPrevious_paragraph"/>
    <addaction name="actionNext_paragraph"/>
    <addaction name="actionNext_chapter"/>
+   <addaction name="actionPrevious_word"/>
+   <addaction name="actionNext_word"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
   <action name="actionOpen">
@@ -289,13 +291,29 @@
     <string>View application log...</string>
    </property>
   </action>
+  <action name="actionPrevious_word">
+   <property name="text">
+    <string>Previous word</string>
+   </property>
+   <property name="toolTip">
+    <string>Previous word</string>
+   </property>
+  </action>
+  <action name="actionNext_word">
+   <property name="text">
+    <string>Next word</string>
+   </property>
+   <property name="toolTip">
+    <string>Next word</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <customwidgets>
   <customwidget>
    <class>QQuickWidget</class>
    <extends>QWidget</extends>
-   <header>QtQuickWidgets/QQuickWidget</header>
+   <header location="global">QtQuickWidgets/QQuickWidget</header>
   </customwidget>
   <customwidget>
    <class>CReaderViewWidget</class>

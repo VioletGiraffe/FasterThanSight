@@ -30,7 +30,8 @@ CReader::CReader(ReaderInterface* interface) : _interface(interface)
 		readNextFragment();
 	});
 
-	_speedWpm = CSettings().value(READER_READING_SPEED_SETTING, READER_READING_SPEED_DEFAULT).toUInt();
+    _speedWpm = CSettings().value(READER_READING_SPEED_SETTING, READER_READING_SPEED_DEFAULT).toUInt();
+    _wordRewind = CSettings().value(READER_WORD_REWIND_SETTING, READER_WORD_REWIND_DEFAULT).toUInt();
 }
 
 void CReader::load(const CStructuredText& text)
@@ -217,6 +218,16 @@ void CReader::toPreviousParagraph()
 	goToWord(_text.previousParagraphStartIndex(_position));
 }
 
+void CReader::toPreviousWord()
+{
+     goToWord(_position-_wordRewind);
+}
+
+void CReader::toNextWord()
+{
+    goToWord(_position+_wordRewind);
+}
+
 void CReader::toNextParagraph()
 {
 	goToWord(_text.nextParagraphStartIndex(_position));
@@ -238,6 +249,18 @@ void CReader::setReadingSpeed(size_t wpm)
 	_speedWpm = wpm;
 	updatePauseValues();
 }
+
+size_t CReader::wordRewind() const
+{
+    return _wordRewind;
+}
+
+void CReader::setWordRewind(size_t wordRewind)
+{
+    CSettings().setValue(READER_WORD_REWIND_SETTING, (uint32_t)wordRewind);
+    _wordRewind = wordRewind;
+}
+
 
 void CReader::readNextFragment()
 {
