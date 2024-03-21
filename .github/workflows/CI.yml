@@ -26,7 +26,9 @@ jobs:
 
     - name: Checkout subrepos
       if: "!startsWith(matrix.os, 'windows')"
-      run: ./update_repository.sh
+      run: |
+        sudo chmod +x update_repository.sh
+        ./update_repository.sh
 
     - name: Checkout subrepos
       if: "startsWith(matrix.os, 'windows')"
