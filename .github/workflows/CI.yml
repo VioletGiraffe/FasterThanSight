@@ -50,9 +50,6 @@ jobs:
       with:
         version: '6.6.2'
         arch: 'gcc_64'
-        archives: 'qtbase icu qtsvg'
-        modules: 'qt5compat qtimageformats'
-
 
     - name: Install Qt
       if: "startsWith(matrix.os, 'macos')"
