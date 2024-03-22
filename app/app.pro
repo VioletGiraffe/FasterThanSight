@@ -42,13 +42,13 @@ android {
 
 }
 
-DESTDIR  = ../bin/$${OUTPUT_DIR}
+DESTDIR  = ../bin/$${OUTPUT_DIR}/$${ARCHITECTURE}
 OBJECTS_DIR = ../build/$${OUTPUT_DIR}/app
 MOC_DIR     = ../build/$${OUTPUT_DIR}/app
 UI_DIR      = ../build/$${OUTPUT_DIR}/app
 RCC_DIR     = ../build/$${OUTPUT_DIR}/app
 
-LIBS += -L$${DESTDIR} -L$${DESTDIR}/$${ARCHITECTURE} -lcore -lcpputils -lqtutils
+LIBS += -L$${DESTDIR} -lcore -lcpputils -lqtutils
 
 # Required for qDebug() to log function name, file and line in release build
 DEFINES += QT_MESSAGELOGCONTEXT
@@ -57,7 +57,7 @@ DEFINES += QT_MESSAGELOGCONTEXT
 	LIBS += -lautoupdater
 
 	!win*{
-		PRE_TARGETDEPS += $${DESTDIR}/$${ARCHITECTURE}/libautoupdater.a
+		PRE_TARGETDEPS += $${DESTDIR}/libautoupdater.a
 	}
 }
 
@@ -80,7 +80,7 @@ linux*|mac*{
 	Release:DEFINES += NDEBUG=1
 	Debug:DEFINES += _DEBUG
 
-	PRE_TARGETDEPS += $${DESTDIR}/libcore.a $${DESTDIR}/$${ARCHITECTURE}/libcpputils.a $${DESTDIR}/$${ARCHITECTURE}/libqtutils.a
+	PRE_TARGETDEPS += $${DESTDIR}/libcore.a $${DESTDIR}/libcpputils.a $${DESTDIR}/libqtutils.a
 }
 
 win32*:!*msvc2012:*msvc* {

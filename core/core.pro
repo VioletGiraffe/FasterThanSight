@@ -10,6 +10,12 @@ mac* | linux*{
 	CONFIG(debug, debug|release):CONFIG += Debug
 }
 
+contains(QT_ARCH, x86_64) {
+	ARCHITECTURE = x64
+} else {
+	ARCHITECTURE = x86
+}
+
 android {
 	Release:OUTPUT_DIR=android/release
 	Debug:OUTPUT_DIR=android/debug
@@ -24,7 +30,7 @@ android {
 
 }
 
-DESTDIR  = ../bin/$${OUTPUT_DIR}
+DESTDIR  = ../bin/$${OUTPUT_DIR}/$${ARCHITECTURE}
 OBJECTS_DIR = ../build/$${OUTPUT_DIR}/core
 MOC_DIR     = ../build/$${OUTPUT_DIR}/core
 UI_DIR      = ../build/$${OUTPUT_DIR}/core
